@@ -1,0 +1,154 @@
+package com.epam.ara.steps;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.jbehave.core.annotations.BeforeScenario;
+import org.jbehave.core.annotations.Given;
+import org.jbehave.core.annotations.Then;
+import org.jbehave.core.annotations.When;
+
+import com.epam.ara.arapage.AraMainPage;
+import com.epam.ara.arapage.PageFactory;
+import com.epam.ara.arapage.preferences.MultiLevelAggregation;
+
+public class AggregationSteps {
+
+	private final PageFactory pages;
+	private AraMainPage araMainPage;
+	private MultiLevelAggregation multiLevelAggregation;
+
+	public AggregationSteps(PageFactory pages) {
+		this.pages = pages;
+	}
+
+	@BeforeScenario
+	public void setupPages() {
+		araMainPage = pages.newAraPage();
+		multiLevelAggregation = pages.newMultiLevelAggregation();
+
+	}
+
+	// use this method only for Concentration Profile folder
+	@Given("select Multi-Level Aggregation $aggregationName")
+	public void selectMultiLevelAggregation(String aggregationName) {
+		araMainPage.reportPaneParameters().selectMultiLevelAggregation(
+				aggregationName);
+	}
+
+	@When("Multi-Level Aggregation page is shown")
+	public void multiLevelAggregationPageIsShown() {
+		multiLevelAggregation.pageIsShown();
+	}
+
+	@Given("select $aggregation aggregation")
+	public void selectNaturalHierarchyAggregation(String aggregation) {
+		araMainPage.reportPaneParameters().selectAggregationfromTable(
+				aggregation);
+	}
+
+	// use this method for Absolute or Relative Risk directories
+	@Given("select aggregation from list $aggregation")
+	public void selectAggregationFromList(String aggregation) {
+		araMainPage.reportPaneParameters().selectAggregation(aggregation);
+		araMainPage.reportPaneParameters().updateWithSelections();
+	}
+
+	@When("I click on Column header $columnName")
+	public void clickOnColumnHeader(String columnName) {
+		araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.clickColumnHeader(columnName);
+	}
+
+	@Then("verify that values in Acct/Book column with $startRow row is sorted by $sortedType")
+	public void isDataInAcctBookColumnSorted(int startRow, String sortedType) {
+		assertTrue("Wrong Sorting order",
+				araMainPage.reportPaneBottom().reportPaneBottomTable()
+						.isAcctBookDataInTableSorted(sortedType, startRow));
+	}
+
+	@Then("verify that $option Aggregation present in table")
+	public void isAggregationPresentInTable(String option) {
+		assertTrue("Aggregation is not present", araMainPage
+				.reportPaneParameters().isAggregationPresentInTable(option));
+	}
+
+	@Then("verify that $aggregation Aggregation is not present in table")
+	public void isAggregationNotPresentInTable(String aggregation) {
+		assertFalse("Aggregation is present", araMainPage
+				.reportPaneParameters()
+				.isAggregationPresentInTable(aggregation));
+	}
+
+	@When("remember values in Acct/Book column")
+	public void rememberAcctBooks() {
+		araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.remeberAcctBooks();
+	}
+
+	@When("select Available aggregation $aggregation")
+	public void selectAvailableAggregation(String aggregation) {
+		multiLevelAggregation.selectAvailableAggregation(aggregation);
+	}
+
+	@When("click Add to List")
+	public void clickAddToList() {
+		multiLevelAggregation.clickAddToList();
+	}
+
+	@Then("verify that Error Message $message is present")
+	public void isErrorMessagePresent(String message) {
+		assertTrue("Warning Message is not present",
+				multiLevelAggregation.isWarningMessagePresent(message));
+	}
+
+	@When("click Move Up")
+	public void clickMoveUp() {
+		multiLevelAggregation.clickMoveUp();
+	}
+
+	@When("click Move Down")
+	public void clickMoveDown() {
+		multiLevelAggregation.clickMoveDown();
+	}
+
+	@When("select Selected Aggregation $aggregation")
+	public void selectSelectedAggregation(String aggregation) {
+		multiLevelAggregation.selectSelectedAggregation(aggregation);
+	}
+
+	@Then("verify that Selected Aggregations sorted by $type")
+	public void isSelectedAggregationsSortedBy(String type) {
+		assertTrue("Wrong sorting order",
+				multiLevelAggregation.isSelectedAggregationSortedBy(type));
+	}
+
+	@When("click Ok button At Multilevel Aggregation")
+	public void clickOkButton() {
+		multiLevelAggregation.clickButtonOk();
+	}
+
+	@When("delete Multi-Level Aggregation $aggregationName")
+	public void deleteMultiLevelAggregation(String aggregation) {
+		multiLevelAggregation.deleteAggregation(aggregation);
+	}
+
+	@Then("verify that Multi-Level Aggregation $aggregationName is not present")
+	public void isAggregationNotPresent(String aggregationName) {
+		assertFalse("Aggregation was not deleted",
+				araMainPage.reportPaneParameters()
+						.isMultiLevelAggregationPresent(aggregationName));
+	}
+
+	@Then("verify that menu item $item for Actions menu is present")
+	public void isMenuItemPresent(String item) {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.clickActionButton().isMenuItemPresent(item));
+	}
+
+	@Given("click Report Actions -> $item")
+	public void clickActionsItem(String item) {
+		araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.clickActionButton().selectOption(item);
+	}
+}

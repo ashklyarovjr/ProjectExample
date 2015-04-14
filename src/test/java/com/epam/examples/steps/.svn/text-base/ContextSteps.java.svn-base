@@ -1,0 +1,167 @@
+package com.epam.ara.steps;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.jbehave.core.annotations.BeforeScenario;
+import org.jbehave.core.annotations.Given;
+import org.jbehave.core.annotations.Then;
+import org.jbehave.core.annotations.When;
+
+import com.epam.ara.arapage.AraMainPage;
+import com.epam.ara.arapage.PageFactory;
+import com.epam.ara.arapage.preferences.ContextTab;
+import com.epam.ara.arapage.preferences.GeneralPreferences;
+
+public class ContextSteps {
+
+	private final PageFactory pages;
+	private AraMainPage araMainPage;
+	private GeneralPreferences generalPreferences;
+	private ContextTab contextTab;
+
+	public ContextSteps(PageFactory pages) {
+		this.pages = pages;
+	}
+
+	@BeforeScenario
+	public void setupPages() {
+		araMainPage = pages.newAraPage();
+		generalPreferences = pages.newGeneralPreferences();
+		contextTab = pages.newContextTab();
+	}
+
+	@Then("verify that the default value is Unlock Context")
+	public void verifyLockContextDefaultValue() {
+		assertTrue(araMainPage.lockContextDialog().isUnlockContextselected());
+	}
+
+	@Then("verify that Basic view is selected by default in Lock Context window")
+	public void verifySelectedView() {
+		assertTrue(araMainPage.lockContextDialog()
+				.isBasicViewSelectedByDefault());
+	}
+
+	@When("I click on switch to link in Lock Context window")
+	public void clickOnSwitchToLink() {
+		araMainPage.lockContextDialog().clickOnSwitchToLink();
+	}
+
+	@Then("verify that Advanced view is displayed in Lock Context window")
+	public void verifyThatAdvancedViewIsDisplayed() {
+		assertTrue(araMainPage.lockContextDialog().isAdvancedViewDisplayed());
+	}
+
+	@Given("I navigate to Context Tab")
+	public void navigateToContextTab() {
+		generalPreferences.navigateToContextTab();
+	}
+
+	@Then("verify that displayed List of Context is the same as in Prefs -> Contexts")
+	public void verifyDisplayedContext() {
+		assertTrue("Displayed List of Context is the same as in Prefs",
+				araMainPage.lockContextDialog().isListOfContextsDisplayed());
+	}
+
+	@Then("verify that locked Context $contextName icon is present")
+	public void isContextLocked(String contextName) {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.isContextLocked(contextName));
+	}
+
+	@Given("click locked context icon $context")
+	public void clickLockedContextIcon(String context) {
+		araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.clickLockedContextIcon(context);
+	}
+
+	@When("I click Unlock Context radio button")
+	public void clickUnlockRadioButton() {
+		araMainPage.lockContextDialog().clickUnlockRadioButton();
+	}
+
+	@Then("verify that locked Context is unlocked")
+	public void isContextUnlocked() {
+		assertFalse("Context is not unlocked", araMainPage.reportPaneBottom()
+				.reportPaneBottomTable().isContextLocked("Today"));
+	}
+
+	@Then("verify that 'Use' and 'From' drop-downs appears")
+	public void verifyDropDownInLockContextDialog() {
+		assertTrue(araMainPage.lockContextDialog().isAdvancedDropDownPresent());
+	}
+
+	@When("I select $value value from 'From' drop down")
+	public void selectValueFromFromDropDown(String value) {
+		araMainPage.lockContextDialog().selectValueFromFromDropDown(value);
+	}
+
+	@Then("verify that tooltip bar shows $portfolio of selected portfolio and $cube of selected cube")
+	public void verifyToolTip(String portfolio, String cube) {
+		assertEquals("Portfolio: " + portfolio + " Cubes: " + cube + "",
+				araMainPage.reportPaneBottom().reportPaneBottomTable()
+						.getLockedContextToolTipText());
+	}
+
+	@Then("verify that Actions -> Lock $menuItem value is available")
+	public void isMenuItemAvailable(String menuItem) {
+		assertTrue("Context menu is not available", araMainPage
+				.reportPaneBottom().reportPaneBottomTable().clickAction()
+				.isMenuItemAvailable(menuItem));
+	}
+
+	@When("I enter $value value into $inputNumber WI-Input field")
+	public void enterValueIntoWiInput(String value, int inputNumber) {
+		araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.fillWiInput(value, inputNumber);
+	}
+
+	@When("I click Actions -> WhatIfCalculate")
+	public void clickWhatIfCalculate() {
+		araMainPage.reportPaneBottom().reportPaneBottomTable().clickAction()
+				.clickActionsWhatIsCalculate();
+	}
+
+	@Then("that Calculations are applied correctly")
+	public void verifyCalculations() {
+		assertTrue("Calculations was applied with error", araMainPage
+				.reportPaneBottom().reportPaneBottomTable()
+				.isCalculationsCorrectlyApplied());
+	}
+
+	@Then("verify that global context $name is $color")
+	public void isGlobalContextsGrey(String contextName, String color) {
+		contextTab.isContextWithColorPresent(contextName, color);
+	}
+
+	@When("I select $contextName context at Context Tab")
+	public void selectContextAtContextTab(String contextName) {
+		contextTab.selectContext(contextName);
+	}
+
+	@Then("verify that Lock Context feature is available in Line Graph report")
+	public void isContextFeatureAvailable() {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.isActionsLockContextAvailable());
+	}
+
+	@Given("$menuitem in Line Graph report")
+	public void lockContext(String menuItem) {
+		araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.lockContextAtGraphReport(menuItem);
+	}
+
+	@Then("verify Graph color and Context icon is present")
+	public void verifyColor() {
+		araMainPage.reportPaneBottom().reportPaneBottomTable().waitForGraph();
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.isLockedContextIconPresent());
+	}
+
+	@Then("verify that newly created custom input output is displayed only in one column")
+	public void verifyCreatedOutput() {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.isCreatedOutpurDisplayedInOneColumn());
+	}
+}

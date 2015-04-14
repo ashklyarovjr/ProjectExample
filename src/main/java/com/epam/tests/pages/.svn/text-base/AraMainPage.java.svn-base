@@ -1,0 +1,577 @@
+package com.epam.ara.arapage;
+
+/**
+ * Ara Page consists of 3 main parts: navigation panel, a report pane, and a quick links bar
+ */
+
+import java.util.Set;
+
+import org.jbehave.web.selenium.WebDriverProvider;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchWindowException;
+
+import com.epam.ara.arapage.benchmarkpane.BenchmarkPane;
+import com.epam.ara.arapage.navigationpanel.NavigationPanel;
+import com.epam.ara.arapage.navigationpanel.benchmarks.dialogs.CreateVirtualBlendedBenchmarkDialog;
+import com.epam.ara.arapage.navigationpanel.benchmarks.dialogs.DeleteVirtualBenchmarkDialog;
+import com.epam.ara.arapage.navigationpanel.benchmarks.dialogs.PostVirtualBenchmarkDialog;
+import com.epam.ara.arapage.navigationpanel.benchmarks.dialogs.RetrieveVirtualBenchmarkDialog;
+import com.epam.ara.arapage.navigationpanel.benchmarks.dialogs.SearchBenchmark;
+import com.epam.ara.arapage.navigationpanel.benchmarks.dialogs.SearchNonBlendedBenchmarkDialog;
+import com.epam.ara.arapage.navigationpanel.onlinereports.DeleteReportDialog;
+import com.epam.ara.arapage.navigationpanel.onlinereports.PrintReportDialog;
+import com.epam.ara.arapage.navigationpanel.onlinereports.filters.AddFilterDialog;
+import com.epam.ara.arapage.navigationpanel.portfolios.dialogs.CopyPortfolioToDialog;
+import com.epam.ara.arapage.navigationpanel.portfolios.dialogs.CopyPortfolioTo_NewFolderDialog;
+import com.epam.ara.arapage.navigationpanel.portfolios.dialogs.CreatePortfolioLinksDialog;
+import com.epam.ara.arapage.navigationpanel.portfolios.dialogs.CreateVirtualPortfolioDialog;
+import com.epam.ara.arapage.navigationpanel.portfolios.dialogs.DeletePortfolioDialog;
+import com.epam.ara.arapage.navigationpanel.portfolios.dialogs.LockPortfolioDialog;
+import com.epam.ara.arapage.navigationpanel.portfolios.dialogs.PortfoliosTabDeleteDialog;
+import com.epam.ara.arapage.navigationpanel.portfolios.dialogs.PostPortfolioDialog;
+import com.epam.ara.arapage.navigationpanel.portfolios.dialogs.RetrievePortfolioDialog;
+import com.epam.ara.arapage.navigationpanel.portfolios.dialogs.SaveVirtualPortfolioDialog;
+import com.epam.ara.arapage.quicklinksbar.QuickLinksBar;
+import com.epam.ara.arapage.reportpane.ReportPane;
+import com.epam.ara.arapage.reportpane.ReportPaneBottom;
+import com.epam.ara.arapage.reportpane.ReportPaneParameters;
+import com.epam.ara.arapage.reportpane.ReportPaneReferences;
+import com.epam.ara.arapage.webpagedialogs.AddNewSecurityDialog;
+import com.epam.ara.arapage.webpagedialogs.BenchmarkSetDialog;
+import com.epam.ara.arapage.webpagedialogs.CreateStrategyDialog;
+import com.epam.ara.arapage.webpagedialogs.LockAggregationDialog;
+import com.epam.ara.arapage.webpagedialogs.LockBenchmarkDialog;
+import com.epam.ara.arapage.webpagedialogs.LockBenchmarkErrorDialog;
+import com.epam.ara.arapage.webpagedialogs.LockContextDialog;
+import com.epam.ara.arapage.webpagedialogs.NewStrategyModalDialog;
+import com.epam.ara.arapage.webpagedialogs.RuleSelectorDialog;
+import com.epam.ara.arapage.webpagedialogs.ScheduleExportDialog;
+import com.epam.ara.arapage.webpagedialogs.SchedulePDFReportDialog;
+import com.epam.ara.arapage.webpagedialogs.SecuritiesFinderDialog;
+import com.epam.ara.arapage.webpagedialogs.SelectAssociatedBenchmarkDialog;
+import com.epam.ara.arapage.webpagedialogs.SelectOZPortfolioDialog;
+import com.epam.ara.arapage.webpagedialogs.ShowLevelDialog;
+import com.epam.ara.arapage.webpagedialogs.UploadDialog;
+
+public class AraMainPage extends BaseAraPage {
+
+	private NavigationPanel navigationPanel;
+	private QuickLinksBar quickLinksBar;
+	private ReportPane reportPane;
+	private RuleSelectorDialog ruleSelectorDialog;
+	private DeleteReportDialog deleteReportDialog;
+	private PrintReportDialog printReportDialog;
+	private CreateVirtualPortfolioDialog createVirtualPortfolioDialog;
+	private SaveVirtualPortfolioDialog saveVirtualPortfolioDialog;
+	private ScheduleExportDialog scheduleExportDialog;
+	private SchedulePDFReportDialog schedulePDFReportDialog;
+	private CopyPortfolioToDialog copyPortfolioToDialog;
+	private CopyPortfolioTo_NewFolderDialog copyPortfolioTo_NewFolderDialog;
+	private CreatePortfolioLinksDialog createPortfolioLinksDialog;
+	private UploadDialog uploadPortfolioDialog;
+	private PostPortfolioDialog postPortfolioDialog;
+	private RetrievePortfolioDialog retrievePortfolioDialog;
+	private SecuritiesFinderDialog searchPortfolioDialog;
+	private AddNewSecurityDialog addNewSecurityDialog;
+	private LockPortfolioDialog lockPortfolioDialog;
+	private DeletePortfolioDialog deletePortfolioDialog;
+	private PortfoliosTabDeleteDialog portfoliosTabDeleteDialog;
+	private ShowLevelDialog showLewelDialog;
+	private LockAggregationDialog lockAggregationDialog;
+	private CreateStrategyDialog createStrategyDialog;
+	private NewStrategyModalDialog newStrategyModalDialog;
+	private CreateVirtualBlendedBenchmarkDialog createVirtualBlendedBenchmarkDialog;
+	private BenchmarkPane benchmarkPane;
+	private SearchBenchmark searchBenchmark;
+	private SearchNonBlendedBenchmarkDialog searchNonBlendedBenchmarkDialog;
+	private PostVirtualBenchmarkDialog postVirtualBenchmarkDialog;
+	private RetrieveVirtualBenchmarkDialog retrieveVirtualBenchmarkDialog;
+	private LockBenchmarkDialog lockBenchmarkDialog;
+	private LockContextDialog lockContextDialog;
+	private LockBenchmarkErrorDialog lockBenchmarkErrorDialog;
+	private DeleteVirtualBenchmarkDialog deleteVirtualBenchmarkDialog;
+	private SelectAssociatedBenchmarkDialog selectAssociatedBenchmarkDialog;
+	private AddFilterDialog addFilterDialog;
+	private BenchmarkSetDialog benchmarkSetDialog;
+	private SelectOZPortfolioDialog selectOZPortfolioDialog;
+
+	private static String mainWindowHandler;
+
+	public AraMainPage(WebDriverProvider webDriverProvider) {
+		super(webDriverProvider);
+		navigationPanel = new NavigationPanel(webDriverProvider);
+		quickLinksBar = new QuickLinksBar(webDriverProvider);
+		reportPane = new ReportPane(webDriverProvider);
+		ruleSelectorDialog = new RuleSelectorDialog(webDriverProvider);
+		deleteReportDialog = new DeleteReportDialog(webDriverProvider);
+		printReportDialog = new PrintReportDialog(webDriverProvider);
+		createVirtualPortfolioDialog = new CreateVirtualPortfolioDialog(
+				webDriverProvider);
+		saveVirtualPortfolioDialog = new SaveVirtualPortfolioDialog(
+				webDriverProvider);
+		scheduleExportDialog = new ScheduleExportDialog(webDriverProvider);
+		schedulePDFReportDialog = new SchedulePDFReportDialog(webDriverProvider);
+		copyPortfolioToDialog = new CopyPortfolioToDialog(webDriverProvider);
+		copyPortfolioTo_NewFolderDialog = new CopyPortfolioTo_NewFolderDialog(
+				webDriverProvider);
+		createPortfolioLinksDialog = new CreatePortfolioLinksDialog(
+				webDriverProvider);
+		uploadPortfolioDialog = new UploadDialog(webDriverProvider);
+		postPortfolioDialog = new PostPortfolioDialog(webDriverProvider);
+		retrievePortfolioDialog = new RetrievePortfolioDialog(webDriverProvider);
+		searchPortfolioDialog = new SecuritiesFinderDialog(webDriverProvider);
+		addNewSecurityDialog = new AddNewSecurityDialog(webDriverProvider);
+		lockPortfolioDialog = new LockPortfolioDialog(webDriverProvider);
+		deletePortfolioDialog = new DeletePortfolioDialog(webDriverProvider);
+		portfoliosTabDeleteDialog = new PortfoliosTabDeleteDialog(
+				webDriverProvider);
+		showLewelDialog = new ShowLevelDialog(webDriverProvider);
+		lockAggregationDialog = new LockAggregationDialog(webDriverProvider);
+		createStrategyDialog = new CreateStrategyDialog(webDriverProvider);
+		newStrategyModalDialog = new NewStrategyModalDialog(webDriverProvider);
+		createVirtualBlendedBenchmarkDialog = new CreateVirtualBlendedBenchmarkDialog(
+				webDriverProvider);
+		benchmarkPane = new BenchmarkPane(webDriverProvider);
+		searchBenchmark = new SearchBenchmark(webDriverProvider);
+		searchNonBlendedBenchmarkDialog = new SearchNonBlendedBenchmarkDialog(
+				webDriverProvider);
+		postVirtualBenchmarkDialog = new PostVirtualBenchmarkDialog(
+				webDriverProvider);
+		retrieveVirtualBenchmarkDialog = new RetrieveVirtualBenchmarkDialog(
+				webDriverProvider);
+		lockBenchmarkDialog = new LockBenchmarkDialog(webDriverProvider);
+		lockContextDialog = new LockContextDialog(webDriverProvider);
+		lockBenchmarkErrorDialog = new LockBenchmarkErrorDialog(
+				webDriverProvider);
+		deleteVirtualBenchmarkDialog = new DeleteVirtualBenchmarkDialog(
+				webDriverProvider);
+		selectAssociatedBenchmarkDialog = new SelectAssociatedBenchmarkDialog(
+				webDriverProvider);
+		addFilterDialog = new AddFilterDialog(webDriverProvider);
+		benchmarkSetDialog = new BenchmarkSetDialog(webDriverProvider);
+		selectOZPortfolioDialog = new SelectOZPortfolioDialog(webDriverProvider);
+	}
+
+	public void pageIsShown() {
+		navigationPanel.waitUntilFrameIsLoaded();
+		quickLinksBar.waitUntilFrameIsLoaded();
+		reportPane.frameIsShown();
+	}
+
+	public void pageIsShownWithoutErrors() {
+		navigationPanel.waitUntilFrameIsLoaded();
+		quickLinksBar.waitUntilFrameIsLoaded();
+		reportPane.reportPanesShown();
+	}
+
+	public void pageIsShownForPortfolios() {
+		navigationPanel.waitUntilFrameIsLoaded();
+		quickLinksBar.waitUntilFrameIsLoaded();
+	}
+
+	public QuickLinksBar quickLinksBar() {
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		switchTo().defaultContent().switchTo()
+				.frame(BaseAraPage.locators.getHEADER_FRAME_NAME());
+		return quickLinksBar;
+	}
+
+	public NavigationPanel navigation() {
+		switchTo().defaultContent().switchTo()
+				.frame(BaseAraPage.locators.getNAVIGATION_FRAME_NAME());
+		return navigationPanel;
+	}
+
+	public AraMainPage refreshPage() {
+		quickLinksBar().clickRefresh();
+		pageIsShown();
+		return this;
+	}
+
+	public AraMainPage refreshPortfolioPage() {
+		quickLinksBar().clickRefresh();
+		return this;
+	}
+
+	public void clickStrategyLink() {
+		quickLinksBar().clickStrategyLink();
+	}
+
+	public void clickAssociatedBenchmarkLink() {
+		quickLinksBar().clickBenchmarkLink();
+	}
+
+	public void logOut() {
+		quickLinksBar().clickLogout();
+	}
+
+	public String getAssociatedBenchmarkLinkName() {
+		return quickLinksBar().getAssociatedBenchmarkLinkName();
+	}
+
+	public ReportPaneBottom reportPaneBottom() {
+		return reportPane.reportsbottom();
+	}
+
+	public RuleSelectorDialog ruleSelectorDialog() {
+		return ruleSelectorDialog.swichToRuleSelectorDialog();
+	}
+
+	public void cancelSearchWindowDialog() {
+		ruleSelectorDialog.cancelSearchWindowDialog();
+	}
+
+	public void confirmSearchWindowDialog() {
+		ruleSelectorDialog.approveSearchWindowDialog();
+	}
+
+	public DeleteReportDialog acceptDeleteReportDialog() {
+		return deleteReportDialog.acceptDeleteReportDialog();
+	}
+
+	public DeletePortfolioDialog acceptDeletePortfolioDialog() {
+		return deletePortfolioDialog.acceptDeletePortfolioDialog();
+	}
+
+	public ReportPaneParameters reportPaneParameters() {
+		return reportPane.parameters();
+
+	}
+
+	public ReportPaneReferences reportPaneReference() {
+		return reportPane.reference();
+	}
+
+	public PrintReportDialog printReportDialog() {
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return printReportDialog.swichToPrintReportDialog();
+	}
+
+	public CreateVirtualPortfolioDialog createVirtualPortfolioDialog() {
+		return createVirtualPortfolioDialog
+				.switchToCreateVirtualPortfolioDialog();
+	}
+
+	public SaveVirtualPortfolioDialog saveVirtualPortfolioDialog() {
+		return saveVirtualPortfolioDialog.switchToSaveVirtualPortfolioDialog();
+	}
+
+	// This method was changed
+	public ScheduleExportDialog scheduleExportDialog() {
+		return scheduleExportDialog.swichToScheduleExportDialog();
+	}
+
+	public SchedulePDFReportDialog schedulePDFReportDialog() {
+		return schedulePDFReportDialog.swichToSchedulePDFReportDialog();
+	}
+
+	public CopyPortfolioToDialog copyPortfolioToDialog() {
+		return copyPortfolioToDialog.swichToCopyPortfolioToDialog();
+	}
+
+	public CopyPortfolioTo_NewFolderDialog newFolderCopyPortfolioDialog() {
+		return copyPortfolioTo_NewFolderDialog.swichToNewFolderDialog();
+	}
+
+	public CreatePortfolioLinksDialog createPortfolioLinksDialog() {
+		return createPortfolioLinksDialog.switchToCreatePortfolioLinksDialog();
+	}
+
+	public void verifyFrameElementIsLoaded(String frameName, By formLocator) {
+		waitUntilFrameIsLoaded(frameName, formLocator);
+	}
+
+	public UploadDialog uploadPortfolioDialog() {
+		return uploadPortfolioDialog.switchToUploadPortfolioDialog();
+	}
+
+	public PostPortfolioDialog postPortfolioDialog() {
+		return postPortfolioDialog.switchToPostPortfolioDialog();
+	}
+
+	public RetrievePortfolioDialog retrievePortfolioDialog() {
+		return retrievePortfolioDialog.switchToRetrievePortfolioDialog();
+	}
+
+	public SecuritiesFinderDialog searchPortfolioDialog() {
+		return searchPortfolioDialog.switchToSecuritySearchPortfolioDialog();
+	}
+
+	public AddNewSecurityDialog addNewSecurityDialog() {
+		return addNewSecurityDialog.switchToAddNewSecurityDialog();
+	}
+
+	public LockPortfolioDialog lockPortfolioDialog() {
+		return lockPortfolioDialog.switchToLockPortfolioDialog();
+	}
+
+	public PortfoliosTabDeleteDialog portfoliosTabDeletePortfolio() {
+		return portfoliosTabDeleteDialog.switchToPortfoliosTabDeleteDialog();
+	}
+
+	public ShowLevelDialog showLevelDialog() {
+		return showLewelDialog.switchToShowLewelDialog();
+	}
+
+	public LockAggregationDialog lockAggregationDialog() {
+		return lockAggregationDialog.switchToLockAggregationDialog();
+	}
+
+	public CreateStrategyDialog createStrategyDialog() {
+		return createStrategyDialog.switchToCreateStrategyDialog();
+	}
+
+	public void closeEmptyWindow() {
+		Set<String> handlers = getWindowHandles();
+		String mainWindowHandl = AraMainPage.getMainWindowHandler();
+		if (handlers.size() > 1) {
+			for (String handler : handlers) {
+				try {
+					switchTo().window(handler);
+					if (!(handler.contains(mainWindowHandl))) {
+						close();
+						break;
+					}
+				} catch (NoSuchWindowException e) {
+					System.out.println("Empty window was closed");
+				}
+			}
+			switchTo().window(mainWindowHandl);
+		} else {
+			System.out.println("Ok! Empty modal Windows was not found");
+		}
+	}
+
+	public void closeEmptyOptimization() {
+		switchTo().defaultContent();
+		Set<String> handlers = getWindowHandles();
+		String mainWindow = "";
+		if (handlers.size() > 2) {
+			for (String handler : handlers) {
+				try {
+					switchTo().window(handler);
+					if ((getCurrentUrl().contains("/view/.pending"))) {
+						mainWindow = handler;
+					} else {
+						close();
+					}
+				} catch (NoSuchWindowException e) {
+					System.out.println("Empty window was closed");
+				}
+			}
+			switchTo().window(mainWindow);
+		} else {
+			System.out.println("Window not found");
+		}
+	}
+
+	public void closeEmptyOptimizationNewFolder() {
+		switchTo().defaultContent();
+		Set<String> handlers = getWindowHandles();
+		String mainWindow = "";
+		if (handlers.size() > 2) {
+			for (String handler : handlers) {
+				try {
+					switchTo().window(handler);
+					if (getCurrentUrl().contains("/.pending")
+							| getCurrentUrl().contains("../view/.ozmodal")) {
+						mainWindow = handler;
+					} else {
+						close();
+					}
+				} catch (NoSuchWindowException e) {
+					System.out.println("Empty window was closed");
+				}
+			}
+			switchTo().window(mainWindow);
+		} else {
+			System.out.println("Window not found");
+		}
+	}
+
+	public void closeOrganizer() {
+		switchTo().defaultContent();
+		Set<String> handlers = getWindowHandles();
+		String mainWindow = "";
+		if (handlers.size() > 2) {
+			for (String handler : handlers) {
+				try {
+					switchTo().window(handler);
+					if (getCurrentUrl().contains("/.pending")
+							| getCurrentUrl().contains("section_organizer")) {
+						mainWindow = handler;
+					} else {
+						close();
+					}
+				} catch (NoSuchWindowException e) {
+					System.out.println("Empty window was closed");
+				}
+			}
+			switchTo().window(mainWindow);
+		} else {
+			//System.out.println("Window not found");
+		}
+	}
+
+	public void closeEmptyReportProperties() {
+		switchTo().defaultContent();
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		Set<String> handlers = getWindowHandles();
+		String mainWindow = "";
+		if (handlers.size() >= 2) {
+			for (String handler : handlers) {
+				try {
+					switchTo().window(handler);
+					if ((getCurrentUrl().contains("/view/.pending"))
+							| (getCurrentUrl()
+									.contains("/ara/editor/.editorsave"))) {
+						mainWindow = handler;
+					} else if ((getCurrentUrl().contains("/view/.reportmodal"))) {
+						log.info("swich to new report window");
+					} else {
+						close();
+					}
+				} catch (NoSuchWindowException e) {
+					System.out.println("Empty window was closed");
+				}
+			}
+			switchTo().window(mainWindow);
+		} else {
+			System.out.println("Window not found");
+		}
+	}
+
+	public void closeEmptyNewReportWarning() {
+		switchTo().defaultContent();
+		Set<String> handlers = getWindowHandles();
+		String mainWindow = "";
+		if (handlers.size() > 2) {
+			for (String handler : handlers) {
+				try {
+					switchTo().window(handler);
+					if (getCurrentUrl().contains("/.pending")
+							| getCurrentUrl().contains("/view/.reportmodal")) {
+						mainWindow = handler;
+					} else {
+						close();
+					}
+				} catch (NoSuchWindowException e) {
+					System.out.println("Empty window was closed");
+				}
+			}
+			switchTo().window(mainWindow);
+		} else {
+			System.out.println("Window not found");
+		}
+	}
+
+	public void closeEmptyChildLimits() {
+		switchTo().defaultContent();
+		Set<String> handlers = getWindowHandles();
+		String mainWindow = "";
+		if (handlers.size() > 2) {
+			for (String handler : handlers) {
+				try {
+					switchTo().window(handler);
+					if ((getCurrentUrl().contains("/view/.pending"))) {
+						mainWindow = handler;
+					} else if ((getCurrentUrl().contains("inplace_limiteditor"))) {
+						log.info("swich to limits editor");
+					} else {
+						close();
+					}
+				} catch (NoSuchWindowException e) {
+					System.out.println("Empty window was closed");
+				}
+			}
+			switchTo().window(mainWindow);
+		} else {
+			System.out.println("Window not found");
+		}
+	}
+
+	public void acceptStrategy() {
+		newStrategyModalDialog.acceptStrategy();
+	}
+
+	public CreateVirtualBlendedBenchmarkDialog createVirtualBlendedBenchmarkDialog() {
+		return createVirtualBlendedBenchmarkDialog
+				.switchToCreateVirtualBlendedBenchmarkDialog();
+	}
+
+	public BenchmarkPane benchmarkPane() {
+		return benchmarkPane.switchToBottomFrame();
+	}
+
+	public SearchBenchmark searchBenchmarkDialog() {
+		return searchBenchmark.switchToSearchBenchmarkDialog();
+	}
+
+	public SearchNonBlendedBenchmarkDialog searchNonBlendedBenchmarkDialog() {
+		return searchNonBlendedBenchmarkDialog
+				.switchToSearchNonBlendedBenchmarkDialog();
+	}
+
+	public PostVirtualBenchmarkDialog postVirtualBenchmarkDialog() {
+		return postVirtualBenchmarkDialog.switchToPostVirtualBenchmarkDialog();
+	}
+
+	public RetrieveVirtualBenchmarkDialog retrieveBenchmarkDialog() {
+		return retrieveVirtualBenchmarkDialog
+				.switchToRetireveVirtualBenchmarkDialog();
+	}
+
+	public LockBenchmarkDialog lockBenchmarkDialog() {
+		return lockBenchmarkDialog.switchToLockBenchmarkDialog();
+	}
+
+	public LockContextDialog lockContextDialog() {
+		return lockContextDialog.switchToLockContextDialog();
+	}
+
+	public LockBenchmarkErrorDialog lockBenchmarkErrorMessageDialog() {
+		return lockBenchmarkErrorDialog.switchToErrorDialog();
+	}
+
+	public DeleteVirtualBenchmarkDialog deleteVirtualBenchmarkDialog() {
+		return deleteVirtualBenchmarkDialog
+				.switchToDeleteVirtualBenchmarkDialog();
+	}
+
+	public SelectAssociatedBenchmarkDialog selectAssociatedBenchmarkDialog() {
+		return selectAssociatedBenchmarkDialog.switchToSelectBenchmarkDialog();
+	}
+
+	public AddFilterDialog filterDialog() {
+		return addFilterDialog.switchToAddFilterDialog();
+	}
+
+	public BenchmarkSetDialog benchmarkSetDialog() {
+		return benchmarkSetDialog.switchToBenchmarkSetDialog();
+	}
+
+	public SelectOZPortfolioDialog selectOzPortfolioDialog() {
+		return selectOZPortfolioDialog.selectPortfolioDialog();
+
+	}
+
+	public void rememberMainWindow() {
+		mainWindowHandler = getWindowHandle();
+	}
+
+	public static String getMainWindowHandler() {
+		return mainWindowHandler;
+	}
+}

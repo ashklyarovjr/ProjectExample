@@ -1,0 +1,1419 @@
+package com.epam.ara.steps;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.apache.commons.lang3.RandomStringUtils;
+import org.jbehave.core.annotations.BeforeScenario;
+import org.jbehave.core.annotations.Given;
+import org.jbehave.core.annotations.Then;
+import org.jbehave.core.annotations.When;
+
+import com.epam.ara.arapage.AraMainPage;
+import com.epam.ara.arapage.BaseAraPage;
+import com.epam.ara.arapage.PageFactory;
+import com.epam.ara.arapage.navigationpanel.NavigationPanel;
+import com.epam.ara.arapage.navigationpanel.limits.LimitEditor;
+import com.epam.ara.arapage.navigationpanel.onlinereports.OnlineReports;
+import com.epam.ara.arapage.navigationpanel.portfolios.dialogs.CopyPortfolioToDialog;
+import com.epam.ara.arapage.navigationpanel.portfolios.dialogs.CopyPortfolioTo_NewFolderDialog;
+import com.epam.ara.arapage.navigationpanel.portfolios.dialogs.CreateVirtualPortfolioDialog;
+import com.epam.ara.arapage.navigationpanel.portfolios.dialogs.SaveVirtualPortfolioDialog;
+import com.epam.ara.arapage.navigationpanel.potrfolios.Portfolios;
+import com.epam.ara.arapage.preferences.GeneralPreferences;
+import com.epam.ara.arapage.webpagedialogs.SecuritiesFinderDialog;
+
+public class PortfolioSteps {
+
+	private final PageFactory pages;
+
+	private NavigationPanel navigationPanel;
+	private Portfolios portfolios;
+	private AraMainPage araMainPage;
+	private OnlineReports onlineReports;
+	private GeneralPreferences generalPreferences;
+	private SecuritiesFinderDialog securitiesFinderDialog;
+	private LimitEditor limitEditor;
+	private String retrieviedPortfolioName = "";
+	private CreateVirtualPortfolioDialog createVirtualPortfolioDialog;
+
+	public PortfolioSteps(PageFactory pages) {
+		this.pages = pages;
+	}
+
+	@BeforeScenario
+	public void setupPages() {
+		navigationPanel = pages.newNavigationPanel();
+		portfolios = pages.newPortfolios();
+		araMainPage = pages.newAraPage();
+		onlineReports = pages.newOnlinaReports();
+		generalPreferences = pages.newGeneralPreferences();
+		securitiesFinderDialog = pages.newSecuritiesFinder();
+		limitEditor = pages.newLimitEditor();
+        createVirtualPortfolioDialog = pages.newCreateVirtualPortfolioDialog();
+	}
+
+	// ========= 7.0 Non-virtual portfolio
+	@Given("I am on ARA main page Portfolios tab as $username")
+	public void iAmOnPortfolioMainPage(String username) {
+		araMainPage.pageIsShownForPortfolios();
+		assertEquals("The Main screen is not displayed", username, araMainPage
+				.quickLinksBar().getUsername());
+		araMainPage.rememberMainWindow();
+		araMainPage.closeEmptyWindow();
+	}
+
+	@Given("go to Portfolio tab in Online Reports")
+	public void goToPortfolioTab() {
+		navigationPanel.waitUntilFrameIsLoaded();
+		navigationPanel.getPortfolioTab();
+	}
+
+	@Given("select any non-virtual portfolio ($portfolio)")
+	public void selectNonVirtualPortfolio(String portfolioName) {
+		araMainPage.navigation().onlineReports().portfolioTab()
+				.selectPortfolioByName(portfolioName);
+		navigationPanel.waitUntilFrameIsLoaded();
+	}
+
+	@Given("click Action at Portfolio Tab")
+	public void clickActionAtPortfolioTab() {
+		araMainPage.navigation().onlineReports().portfolioTab()
+				.clickActionsButton();
+	}
+
+	@Given("click Action at Portfolios Navigation table")
+	public void clickActions() {
+		araMainPage.navigation().portfolios().clickActionsButton();
+	}
+
+	@Then("verify that for Actions menu-list there are $menuItem")
+	public void verifyCollapseAll(String menuItem) {
+		assertTrue("Menu " + menuItem + " in menu-list Actions not displayed",
+				portfolios.isActionsMenuItemDisplayed(menuItem));
+	}
+
+	// =============== 7.0.1 Virtual portfolio
+
+	@Given("go to Portfolios tab")
+	public void goToPortfoliosTab() {
+		navigationPanel.waitUntilFrameIsLoaded();
+		navigationPanel.portfolios();
+	}
+
+	@Given("create any empty virtual portfolio in Portfolio hierarchy")
+	public void selectVirtualPortfolio() {
+		portfolios.clickActionsButton().actionsCreateVirtualPortfolio();
+		araMainPage.createVirtualPortfolioDialog()
+				.acceptCreateVirtualPortfolioDialog();
+	}
+
+	// ============== 7.1.1.1
+
+	@Given("click Actions -> Create Virtual Portfolio")
+	public void createVirtualPortfolio() {
+		araMainPage.navigation().portfolios().clickActionsButton()
+				.actionsCreateVirtualPortfolio();
+	}
+
+	@Then("verify that Create Virtual dialog box $dialogTitle appeared")
+	public void verifyCreateDialogName(String dialogTitle) {
+		assertEquals("Dialog names does not equals", dialogTitle, araMainPage
+				.createVirtualPortfolioDialog().getTitle());
+	}
+
+	@Then("verify that dialog elements are present")
+	public void verifyDialogElementsPresent() {
+		assertTrue("Element lost", araMainPage.createVirtualPortfolioDialog()
+				.switchToFrame().dialogElementsArePresent());
+	}
+
+	@Then("verify that for Create Virtual dialog there are 'Name field'")
+	public void verifyFieldName() {
+		assertTrue("Field 'Name' does not displayed", araMainPage
+				.createVirtualPortfolioDialog().switchToFrame()
+				.getPortfolioNameField().isDisplayed());
+	}
+
+	@Then("verify that for Create Virtual dialog there are present $fieldName")
+	public void verifyCreateInField(String fieldName) {
+		assertTrue("Field " + fieldName + " does not displayed", araMainPage
+				.createVirtualPortfolioDialog().switchToFrame()
+				.getPortfolioNameField().isDisplayed());
+	}
+
+	@Then("verify there are Create Virtual button Ok")
+	public void verifyDialogButtonOk() {
+		assertTrue("Button Ok not dispalyed", araMainPage
+				.createVirtualPortfolioDialog().switchToFrame().getButtonOk()
+				.isDisplayed());
+	}
+
+	@Then("verify there are Create Virtual button Cancel")
+	public void verifyDialogButtonCancel() {
+		assertTrue("Button Cancel not dispalyed", araMainPage
+				.createVirtualPortfolioDialog().switchToFrame()
+				.getButtonCancel().isDisplayed());
+	}
+
+	@Given("user enters portfolio name $portfolioName at the 'Create Virtual dialog'")
+	public void fillNameField(String portfolioName) {
+		araMainPage.createVirtualPortfolioDialog().switchToFrame()
+				.enterPortfolioName(portfolioName);
+	}
+
+	@Given("Create Virtual portfolio dialog press Ok")
+	public void pressOk() {
+        createVirtualPortfolioDialog.acceptCreateVirtualPortfolioDialog();
+//		araMainPage.createVirtualPortfolioDialog()
+//				.acceptCreateVirtualPortfolioDialog();
+	}
+	@Then("verify that new virtual portfolio was created")
+	public void verifyNameOfCreatedPortfolio() {
+		araMainPage.navigation().portfolios();
+		assertEquals(
+				"Portfolio names not equals",
+				CreateVirtualPortfolioDialog.getCreatedPortfolioName(),
+				portfolios
+						.verifyPresentationPortfolioByName(CreateVirtualPortfolioDialog
+								.getCreatedPortfolioName()));
+	}
+
+	// ============= 7.1.1.2
+
+	@Then("verify that for Management interface view there are Default Currency select")
+	public void verifyDefaultCurrencySelectIsPresent() {
+		araMainPage.verifyFrameElementIsLoaded(
+				BaseAraPage.locators.getBOTTOM_FRAME_NAME(),
+				BaseAraPage.locators.getBOTTOM_DEFAULT_CURRENCY_SELECT());
+	}
+
+	@Then("verify that for Management interface view there are Default Aggregation select")
+	public void verifyDefaultAggregationSelectIsPresent() {
+
+		araMainPage.verifyFrameElementIsLoaded(
+				BaseAraPage.locators.getBOTTOM_FRAME_NAME(),
+				BaseAraPage.locators.getBOTTOM_DEFAULT_AGGREGATION_SELECT());
+	}
+
+	@Then("verify that for Management interface view there are Associated Benchmark select")
+	public void verifyAssociatedBenchmarkSelectIsPresent() {
+
+		araMainPage.verifyFrameElementIsLoaded(
+				BaseAraPage.locators.getBOTTOM_FRAME_NAME(),
+				BaseAraPage.locators.getBOTTOM_ASSOCIATED_BENCHMARK_SELECT());
+	}
+
+	@Then("verify that for Management interface view there are Apply button")
+	public void verifyApplyButtonIsPresent() {
+
+		araMainPage.verifyFrameElementIsLoaded(
+				BaseAraPage.locators.getBOTTOM_FRAME_NAME(),
+				BaseAraPage.locators.getBOTTOM_APPLY_BUTTON());
+
+	}
+
+	@Then("verify that Portfolio navigation table is displayed")
+	public void verifyNavigationPanelIsDisplayed() {
+
+		araMainPage.verifyFrameElementIsLoaded(
+				BaseAraPage.locators.getNAVIGATION_FRAME_NAME(),
+				BaseAraPage.locators.getNAVIGATION_BODY_XPATH());
+	}
+
+	// ============= 7.1.2.1
+	@Given("select any report ($report)")
+	public void selectReport(String reportName) {
+		onlineReports.reportsTab();
+		onlineReports.collapseFolder();
+		onlineReports.selectReportFolder("Concentration Profile");
+		onlineReports.selectReportByName(reportName);
+	}
+
+	@Given("in report view click on the cell $cell beside the necessary position rows")
+	public void clickOnTheCell(int cell) {
+		araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.clickOnTheCell(cell);
+	}
+
+	@Given("select Actions->Save as Virtual Portfolio in a report view table")
+	public void clickPanelActionButton() {
+		araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.clickActionButton().clickActionsSaveAsVirtualPortfolio();
+	}
+
+	@Then("verify that Save Virtual Portfolio dialog $name box appears")
+	public void verifySaveVirtualPortfoliodialogBox(String dialogName) {
+		assertEquals("Window is not appear", dialogName, araMainPage
+				.saveVirtualPortfolioDialog().getTitle());
+	}
+
+	@Then("verify that for Save Virtual Portfolio there are Portfolio Type drop-down list")
+	public void verifyPortfolioType() {
+		assertTrue("Drop-down list is not displayed", araMainPage
+				.saveVirtualPortfolioDialog().switchToFrame()
+				.verifyPortfolioType());
+	}
+
+	@Then("verify there are 'Save Portfolio as'at Save Virtual Portfolio dialog")
+	public void verifySavePortfolioAs() {
+		assertTrue("Save Portfolio as field is not displayed", araMainPage
+				.saveVirtualPortfolioDialog().switchToFrame()
+				.verifySavePortfolioAsField());
+	}
+
+	@Then("verify Save Virtual Portfolio dialog there are button OK")
+	public void verifySavePortfolioButtonOk() {
+		assertTrue("Button Ok not present", araMainPage
+				.saveVirtualPortfolioDialog().switchToFrame().verifyButtonOk());
+	}
+
+	@Then("verify Save Virtual Portfolio dialog there are button Cancel")
+	public void verifySavePortfolioButtonCancel() {
+		assertTrue("Button Cancel not present", araMainPage
+				.saveVirtualPortfolioDialog().switchToFrame()
+				.verifyButtonCancel());
+	}
+
+	@Given("select $type from Portfolio Type drop-down list")
+	public void selectPortfolioType(String type) {
+		araMainPage.saveVirtualPortfolioDialog().switchToFrame()
+				.selectPortfolioType(type);
+	}
+
+	@Given("enter valid name $portfolioName in 'Save Portfolio as' field")
+	public void enterPortfolioName(String portfolioName) {
+		araMainPage.saveVirtualPortfolioDialog().switchToFrame()
+				.enterSavePortfolioName(portfolioName);
+	}
+
+	@Given("click Save Virtual Portfolio dialog button Ok")
+	public void clickSavePorfolioOk() {
+		araMainPage.saveVirtualPortfolioDialog().acceptSavePortfolioDialog();
+	}
+
+	@Then("verify that new portfolio was Saved")
+	public void verifyCreatedPortfolio() {
+		araMainPage.navigation().getPortfolioTab();
+		assertEquals(
+				"Portfolio names not equals",
+				SaveVirtualPortfolioDialog.getSavedPortfolioName(),
+				portfolios
+						.verifyPresentationPortfolioByName(SaveVirtualPortfolioDialog
+								.getSavedPortfolioName()));
+
+	}
+
+	@Given("select non-virtual portfolio ($portfolioName)")
+	public void selectPortfolio(String portfolioName) {
+		araMainPage.navigation().portfolios()
+				.selectNonVirtualPortfolioByName(portfolioName);
+	}
+
+	@Given("select previously created portfolio")
+	public void selectPreviouslyCreatedPortfolio() {
+		araMainPage
+				.navigation()
+				.portfolios()
+				.selectNonVirtualPortfolioByName(
+						CreateVirtualPortfolioDialog.getCreatedPortfolioName());
+	}
+
+	// ========== 7.2.1.1 - 7.2.1.3
+
+	@Given("select any portfolio ($portfolioName)")
+	public void selectPortfolioInPortfolios(String portfolioName) {
+		portfolios.selectNonVirtualPortfolioByName(portfolioName);
+	}
+
+	@Given("click 'Copy Portfolio To'")
+	public void openCopyPortfolioTo() {
+		portfolios.clickActionsCopyPortfolioTo();
+	}
+
+	@Then("verify that 'Copy Portfolio To' dialog $name box appeared")
+	public void verifyDialogAppear(String dialogName) {
+		assertEquals("Window names not equals", dialogName, araMainPage
+				.copyPortfolioToDialog().getTitle());
+	}
+
+	@Then("verify that there are visible Portfolio name")
+	public void verifyPortfolioName() {
+		assertEquals("Portfolio names are not equals",
+				"BOOK: Global Large Cap", araMainPage.copyPortfolioToDialog()
+						.switchToFrame().getPortfolioName());
+	}
+
+	@Then("verify that there are visible Copy name field")
+	public void verfyCopyNameField() {
+		assertTrue("Copy name field does not displayed", araMainPage
+				.copyPortfolioToDialog().switchToFrame().getCopyName()
+				.isDisplayed());
+	}
+
+	@Given("enter name of New Portfolio $copyName")
+	public void enterNameForPortfolioCopy(String copyName) {
+		araMainPage.copyPortfolioToDialog().switchToFrame()
+				.enterPortfolioName(copyName);
+	}
+
+	@Then("verify that there are visible Create option")
+	public void verifyCreateOption() {
+		assertTrue("Copy option does not displayed", araMainPage
+				.copyPortfolioToDialog().switchToFrame().getCopyOption()
+				.isDisplayed());
+	}
+
+	@Then("verify that there are visible 'Create copy in' list")
+	public void verifyCreateCopyInList() {
+		assertTrue("Copy in list does not displayed", araMainPage
+				.copyPortfolioToDialog().switchToFrame().getCopyInList()
+				.isDisplayed());
+	}
+
+	@When("select another portfolio which does not contain the security")
+	public void selectAnotherPortfolio() {
+		araMainPage
+				.copyPortfolioToDialog()
+				.switchToFrame()
+				.selectAnotherPortfolio(
+						CreateVirtualPortfolioDialog.getCreatedPortfolioName());
+	}
+
+	@Then("verify New folder button")
+	public void verifyNewFolderButton() {
+		assertTrue("New Folder Button does not displayed", araMainPage
+				.copyPortfolioToDialog().switchToFrame().getNewFolderButton()
+				.isDisplayed());
+	}
+
+	@Then("verify buttons Ok and Cancel")
+	public void verifyButtons_Ok() {
+		assertTrue("Button Ok does not displayed", araMainPage
+				.copyPortfolioToDialog().switchToFrame().getButtonOk()
+				.isDisplayed());
+		assertTrue("Button Cancel does not displayed", araMainPage
+				.copyPortfolioToDialog().switchToFrame().getCancelButton()
+				.isDisplayed());
+	}
+
+	@Given("click New Folder Button")
+	public void clickNewFolderButton() {
+		araMainPage.copyPortfolioToDialog().switchToFrame()
+				.clickNewFolderButton();
+	}
+
+	@Then("verify that New Folder dialog box $dialogName appeared")
+	public void nerifyNewFolderDialog(String dialogName) {
+		assertEquals("Dialog names does not equals", dialogName, araMainPage
+				.newFolderCopyPortfolioDialog().getTitle());
+	}
+
+	@Given("enter Name $folderName for new folder")
+	public void enterNameForFolder(String newFolderName) {
+		araMainPage.newFolderCopyPortfolioDialog().switchToFrame()
+				.enterNewFolderName(newFolderName);
+	}
+
+	@Given("press Ok button")
+	public void pressOkButton() {
+		araMainPage.newFolderCopyPortfolioDialog().acceptNewFoldertDialog();
+	}
+
+	@Then("verify that new created folder appears in 'Create Copy In' list")
+	public void verifyCreatedFolderInFolderList() {
+		assertTrue(
+				"Folder does not displayed",
+				araMainPage
+						.copyPortfolioToDialog()
+						.switchToFrame()
+						.verifyCreatedFolderName(
+								CopyPortfolioTo_NewFolderDialog
+										.getCreatedFolderName()));
+	}
+
+	@Given("confirm 'Copy Portfolio To' dialog")
+	public void confirmCopyPortfolioToDialog() {
+		araMainPage.copyPortfolioToDialog().acceptCopyPortfolioToDialog();
+	}
+
+	@Then("verify that new  portfolio appears in the Portfolio navigation table hierarchy")
+	public void verifyCreatedPortfolioInHierarchy() {
+		assertEquals(
+				"Copy of portfolio does not present",
+				CopyPortfolioToDialog.getCopiedPortfoliName(),
+				araMainPage
+						.navigation()
+						.portfolios()
+						.verifyPresentationPortfolioByName(
+								CopyPortfolioToDialog.getCopiedPortfoliName()));
+
+	}
+
+	@Then("verify that another portfolio (opened in 'Create Copy In' list) contains created portfolio")
+	public void verifyPortfolioOpenedInCreateCopyInListContainsCreatedPortfolio() {
+		assertTrue(araMainPage
+				.navigation()
+				.portfolios()
+				.verifyPortfolioOpenedInCreateCopyInListContainsCreatedPortfolio(
+						CopyPortfolioToDialog.getCopiedPortfoliName(),
+						CreateVirtualPortfolioDialog.getCreatedPortfolioName()));
+	}
+
+	// ================ 7.2.1.4
+
+	@Given("click on Actions menu at Portfolio Tab")
+	public void clickOnActionsMenu() {
+		araMainPage.navigation().portfolios().clickActionsButton();
+	}
+
+	@Then("verify that Copy of portfolio is appeared in table hierarchy")
+	public void verifyCopyPortfolioName() {
+		assertEquals(
+				"Copy of portfolio does not appear in table hierarchy",
+				CopyPortfolioToDialog.getCopiedPortfoliName(),
+				araMainPage
+						.navigation()
+						.portfolios()
+						.verifyPresentationPortfolioByName(
+								CopyPortfolioToDialog.getCopiedPortfoliName()));
+	}
+
+	// =============== Create Portfolio Links
+
+	@Given("click Create Portfolio Links")
+	public void clickCreatePortfolioLinks() {
+		portfolios.actionsCreatePortfolioLinks();
+	}
+
+	@Then("verify that Create Portfolio Links dialog box $dialogName appears")
+	public void verifyPortfolioLinksDialogPresent(String dialogName) {
+		assertEquals("Create Portfolio Links dialog box does not appear",
+				dialogName, araMainPage.createPortfolioLinksDialog().getTitle());
+	}
+
+	@Given("open Portfolio tree Folder")
+	public void openPorfolioTreeFolder() {
+		araMainPage.createPortfolioLinksDialog().switchToFrameCreateLinks()
+				.openFolderSellfirm();
+	}
+
+	@Then("verify that for Create Portfolio Links available $portfolioName")
+	public void verifyAvailablePortfolios(String portfolioName) {
+		assertTrue(araMainPage.createPortfolioLinksDialog()
+				.switchToFrameCreateLinks()
+				.verifyPortfolioIsPresent(portfolioName));
+	}
+
+	@Given("select ($portfolioName) portfolio which will be a link")
+	public void selectPortfolioFromTreeByName(String portfolioName) {
+		araMainPage.createPortfolioLinksDialog().switchToFrameCreateLinks()
+				.selectPortfolioFromTreeByName(portfolioName);
+	}
+
+	@Then("verify Button OK")
+	public void verifyButtonsOk() {
+		assertTrue(araMainPage.createPortfolioLinksDialog()
+				.switchToFrameCreateLinks().verifyButtonOkIsDisplayed());
+	}
+
+	@Then("verify Button Cancel")
+	public void verifyButtonsCancel() {
+		assertTrue(araMainPage.createPortfolioLinksDialog()
+				.switchToFrameCreateLinks().verifyButtonCancelIsDisplayed());
+	}
+
+	@Given("press button OK")
+	public void pressButtonOk() {
+		araMainPage.createPortfolioLinksDialog().switchToFrameCreateLinks()
+				.acceptCreatePortfolioLinksDialog();
+		araMainPage.closeEmptyWindow();
+	}
+
+	@Then("verify that corresponding portfolio $portfolioName appears")
+	public void openVirtulPortfoliosFolder(String portfolioName) {
+		assertTrue("Portfolio link not found", araMainPage.navigation()
+				.portfolios().openVirtualPortfoliosFolder()
+				.findVirtualPorfolioLinkByName(portfolioName));
+	}
+
+	// ============== Upload Portfolio
+
+	@Given("select Actions-> Upload Portfolio in a report view table")
+	public void clickActionsUploadPortfolio() {
+
+		araMainPage.reportPaneBottom().clickAction()
+				.clickActionsUploadPortfolio();
+	}
+
+	@Then("verify that Upload Portfolio dialog box $dialogName appears")
+	public void verifyUploadPortfolioDialogIsPresent(String dialogName) {
+		assertEquals("Upload Portfolio dialog doesn't appear", dialogName,
+				araMainPage.uploadPortfolioDialog().getTitle());
+	}
+
+	@Given("upload corrupted CSV file")
+	public void uploadCSVFile() {
+		araMainPage.uploadPortfolioDialog().switchToUploadPortfolioFrame()
+				.selectFileFromDisc();
+		araMainPage.uploadPortfolioDialog().switchToUploadPortfolioFrame()
+				.acceptUploadPortfolioDialog();
+	}
+
+	@Then("verify that correct Error message appears")
+	public void verifyErrorMessage() {
+		assertTrue(araMainPage.uploadPortfolioDialog()
+				.switchToUploadPortfolioFrame().verifyErrorTextPresent());
+	}
+
+	// ===================== Post Potfolio
+
+	@Given("click actions menu Post Portfolio")
+	public void clickActionsPostPortfolio() {
+		portfolios.clickActionsPostPortfolio();
+	}
+
+	@Then("verify that Post Portfolio dialog box $dialogName appears")
+	public void verifyPostPortfolioDialogIsPresent(String dialogName) {
+		assertEquals("Post Postfolio dialog doesn't present", dialogName,
+				araMainPage.postPortfolioDialog().getTitle());
+	}
+
+	@Then("verify that for Post Portfolio there visible User ID")
+	public void verifyUserIdFieldIsPresent() {
+		assertTrue("Field User Id does not present", araMainPage
+				.postPortfolioDialog().switchToPostPortfolioFrame()
+				.verifyIsUserIdFieldPresent());
+	}
+
+	@Then("verify that Portfolio name field is present")
+	public void verifyPortfolioNameIsPresent() {
+		assertTrue("Field Portfolio Name doesn't present", araMainPage
+				.postPortfolioDialog().switchToPostPortfolioFrame()
+				.verifyIsPortfolioNameFieldPresent());
+	}
+
+	@Then("verify that Description field is present")
+	public void verifyDescriptionFieldIsPresent() {
+		assertTrue("Description Field doesn't present", araMainPage
+				.postPortfolioDialog().switchToPostPortfolioFrame()
+				.verifyDescriptionFieldIsPresent());
+	}
+
+	@Then("verify button Ok is present")
+	public void verifyPostPortfolioBtnOk() {
+		assertTrue("Button Ok does not present", araMainPage
+				.postPortfolioDialog().switchToPostPortfolioFrame()
+				.verifyButtonOkIsPresent());
+	}
+
+	@Then("verify button Cancel is present")
+	public void verifyPostPortfolioBtnCancel() {
+		assertTrue("Button Cancel does not present", araMainPage
+				.postPortfolioDialog().switchToPostPortfolioFrame()
+				.verifyButtonCancelIsPresent());
+	}
+
+	@Given("enter Description ($description)")
+	public void enterDescription(String description) {
+		araMainPage.postPortfolioDialog().switchToPostPortfolioFrame()
+				.enterDescription(description);
+	}
+
+	@Given("press Post Portfolio dailog Ok button")
+	public void pressPostPortfolio_Ok_Btn() {
+		araMainPage.postPortfolioDialog().switchToPostPortfolioFrame()
+				.acceptPostPortfolioDialog();
+	}
+
+	@Given("click actions menu Retrieve Portfolio")
+	public void pressRetrievePortfolioMenu() {
+		araMainPage.navigation().portfolios().clickActionsButton();
+		portfolios.clickActionsRetrievePortfolio();
+	}
+
+	@Then("verify that selected $portfolio was posted")
+	public void verifyPortfolioWasPosted(String portfolioName) {
+
+		assertEquals(
+				"Portfolio not found",
+				CreateVirtualPortfolioDialog.getCreatedPortfolioName(),
+				araMainPage
+						.retrievePortfolioDialog()
+						.switchToRetrievePortfolioFrame()
+						.findPortfolioByName(
+								CreateVirtualPortfolioDialog
+										.getCreatedPortfolioName()));
+
+	}
+
+	@Given("close Retrieve Portfolio dialog")
+	public void closeRetrievePortfolioDialog() {
+		araMainPage.retrievePortfolioDialog().closeRetrievePortfolioDialog();
+		araMainPage.closeEmptyWindow();
+	}
+
+	// ===================== Retrieve Portfolio
+
+	@Then("verify that for Retrieve Portfolio view there are visible $element")
+	public void verifyTableHeader(String element) {
+		assertTrue(element + " is not displayed", araMainPage
+				.retrievePortfolioDialog().switchToRetrievePortfolioFrame()
+				.getTableColumnByName(element).isDisplayed());
+	}
+
+	@Then("verify that for Retrieve Portfolio there are visible $button button")
+	public void verifyRetrieveInTable(String button) {
+		assertTrue(araMainPage.retrievePortfolioDialog()
+				.switchToRetrievePortfolioFrame().verifyBtn(button));
+	}
+
+	@Then("verify that for Retrieve Portfolio view there is button Cancel")
+	public void verifyRetrievePortfolioBtnCancel() {
+		assertTrue(araMainPage.retrievePortfolioDialog()
+				.switchToRetrievePortfolioFrame().verifyCancelButtonIsPresent());
+	}
+
+	@Given("select checkbox portfolio to retrieve from table")
+	public void selectPortfoliToRetrieve() {
+		araMainPage
+				.retrievePortfolioDialog()
+				.switchToRetrievePortfolioFrame()
+				.selectPortfolioToRetrieve(
+						CreateVirtualPortfolioDialog.getCreatedPortfolioName());
+	}
+
+	@Given("click Retrieve this portfolio")
+	public void clickRetrievePortfolio() {
+		araMainPage.retrievePortfolioDialog().switchToRetrievePortfolioFrame()
+				.clickRetrieveButton();
+	}
+
+	@Then("verify that Duplicate Found Message shown")
+	public void verifyErrorMsgIsPresent() {
+		assertTrue(araMainPage.retrievePortfolioDialog()
+				.switchToRetrievePortfolioFrame()
+				.verifyErrorMessageIsDisplayed());
+	}
+
+	@Given("rename retrieved portfolio")
+	public void renameRetrievedPortfolio() {
+		retrieviedPortfolioName = "RenamedPortfolio"
+				+ RandomStringUtils.randomNumeric(4);
+		araMainPage.retrievePortfolioDialog().switchToRetrievePortfolioFrame()
+				.renameRetrievedPortfolio(retrieviedPortfolioName);
+	}
+
+	@When("click Ok button for Duplicate Found Message")
+	public void clickOkButtonForDuplicateFoundMessage() {
+		araMainPage.retrievePortfolioDialog().acceptDuplicatePortfolioMessage();
+	}
+
+	@When("close Retrieve Portfolio Dialog")
+	public void closeRetrievePortfolio() {
+		araMainPage.retrievePortfolioDialog().closeRetrievePortfolioDialog();
+		araMainPage.closeEmptyWindow();
+	}
+
+	@Then("verify that renamed portfolio appers")
+	public void verifyThatRenamedPortfolioAppers() {
+		assertTrue(
+				"Renamed portfolio is not displayed",
+				araMainPage.navigation().portfolios()
+						.verifyPortfolioByName(retrieviedPortfolioName));
+	}
+
+	@Given("close modal dialog")
+	public void closeModalDialog() {
+		araMainPage.retrievePortfolioDialog().closeModalWindow();
+		araMainPage.retrievePortfolioDialog().closeRetrievePortfolioDialog();
+		araMainPage.closeEmptyWindow();
+	}
+
+	// ================ Security search
+
+	@Given("click Actions -> Search")
+	public void clickActionsSearch() {
+		araMainPage.reportPaneBottom().clickActionsSearch();
+	}
+
+	@Then("verify that Security Finder dialog box $dialogName appears")
+	public void verifyFinderDialogIsPresent(String dialogName) {
+		assertEquals("Find dialog does not present", dialogName, araMainPage
+				.searchPortfolioDialog().getTitle());
+	}
+
+	@Then("verify there are visible Add Search Term drop-down list")
+	public void verifySearchDropDownListIsPresent() {
+		assertTrue("Drop-down list does not present", araMainPage
+				.searchPortfolioDialog()
+				.switchToSecuritiesSearchPortfolioFrame()
+				.verifySelectIsPresent());
+	}
+
+	@Given("Add Search Term ($type) from drop-down list")
+	public void selectSearchTermFromList(String type) {
+		araMainPage.searchPortfolioDialog()
+				.switchToSecuritiesSearchPortfolioFrame()
+				.chooseItemFromselect(type);
+	}
+
+	@Then("verify there are visible Reset button")
+	public void verifySearchDialogBtnReset() {
+		assertTrue("Reset button does not displayed", araMainPage
+				.searchPortfolioDialog()
+				.switchToSecuritiesSearchPortfolioFrame()
+				.verifyButtonResetIsPresent());
+	}
+
+	@Then("verify there are visible Search button")
+	public void verifySearchDialogBtnSearch() {
+		assertTrue("Search button does not displayed", araMainPage
+				.searchPortfolioDialog()
+				.switchToSecuritiesSearchPortfolioFrame()
+				.verifySearchButtonIsPresent());
+	}
+
+	@Then("verify there are visible Search Results table")
+	public void verifySearchDialogSearchResultsTable() {
+		assertTrue("Search Results table does not displayed", araMainPage
+				.searchPortfolioDialog()
+				.switchToSecuritiesSearchPortfolioFrame()
+				.verifySearchResultsTableIsPresent());
+	}
+
+	@Then("verify there are visible Ok button")
+	public void verifySearchDialogButtonOk() {
+		assertTrue("Button Ok does not present", araMainPage
+				.searchPortfolioDialog()
+				.switchToSecuritiesSearchPortfolioFrame()
+				.verifyButtonOkIsPresent());
+	}
+
+	@Then("verify there are visible Cancel button")
+	public void verifySearchDialogButtonCancel() {
+		assertTrue("Button Cancel does not present", araMainPage
+				.searchPortfolioDialog()
+				.switchToSecuritiesSearchPortfolioFrame()
+				.verifyButtonCancelIsPresent());
+	}
+
+	@Then("verify there are visible Apply button")
+	public void verifySearchDialogButtonApply() {
+		assertTrue("Button Apply does not present", araMainPage
+				.searchPortfolioDialog()
+				.switchToSecuritiesSearchPortfolioFrame()
+				.verifyButtonApplyIsPresent());
+	}
+
+	@Then("verify there are column $columnName visible for Search table")
+	public void verifySearchTableHeader(String columnName) {
+		assertTrue(columnName + " column does not present", araMainPage
+				.searchPortfolioDialog()
+				.switchToSecuritiesSearchPortfolioFrame()
+				.verifysearchTableHeader(columnName));
+	}
+
+	@Given("close Search Portfolio dialog")
+	public void closeSearchPortfolio() {
+		araMainPage.searchPortfolioDialog().cancelSearchPortfolioDialog();
+		araMainPage.closeEmptyWindow();
+	}
+
+	// ======================== 7.2.5.2
+
+	@Given("click User Preferences")
+	public void clickUserPreferences() {
+		araMainPage.quickLinksBar().clickPrefs();
+	}
+
+	@Given("click $itemNane at the navigation panel")
+	public void clickSecuritiesFinder(String itemName) {
+		generalPreferences.selectItemFromNavigationPanel(itemName);
+	}
+
+	@Then("verify that $windowTitle dialog box appears")
+	public void verifyThatSecuritiesDialogAppears(String windowTitle) {
+		assertEquals("Window titles not equals", windowTitle,
+				securitiesFinderDialog.getWindowTitle());
+	}
+
+	@Given("close Security Finder window")
+	public void closeSecurityFinderWindow() {
+		securitiesFinderDialog.closeSecurityFinderWindow();
+	}
+
+	// ========================= 7.2.5.3
+
+	@Given("set search parameter $parameter in field $fieldName")
+	public void setParameterInSearchField(String parameter, String fieldName) {
+		araMainPage.searchPortfolioDialog()
+				.switchToSecuritiesSearchPortfolioFrame()
+				.setSearchField(fieldName, parameter);
+	}
+
+	@Given("press button Search at Security Dialog")
+	public void pressButtonSearch() {
+		araMainPage.searchPortfolioDialog()
+				.switchToSecuritiesSearchPortfolioFrame().pressButtonSearch();
+	}
+
+	@Given("fill Value field, set $value")
+	public void setValueField(String value) {
+		araMainPage.searchPortfolioDialog()
+				.switchToSecuritiesSearchPortfolioFrame().setValueField(value);
+	}
+
+	@Given("press Add to book")
+	public void pressAddToBook() {
+		araMainPage.searchPortfolioDialog()
+				.switchToSecuritiesSearchPortfolioFrame().pressAddToBook();
+	}
+
+	@Given("press Ok at Search Security Finder dialog")
+	public void pressSecurityFinderButtonOk() {
+		araMainPage.searchPortfolioDialog()
+				.switchToSecuritiesSearchPortfolioFrame()
+				.acceptSecuritySearchPortfolioDialog();
+	}
+
+	@Then("verify that selected security $uniquieId appears in the table")
+	public void verifySecurities(String id) {
+		assertEquals("Wrong Security id", id, araMainPage.reportPaneBottom()
+				.getUniqueIdFromTable(id));
+	}
+
+	@Then("verify that for selected security displayed value $value")
+	public void verifyThatForSelectedSecurityDisplayedValue(String value) {
+		assertTrue(araMainPage.reportPaneBottom()
+				.verifyThatForSelectedSecurityDisplayedValue(value));
+	}
+
+	// =========================== 7.2.6.1
+
+	@Given("click Actions -> Add New")
+	public void clickActionsAddNewSecurity() {
+		araMainPage.reportPaneBottom().clickActionsAddNew();
+	}
+
+	@Given("enter $secName to the field Security name")
+	public void enterSecurityName(String securityName) {
+		araMainPage.addNewSecurityDialog().switchToAddNewSecurityFrame()
+				.enterSecurityName(securityName);
+	}
+
+	@Given("enter $units to the field Units")
+	public void enterUnits(String units) {
+		araMainPage.addNewSecurityDialog().switchToAddNewSecurityFrame()
+				.enterUnits(units);
+	}
+
+	@Given("enter $price to the field Price")
+	public void enterPrice(String price) {
+		araMainPage.addNewSecurityDialog().switchToAddNewSecurityFrame()
+				.enterPrice(price);
+	}
+
+	@Given("select $currency Currency at Add New")
+	public void selectCurrencyFromDropDownlist(String currency) {
+		araMainPage.addNewSecurityDialog().switchToAddNewSecurityFrame()
+				.selectCurrencyFromDropDownList(currency);
+	}
+
+	@Given("click Add New Security button Ok")
+	public void confirmAddNewSecurityDialog() {
+		araMainPage.addNewSecurityDialog().acceptAddNewSecurityDialog();
+	}
+
+	@Then("verify that new security $SecurityName was created and appeared")
+	public void verifyCreatedSecurity(String securityName) {
+
+		assertEquals("Security ID does not appear", securityName, araMainPage
+				.reportPaneBottom().getUniqueSecurityID());
+	}
+
+	@Then("verify that No Coverage icon appears near to an unmodeled security")
+	public void verifySecurityIconIsPresent() {
+		assertTrue("Security Warning icon does not displayed", araMainPage
+				.reportPaneBottom().verifySecurityWarningIconIsPresent());
+	}
+
+	// ======================== Portfolio Search
+
+	@Then("verify that Portfolio Search box is located under the Portfolio tab, immediately below the Portfolio tab")
+	public void verifyPortfolioSearchBoxLocation() {
+		assertTrue("Search box does not present",
+				portfolios.verifySearchBoxIsPresent());
+	}
+
+	// ========================= 7.3.2
+
+	@Given("navigate to Portfolios")
+	public void navigateToPortfolios() {
+		araMainPage.navigation();
+	}
+
+	@Given("enter some search term ($searchTerm) to the Search box")
+	public void enterSearchTerm(String searchTerm) {
+		portfolios.enterSearchTerm(searchTerm);
+	}
+
+	@Then("verify that several results are displayed")
+	public void verifySearchResults() {
+		assertTrue("Search results are wrong",
+				portfolios.verifySeveralSearchResultsIsDisplayed());
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Then("verify that  there are no support for selecting multiple results (by ctr or shift)")
+	public void verifyMultiSelectNotAvailable() {
+		assertTrue("Multiple select is available",
+				portfolios.verifyMultiSelectIsNotAvailable());
+	}
+
+	// ========================== 7.3.3
+
+	@Then("verify that drop-down has portfolio Name $portfolioName")
+	public void verifyDropDownListResults(String portfolioName) {
+		assertTrue("Portfolio " + portfolioName + " is not present",
+				portfolios.verifySearchResultsNamesIsPresent(portfolioName));
+	}
+
+	@Then("verify that drop-down has portfolio relative path $path")
+	public void verifyRelativePath(String relativePath) {
+		assertTrue("Relative path " + relativePath + " is not present",
+				portfolios.verifySearchResultsPath(relativePath));
+	}
+
+	// ============================ 7.3.4
+
+	@Given("click on ane searched portfolio $portfolioName")
+	public void selectSearchedPortfolio(String portfolioName) {
+		portfolios.clickOnSearchedPortfolio(portfolioName);
+	}
+
+	@Then("verify that serched $portfolioName portfolio is selected")
+	public void verifyThatSearchedPortfolioIsSelected(String portfolioName) {
+		assertEquals("Porfolio does not selected", portfolioName,
+				portfolios.verifySelectedPortfolioName());
+	}
+
+	// ============================ 7.3.5
+
+	@Then("verify that all searched portfolios are displayed")
+	public void verifyThatAllSearchedPortfoliosDisplayed() {
+		assertTrue("Not all portfolios are displayed",
+				portfolios.countNumberOfSearchedPortfolios());
+	}
+
+	// ============================ 7.4.1.1 Portfolio Lock
+
+	@Given("go to Portfolio tab")
+	public void goToOnlineReportsPortfolioTab() {
+		araMainPage.navigation().onlineReports().portfolioTab();
+	}
+
+	@Given("select Table report ($reportName) from $folder")
+	public void selectTableReport(String reportName, String folder) {
+		araMainPage.navigation().onlineReports().reportsTab();
+		onlineReports.collapseFolder();
+		onlineReports.selectReportFolder(folder);
+		onlineReports.selectReportByName(reportName);
+	}
+
+	@Given("click on Actions-> Lock Portfolio")
+	public void clickActionsLockPortfolio() {
+		araMainPage.reportPaneBottom().reportPaneBottomTable().clickAction()
+				.selectLockPortfolioOption();
+	}
+
+	@Then("verify that the default value  is Unlock Portfolio")
+	public void verifyDefaultValueIsUnlock() {
+		assertTrue("Unlock Portfolio value is not default", araMainPage
+				.lockPortfolioDialog().switchToLockPortfolioFrame()
+				.verifyUnlockRadioButtonCheked());
+	}
+
+	@Then("verify that user can see Portfolio Hierarchy")
+	public void verifyPortfolioHierarchyIsPresent() {
+		assertTrue(araMainPage.lockPortfolioDialog()
+				.switchToLockPortfolioFrame()
+				.verifyPortfolioHierarchyIsPresent());
+	}
+
+	@Then("verify that displayed Hierarchy contains $portfolioName")
+	public void verifyDisplayedHierarchy(String portfolioName) {
+		assertTrue(portfolioName + " does not present is Hierarchy",
+				araMainPage.lockPortfolioDialog().switchToLockPortfolioFrame()
+						.verifyDisplayedHierarchyFolders(portfolioName));
+	}
+
+	@Given("close Lock Portfolio dialog")
+	public void closeLockPortfolioDialog() {
+		araMainPage.lockPortfolioDialog().closeLockPortfolioDialog();
+		araMainPage.closeEmptyWindow();
+
+	}
+
+	// ========================== 7.4.1.3
+
+	@Then("verify that user can see only $portfolioName")
+	public void verifyNameOfSelectedPortfolio(String portfolioName) {
+		assertEquals("Portfolio name does not present", portfolioName,
+				araMainPage.reportPaneReference().selectPortfolioName());
+	}
+
+	@Given("click Lock Portfolio At radio button")
+	public void clickLockPortfolioAtRadioButton() {
+		araMainPage.lockPortfolioDialog().switchToLockPortfolioFrame()
+				.clickPortfolioAtRadioButton();
+	}
+
+	@Given("select Portfolio $portfolioName that wish to lock")
+	public void selectPortfolioToLock(String portfolioName) {
+		araMainPage.lockPortfolioDialog().switchToLockPortfolioFrame()
+				.selectPortfolioToLock(portfolioName);
+	}
+
+	@Given("click Ok button to Lock/Unlock selected Portfolio")
+	public void acceptLockPortfolioDialog() {
+		araMainPage.lockPortfolioDialog().acceptLockPortfolioDialog();
+	}
+
+	@Then("verify that selected Portfolio $portfolioName is locked")
+	public void verifyThatSelectedPortfolioIsLocked(String portfolioName) {
+		assertEquals("Portfolio " + portfolioName + " is not found",
+				portfolioName, araMainPage.reportPaneBottom()
+						.reportPaneBottomTable().selectLockedPortfolioName());
+	}
+
+	@Given("click Unlock Portfolio radio button")
+	public void clickUnlockRadioButton() {
+		araMainPage.lockPortfolioDialog().switchToLockPortfolioFrame()
+				.clickUnlockPortfolioRadioButton();
+	}
+
+	@Then("verify that selected Portfolio is unlocked")
+	public void verifyThatPortfolioIsUnlocked() {
+		assertEquals("Portfolio does not present", "Portfolio is unlocked",
+				araMainPage.reportPaneBottom().reportPaneBottomTable()
+						.selectLockedPortfolioName());
+	}
+
+	// ============================== 7.4.2
+
+	@Given("select $portfolioName portfolio in Portfolio Tab")
+	public void selectPorfolioInPortfolioTab(String portfolioName) {
+		navigationPanel.waitUntilFrameIsLoaded();
+		navigationPanel.getPortfolioTab();
+		portfolios.verifyPresentationPortfolioByName(portfolioName);
+	}
+
+	@Given("select report ($reportName)")
+	public void selectReportAtOnlineReportTab(String reportName) {
+		araMainPage.navigation().onlineReports().reportsTab()
+				.selectReportByName(reportName);
+	}
+
+	@Given("select created Portfolio to lock")
+	public void selectPortfolioToLock() {
+		araMainPage
+				.lockPortfolioDialog()
+				.switchToLockPortfolioFrame()
+				.selectPortfolioToLock(
+						CreateVirtualPortfolioDialog.getCreatedPortfolioName());
+	}
+
+	@Given("select created portfolio")
+	public void selectCreatedPortfolio() {
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		portfolios.selectPortfolioByName(CreateVirtualPortfolioDialog
+				.getCreatedPortfolioName());
+	}
+
+	@Given("click Actions -> Delete Portfolio to delete Portfolio")
+	public void clickActionsRenamePortfolio() {
+		portfolios.clickActionsButton().clickActionsDeletePortfolio();
+		araMainPage.acceptDeletePortfolioDialog();
+	}
+
+	@Then("verify missing portfolio Error Message")
+	public void verifyMissingPOrtfolioErrorMessage() {
+		assertTrue(
+				"Error Message not found",
+				araMainPage
+						.reportPaneBottom()
+						.reportPaneBottomTable()
+						.verifyMissingErrorMessageIsPresent("Missing Portfolio"));
+	}
+
+	@Given("lock portfolio $portfolioName after Missing Error Message")
+	public void lockPortfolioAfterMissingError(String portfolioName) {
+		if (araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.verifyMissingErrorMessageIsPresent("Missing Portfolio")) {
+			araMainPage.reportPaneBottom().reportPaneBottomTable()
+					.clickMissingErrorLink();
+			araMainPage.lockPortfolioDialog().switchToLockPortfolioFrame()
+					.selectPortfolioToLock(portfolioName);
+			araMainPage.lockPortfolioDialog().acceptLockPortfolioDialog();
+		} else {
+			System.out.println("Missing portfolio error doesn't appear");
+		}
+	}
+
+	// ======================== Delete Created Portfolio
+
+	@Given("click Actions -> Delete Portfolio")
+	public void clickActionsDeletePortfolio() {
+		portfolios.clickActionsButton().clickActionsDeletePortfolio();
+	}
+
+	@Given("delete selected portfolios")
+	public void deleteAllVirtualPortfolios() {
+		araMainPage.portfoliosTabDeletePortfolio().switchToFrame()
+				.deleteAllVirtualPortfolio();
+		araMainPage.closeEmptyWindow();
+	}
+
+	// ======================== 7.4 Joint work of Lock portfolio
+
+	@Given("select $type type and currency $currency")
+	public void selectCurrencyInReportPaneParameters(String type,
+			String currency) {
+		araMainPage.reportPaneParameters().selectValueFromTypeWriterList(type)
+				.selectCurrency(currency);
+	}
+
+	@Given("click on Actions-> Transpose")
+	public void clickActionsTranspose() {
+		araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.clickActionButton().selectTransposeOption();
+	}
+
+	@Then("verify header row name $rowName is displayed")
+	public void verifyTransponseTableRowHeader(String rowName) {
+		assertTrue("Column name " + rowName + "is not displayed", araMainPage
+				.reportPaneBottom().reportPaneBottomTable()
+				.verifyTransposeTableHeaderRows(rowName));
+	}
+
+	@Then("verify header row name $rowName is transposed back to column")
+	public void verifyTransponseTableColumnHeader(String rowName) {
+		assertFalse("Column name " + rowName + "is not displayed", araMainPage
+				.reportPaneBottom().reportPaneBottomTable()
+				.verifyTransposeTableHeaderRows(rowName));
+	}
+
+	@Given("click on Actions-> Show Level")
+	public void clickActionsShowLewel() {
+		araMainPage.reportPaneBottom().reportPaneBottomTable().clickAction()
+				.selectShowLevelOption();
+
+	}
+
+	@When("switch to Show Level window, enter level $number")
+	public void enterLewelNumber(String levelNumber) {
+		araMainPage.showLevelDialog().enterLevelNumber(levelNumber);
+	}
+
+	@When("confirm dialog by pressing Ok")
+	public void confirmShowLevelDialog() {
+		araMainPage.showLevelDialog().acceptShowLevelDialog();
+		araMainPage.closeEmptyWindow();
+	}
+
+	@Then("verify that changes applied correctly $value is displayed")
+	public void verifyShowLevelOptionsApplied(String value) {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.isTableLevelValueDisplayed(value));
+	}
+
+	@Given("click on Actions-> Export Data")
+	public void selectActionsExportData() {
+		araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.clickActionButton().selectExportOption().selectDataOption();
+	}
+
+	@Then("verify that data is displayed on the Screen")
+	public void verifyExportedDataIsDisplayed() {
+		assertTrue("Export Data does not diplayed", araMainPage
+				.reportPaneBottom().reportPaneBottomTable()
+				.isExportDataDisplayed());
+	}
+
+	// =========================== 7.4.3.2
+
+	@Given("refresh Main Page")
+	public void refreshMainPage() {
+		araMainPage.refreshPage();
+	}
+
+	@Given("select Actions->Lock Aggregation")
+	public void selectFctionsLockAggregation() {
+		araMainPage.reportPaneBottom().reportPaneBottomTable().clickAction()
+				.selectLockAggregation();
+	}
+
+	@When("choose an aggregation $aggregation that wish to lock")
+	public void selectAggregationToLock(String aggregation) {
+		araMainPage.lockAggregationDialog().selectAggregation(aggregation);
+	}
+
+	@Given("confirm selected Aggregation")
+	public void confirmSelectedAggregation() {
+		araMainPage.lockAggregationDialog().acceptLockAggregationDialog();
+		araMainPage.closeEmptyWindow();
+	}
+
+	@Then("verify that changes applied correctly")
+	public void verifyAggregationIsLocked() {
+		assertTrue("Aggregation locked icon does not present", araMainPage
+				.reportPaneBottom().reportPaneBottomTable()
+				.isAggregationLocked());
+	}
+
+	@Given("select Actions->Limits")
+	public void selectActionShowLimits() {
+		if (!araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.isCellLimitIconPresent()) {
+			araMainPage.reportPaneBottom().reportPaneBottomTable()
+					.clickAction().selectActionsLimitOption();
+		} else {
+			System.out.println("Limits was already swiched on");
+		}
+	}
+
+	@When("set some Limit $limit")
+	public void setLimit(String limit) {
+		limitEditor.swichToLimitEditor().enterMaximumLimit(limit);
+	}
+
+	@Given("confirm Set Limits Dialog")
+	public void confirmSetLimitsDialog() {
+		limitEditor.swichToLimitEditor().acceptLimitEditor();
+		araMainPage.closeEmptyWindow();
+	}
+
+	@Then("verify that limit was set")
+	public void verifyThatLimitWasSet() {
+		assertTrue("Limit Icon does not present", araMainPage
+				.reportPaneBottom().reportPaneBottomTable()
+				.isCellLimitIconPresent());
+		araMainPage.closeEmptyWindow();
+	}
+
+	@Given("click on Actions -> Lock Portfolio at bottom part of Horizontally Splitted Report layout")
+	public void clickActionLockPortfolioAtLayotBottomPart() {
+		araMainPage.reportPaneBottom().clickLockPortfolioAtBottomLayotPart();
+	}
+
+	@Then("verify that Portfolio at bottom part of Horizontally Splitted Report layout is locked")
+	public void verifyBottomPartPortfolioisLocked() {
+		assertTrue("Portfolio lock icon does not displayed", araMainPage
+				.reportPaneBottom().isBottomPortfolioLockedIconIsDisplayed());
+	}
+
+	// ================================ STRATEGY
+
+	@When("I click on create Strategy Link")
+	public void clickOnCreateStrategyLink() {
+		araMainPage.clickStrategyLink();
+	}
+
+	@When("I click Actions Create New Srategy")
+	public void clickActionsCreateNewStrategy() {
+		araMainPage.createStrategyDialog().clickActionsCreateNewStrategy();
+	}
+
+	@When("I enter name $stratefyName for new strategy")
+	public void enterStrategyName(String strategyName) {
+		araMainPage.createStrategyDialog().enterStrategyName(strategyName);
+	}
+
+	@Then("I close Create Strategy dialog")
+	public void closeCerateStrategyDialog() {
+		araMainPage.createStrategyDialog().closeCreateStrategyDialog();
+		araMainPage.closeEmptyWindow();
+	}
+
+	@When("I select created $strategyName Strategy")
+	public void selectCreatedstrategy(String strategyName) {
+		araMainPage.createStrategyDialog().selectCreatedStrategy(strategyName);
+	}
+
+	@Given("close strategy window")
+	public void closeStrategyWindow() {
+		araMainPage.acceptStrategy();
+	}
+
+	@Given("close Empty Window")
+	public void closeEmptyWindow() {
+		araMainPage.closeEmptyWindow();
+	}
+
+	@Then("verify that portfolio $portfolioName is present")
+	public void isPortfolioPresent(String portfolioName) {
+		portfolios.isPortfolioPresent(portfolioName);
+	}
+
+	@Then("verify that column $columnNUmber contains Top 10 BOOK: Global Large Cap Groups")
+	public void isContainsGroups(int columnNumber) {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.isColumnContainTopResults(columnNumber));
+	}
+
+	@Then("verify that locked portfolio icon is present")
+	public void isLockedPortfolioIconPresent() {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.isLockedPortfolioIconPresent());
+	}
+
+	@When("select currency $currency from list")
+	public void selectCurrency(String currency) {
+		araMainPage.reportPaneParameters().selectCurrency(currency);
+	}
+
+	@Then("verify Application Error is not present at Copy portfolio Dialog")
+	public void isApplicationErrorPresent() {
+		assertFalse("Application Error", araMainPage.copyPortfolioToDialog()
+				.switchToFrame().isApplicationErrorPresent());
+	}
+
+	@Then("verify that Application Error for Portfolios tab is not present")
+	public void verifyMainScreenAppers() {
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		assertFalse("Attention Application Error was found", araMainPage
+				.navigation().isApplicationErrorPresent());
+		assertFalse("Attention Application Error was found", araMainPage
+				.reportPaneParameters().isApplicationErrorPresent());
+		assertFalse("Attention Application Error was found", araMainPage
+				.reportPaneReference().isApplicationErrorPresent());
+	}
+
+	@Given("I am on Portfolios tab as $username")
+	public void iamOnMainPage(String username) {
+		araMainPage.pageIsShownForPortfolios();
+		assertEquals("The Main screen is not displayed", username, araMainPage
+				.quickLinksBar().getUsername());
+		araMainPage.closeEmptyWindow();
+	}
+
+	@Given("collapse all folder for Portfolios tab")
+	public void collapseFolder() {
+		araMainPage.navigation().portfolios().collapsePortfolioFoldersJS();
+		araMainPage.refreshPortfolioPage();
+	}
+}

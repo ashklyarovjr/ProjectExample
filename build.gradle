@@ -1,0 +1,41 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'maven'
+
+group = 'autotest'
+version = '1.0.0-SNAPSHOT'
+
+description = """test automation framework"""
+
+allprojects {
+    apply plugin: 'java'
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+}
+
+repositories {
+    maven { url "http://repo.maven.apache.org/maven2" }
+}
+
+dependencies {
+    compile group: 'de.codecentric', name: 'jbehave-junit-runner', version: '1.1.2'
+
+    compile group: 'org.jbehave', name: 'jbehave-core', version: '3.9.4'
+    compile group: 'org.jbehave', name: 'jbehave-spring', version: '3.9.4'
+    compile group: 'org.jbehave.site', name: 'jbehave-site-resources', version: '3.2'
+    compile group: 'org.jbehave.web', name: 'jbehave-web-selenium', version: '3.5.5'
+
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-api', version: '2.45.0'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-server', version: '2.45.0'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-common', version: '2.0a7'
+
+    compile group: 'org.skyscreamer', name: 'jsonassert', version: '1.2.3'
+    compile group: 'com.jayway.jsonpath', name: 'json-path', version: '0.9.1'
+
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.1.0'
+
+    compile 'org.apache.poi:poi:3.9'
+
+    runtime group: 'org.easytesting', name: 'fest-assert', version: '1.4'
+    runtime group: 'com.jayway.jsonpath', name: 'json-path-assert', version: '0.9.1'
+}

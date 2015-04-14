@@ -1,0 +1,73 @@
+package com.epam.ara.steps;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import org.jbehave.core.annotations.BeforeScenario;
+import org.jbehave.core.annotations.Given;
+import org.jbehave.core.annotations.Then;
+import org.jbehave.core.annotations.When;
+
+import com.epam.ara.arapage.AraMainPage;
+import com.epam.ara.arapage.PageFactory;
+import com.epam.ara.arapage.quicklinksbar.QuickLinksBar;
+import com.epam.ara.login.Login;
+
+public class LoginSteps {
+	private final PageFactory pages;
+
+	private Login login;
+	private AraMainPage araMainPage;
+	private QuickLinksBar quickLinksBar;
+
+	public LoginSteps(PageFactory pages) {
+		this.pages = pages;
+	}
+
+	@BeforeScenario
+	public void setupPages() {
+		login = pages.newLogin();
+		araMainPage = pages.newAraPage();
+		quickLinksBar = pages.newQuickLikBar();
+	}
+
+	@Given("I am on ARA login page")
+	public void openAra() {
+		login.open();
+	}
+
+	@When("I login as $username and $password")
+	public void loginToAra(String username, String password) {
+		login.loginAs(username, password);
+	}
+
+	@Then("an error $message will be shown on login screen")
+	public void anErrorIsDisplayed(String message) {
+		assertTrue("The error message is not displayed", login.isLoginError());
+		assertEquals("The error message is incorrect", message,
+				login.getErrorMessage());
+	}
+
+	@Then("an ARA main screen is shown for user $username")
+	public void verifyMainScreen(String username) {
+		araMainPage.pageIsShown();
+		assertEquals(username, araMainPage.quickLinksBar()
+				.getUserNameFromHeader());
+
+	}
+
+	@When("I logout from Application")
+	public void logOut() {
+		araMainPage.logOut();
+	}
+
+	@When("I click Restart Algo Risk")
+	public void clickRestartAlgoRisk() {
+		login.clickRestartAlgoRiskButton();
+	}
+
+    @Then("I get ARA build number")
+    public void getBuildNumberFromLoginPage() {
+        login.writeBuildNumberToFile();
+    }
+}

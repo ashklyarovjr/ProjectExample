@@ -1,0 +1,692 @@
+package com.epam.ara.steps;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.jbehave.core.annotations.BeforeScenario;
+import org.jbehave.core.annotations.Given;
+import org.jbehave.core.annotations.Then;
+import org.jbehave.core.annotations.When;
+
+import com.epam.ara.arapage.AraMainPage;
+import com.epam.ara.arapage.PageFactory;
+import com.epam.ara.arapage.navigationpanel.onlinereports.filters.Filters;
+import com.epam.ara.arapage.preferences.AboutTab;
+import com.epam.ara.arapage.preferences.ContextTab;
+import com.epam.ara.arapage.preferences.CustomAggregationPreferences;
+import com.epam.ara.arapage.preferences.DefineScenarioTab;
+import com.epam.ara.arapage.preferences.GeneralPreferences;
+import com.epam.ara.arapage.preferences.InstrumentalFilterTab;
+import com.epam.ara.arapage.preferences.OrderingTab;
+import com.epam.ara.arapage.preferences.ReferenceBar;
+import com.epam.ara.arapage.preferences.TimeBucketTab;
+
+public class PreferencesSteps {
+	private final PageFactory pages;
+	private GeneralPreferences generalPrefs;
+	private CustomAggregationPreferences customAggreagtionPrefs;
+	private ReferenceBar referenceBar;
+	private ContextTab contextTab;
+	private AboutTab aboutTab;
+	private TimeBucketTab timeBucketTab;
+	private OrderingTab orderingTab;
+	private DefineScenarioTab defineScenarioTab;
+	private InstrumentalFilterTab instrumentalFilterTab;
+	private Filters filters;
+
+	public PreferencesSteps(PageFactory pages) {
+		this.pages = pages;
+	}
+
+	public AraMainPage araMainPage;
+
+	@BeforeScenario
+	public void setupPages() {
+		araMainPage = pages.newAraPage();
+		generalPrefs = pages.newGeneralPreferences();
+		customAggreagtionPrefs = pages.newCustomAggregationPreferences();
+		referenceBar = pages.newReferenceBar();
+		contextTab = pages.newContextTab();
+		aboutTab = pages.newAboutTab();
+		timeBucketTab = pages.newTimeBUcketTab();
+		orderingTab = pages.newOrderingTab();
+		defineScenarioTab = pages.newDefineScenarioTab();
+		instrumentalFilterTab = pages.newInstrumentFilterTab();
+		filters = pages.newFilters();
+	}
+
+	@Given("choose User Preferences in menu bar")
+	public void chooseUserPreferences() {
+		araMainPage.quickLinksBar().clickPrefs();
+		generalPrefs.pageIsShown();
+	}
+
+	@Then("verify that General Preferences screen appeared")
+	public void verifyGeneralPreferencesAppeared() {
+		assertTrue(generalPrefs.verifyGeneralPreferencesAppeared());
+	}
+
+	@Given("choose item in Page Size drop-down list $item")
+	public void chooseItemInPageSizeDropDownList(String item) {
+		generalPrefs.chooseItemInPageSizeDropDownList(item);
+	}
+
+	@Given("chose screen item")
+	public void chooseScreenItem() {
+		generalPrefs.choseScreenItem();
+	}
+
+	@Then("click OK button for Preferences")
+	@When("click OK button for Preferences")
+	public void clickOKButtonForPreferences() {
+		generalPrefs.clickOKButton();
+	}
+
+	@When("select a default Benchmark $benchmarkName")
+	public void selectBenchmark(String benchmarkName) {
+		generalPrefs.selectBenchmark(benchmarkName);
+	}
+
+	@When("choose item Screen in Preferences")
+	public void chooseItemScreenInPreferences() {
+		generalPrefs.choseScreenItem();
+	}
+
+	@Given("go to Custom Aggregation tab")
+	public void gotoCustomAggregationTab() {
+		generalPrefs.navigateToCustomAggregationTab();
+	}
+
+	@When("Custom Aggregation page is shown")
+	public void customAggregationPageShown() {
+		customAggreagtionPrefs.pageIsShown();
+	}
+
+	@Given("go to Multi-Level Aggregation tab")
+	public void gotoMultiLevelAggregationTab() {
+		generalPrefs.navigateToMultiLevelAggregationTab();
+	}
+
+	@Given("select output Aggregation from available fields $aggregation")
+	public void selectOutputAggregation(String aggregation) {
+		customAggreagtionPrefs.selectOutputAggregation(aggregation);
+	}
+
+	@Given("click OK button for Custom Aggregation page")
+	public void clickOKButtonCustomAggregation() {
+		customAggreagtionPrefs.clickOKButton();
+		araMainPage.pageIsShown();
+	}
+
+	@Given("navigate to Reference Bar tab")
+	public void navigateToReferenceBarTab() {
+		generalPrefs.navigateToReferenceTab();
+	}
+
+	@Given("select output for reference bar $output")
+	public void selectOutputforReferenceBar(String output) {
+		referenceBar.selectOutputForReferenceBar(output);
+	}
+
+	@When("click OK button for Reference Bar page")
+	public void clickOKButtonReferenceBar() {
+		referenceBar.clickOKButton();
+		araMainPage.pageIsShown();
+	}
+
+	@When("I remember Contexts at Context Tab")
+	public void rememberContexts() {
+		contextTab.rememberAllContexts();
+	}
+
+	@When("I click Ok at Context Tab")
+	public void clickOkatContextTab() {
+		contextTab.clickOk();
+	}
+
+	@Then("check that Equally Spaced is cheked")
+	public void checkThatEquallySpacedIsSelected() {
+		assertTrue(generalPrefs.checkThatEquallySpacedIsSelected());
+	}
+
+	@Given("click on Proportional To Time radiobutton")
+	public void clickOnProportionalToTimeRadiobutton() {
+		generalPrefs.clickOnProportionalToTimeRadiobutton();
+	}
+
+	@Then("verify that navigation panel at User Preferences includes $itemName")
+	public void isMenuItemPresent(String itemName) {
+		generalPrefs.isItemPresentAtNavigationPanel(itemName);
+	}
+
+	@When("navigate to About ARA Tab")
+	public void navigateToAboutTab() {
+		generalPrefs.navigateToAboutTab();
+	}
+
+	@When("navigate to Time Buckets Tab")
+	public void navigateToTimeBucketsTab() {
+		generalPrefs.navigateToTimeBucketsTab();
+	}
+
+	@Then("verify that 'About ARA' page is displayed correctly")
+	public void isAboutAraPageDisplayedCorrectly() {
+		assertTrue(aboutTab.isInformationDisplayedCorrectly());
+	}
+
+	@When("select Time Bucket $timeBucket")
+	public void selectTimeBucket(String timeBucket) {
+		timeBucketTab.selectTimeBucketGroup(timeBucket);
+	}
+
+	@When("fill $numberOfDefinitions Time Bucket Definition")
+	public void fillTimeBucketDefinition(int numberOfDefinitions) {
+		timeBucketTab.fillTimeBucketDefinition(numberOfDefinitions);
+	}
+
+	@When("set Low $low High $high for row number $rowNumber")
+	public void setTimes(String low, String high, String rowNumber) {
+		timeBucketTab.setTimes(low, high, rowNumber);
+	}
+
+	@When("click Add Time Buckets button")
+	public void clickAddButton() {
+		timeBucketTab.clickAddButton();
+	}
+
+	@When("fill Save As field with name $name")
+	public void fillSaveAsField(String name) {
+		timeBucketTab.fillSaveAsField(name);
+	}
+
+	@When("click Apply button")
+	public void clickApplyButton() {
+		timeBucketTab.clickApplyButton();
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Given("confirm modal Dialog")
+	public void confirmModalDialog() {
+		timeBucketTab.confirmDialogWindow();
+	}
+
+	@Given("click Ok button")
+	public void clickOkButton() {
+		timeBucketTab.clickOKButton();
+	}
+
+	@When("select value $value from Time Bucket Group")
+	public void selectValueFromTimeBucketGroup(String value) {
+		araMainPage.reportPaneParameters().selectValueFromTimeBucketList(value);
+	}
+
+	@When("select value $value from Entry Report")
+	public void selectValueFromEntryReportList(String value) {
+		generalPrefs.selectValueFromEntryReportList(value);
+	}
+
+	@When("select Application Wide option")
+	public void selectApplicationWideOption() {
+		generalPrefs.selectApplicationWideOption();
+	}
+
+	@When("select Export to Screen option")
+	public void selectExportToScreenOption() {
+		generalPrefs.selectExportToScreenOption();
+	}
+
+	@Then("verify that $value is selected by Default")
+	public void isValueSelectedInList(String value) {
+		assertTrue(generalPrefs.isValueInEntryReportSelected(value));
+	}
+
+	@When("select Section Specific option")
+	public void selectSectionSpecificOption() {
+		generalPrefs.selectSetionSpecificOption();
+	}
+
+	@Then("verify that selected aggregation is $aggregation")
+	public void isSelectedAggregationDisplayed(String aggregation) {
+		araMainPage.reportPaneParameters().isAggregationDisplayedInList(
+				aggregation);
+	}
+
+	@Then("verify that selected Currency is $value")
+	public void isSelectedCurrencyDisplayed(String value) {
+		araMainPage.reportPaneParameters().isCurrencyDisplayedInList(value);
+	}
+
+	@When("select Display Limit $value from list")
+	public void selectDisplayLimit(String value) {
+		generalPrefs.selectDisplayLimitFromList(value);
+	}
+
+	@When("select Negatives - Red Text")
+	public void selectNegativesRedTExt() {
+		generalPrefs.selectNegativesRedText();
+	}
+
+	@When("select Negatives - Black Text")
+	public void selectNegativesBlackTExt() {
+		generalPrefs.selectNegativesBlackText();
+	}
+
+	@When("select Percentage Formatting $value")
+	public void selectPercentageFormatting(String value) {
+		generalPrefs.selectPercentageFormattingFromList(value);
+	}
+
+	@Then("verify that negative numbers are displayed in $color color")
+	public void isNegativeNumbersDisplayedInSelectedColor(String color) {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.isNegativeNumbersDisplayedInSelectedColor(color));
+	}
+
+	@When("select Hide Unowned Positions - Yes")
+	public void selectHideUnownedPositionYes() {
+		generalPrefs.selectHideUnownedPositionsYes();
+	}
+
+	@When("select Hide Unowned Positions - No")
+	public void selectHideUnownedPositionNo() {
+		generalPrefs.selectHideUnownedPositionsNo();
+	}
+
+	@When("click $folderName folder")
+	public void openPortfolioFolder(String folderName) {
+		araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.openPortfolioFolder(folderName);
+	}
+
+	@Then("verify that Add to book icons present")
+	public void isAddBookIconPresent() {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.isAddBookIconPresent());
+	}
+
+	@When("click on $bookName select Aggregation benchmark")
+	public void clickOnselectAggregation(String bookName) {
+		araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.selectAssociatedBenchmark(bookName);
+	}
+
+	@When("select printing Page Size $size")
+	public void selectPrintingSize(String size) {
+		generalPrefs.selectPrintingPageSize(size);
+	}
+
+	@When("select Page Orientation Portrait")
+	public void selectPortraitPageOrientation() {
+		generalPrefs.selectPageOrientationPortrait();
+	}
+
+	@When("select Page Orientation Landscape")
+	public void selectLandscapePageOrientation() {
+		generalPrefs.selectPageOrientationLandscape();
+	}
+
+	@When("select Full Page Layout")
+	public void selectFullPageLayout() {
+		generalPrefs.selectFullPageLayout();
+	}
+
+	@When("select Screen Page Layout")
+	public void selectScreenPageLayout() {
+		generalPrefs.selectScreenPageLayout();
+	}
+
+	@Given("navigate to Ordering Tab")
+	public void navigateToOrderingTab() {
+		generalPrefs.navigateToOrderingTab();
+	}
+
+	@When("select Ordering $value from Ordering drop-down list")
+	public void selectValueFromOrderingList(String text) {
+		orderingTab.selectValueFromOrderingList(text);
+	}
+
+	@When("move $value value from table")
+	public void moveFromTable(String text) {
+		orderingTab.moveValueFromSelectedTable(text);
+	}
+
+	@Then("verify that $value is present in Available list")
+	public void isValuePresentInAvailableList(String text) {
+		assertTrue(orderingTab.isValuePresentAtAvailableList(text));
+	}
+
+	@Then("verify that $value is present in Selected list")
+	public void isValuePresentInSelectedList(String text) {
+		assertTrue(orderingTab.isValuePresentAtSelectedList(text));
+	}
+
+	@When("move $value to Selected table")
+	public void moveToAvailableTable(String text) {
+		orderingTab.moveValueToSelectedTable(text);
+	}
+
+	@When("click Apply button at Ordering Tab")
+	public void clickApplyButtonAtOrderingTab() {
+		orderingTab.clickApplyButton();
+	}
+
+	@When("click Alphabetical button")
+	public void clickAlphabeticalButton() {
+		orderingTab.clickAlphabeticalButton();
+	}
+
+	@Then("verify that selected values sorted by A/Z")
+	public void isSelectedValuesSorted() {
+		assertTrue("Sort order is incorrect",
+				orderingTab.isSelectedFieldsSorted());
+	}
+
+	@When("remember Selected values")
+	public void remeberSelectedValues() {
+		orderingTab.rememberValues();
+	}
+
+	@Then("verify that Selected values sorted by Default")
+	public void isSelectedSortedByDefault() {
+		assertTrue("Sort order is incorrect",
+				orderingTab.isSelectedSortedByDefault());
+	}
+
+	@When("click Default Order Button")
+	public void clickDefaultOrderButton() {
+		orderingTab.clickDefaultButton();
+	}
+
+	@When("click Ok button at Ordering Tab")
+	public void clickOkButtonAtOrderingTab() {
+		orderingTab.clickOKButton();
+	}
+
+	@Then("verify that values in Aggregation list are corresponded with applied changes")
+	public void isChangesAppliedCorrectlyForAggregationList() {
+		assertTrue("Sorting order is incorrect", araMainPage
+				.reportPaneParameters()
+				.isValuesInAggregationListSortedInDescendingOrder());
+	}
+
+	@Then("verify that values in Currency list are corresponded with applied changes")
+	public void isChangesAppliedCorrectlyForCurrencyList() {
+		assertTrue(araMainPage.reportPaneParameters()
+				.isValuesInCurrencyListSortedInDescendingOrder());
+	}
+
+	@When("navigate to User Defined Scenarious")
+	public void navigateToUserDefinedScenarious() {
+		generalPrefs.navigateToUserDefinedScenariosTab();
+	}
+
+	@When("enter $value Shift Value")
+	public void navigateToDefineScenarioTab(String value) {
+		defineScenarioTab.enterShiftValue(value);
+	}
+
+	@When("click Set All button")
+	public void clickSetAllButton() {
+		defineScenarioTab.clickSetAllButton();
+	}
+
+	@When("enter name $name for new Scenario")
+	public void enterScenarioName(String name) {
+		defineScenarioTab.setScenarioName(name);
+	}
+
+	@When("click Apply button at User Defined Scenarios")
+	public void clickapplyButton() {
+		defineScenarioTab.clickApplyButton();
+	}
+
+	@When("click Cancel Button at User Defined Scenarios")
+	public void clickCancelButton() {
+		defineScenarioTab.clickCancelButton();
+	}
+
+	@When("click Ok Button at User Defined Scenarios")
+	public void clickOkButtonAtUserDefinedScenarios() {
+		defineScenarioTab.clickOKButton();
+	}
+
+	@When("select Scenario $testScenario from Scenario List")
+	public void selectScenarioFromList(String option) {
+		araMainPage.reportPaneParameters().selectScenario(option);
+	}
+
+	@Then("verify that despription message is present")
+	public void isDescriptionMessagePresent() {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.isDescriptionMessagePresent());
+	}
+
+	@When("select User Scenario $scenario from list")
+	public void selectUserScenarioFromList(String scenario) {
+		defineScenarioTab.selectCreatedScenarioFromList(scenario);
+	}
+
+	@Given("click Delete Button at User Defined Scenarios")
+	public void clickDeleteButton() {
+		defineScenarioTab.clickDeleteButton();
+	}
+
+	@Then("verify that there is no scenario $testScenario in the Scenario list")
+	public void isScenarioPresentInScenarioList(String scenario) {
+		assertFalse(araMainPage.reportPaneParameters()
+				.isScenarioPresentInScenarioList(scenario));
+	}
+
+	@When("check Include Report Name box")
+	public void checkIncludeReportNameBox() {
+		referenceBar.checkIncludeReportName();
+	}
+
+	@Then("verify that $item is displayed in reference bar")
+	public void isReportNameDisplayedInReferenceBar(String reportName) {
+		assertTrue(araMainPage.reportPaneReference()
+				.isItemDisplayed(reportName));
+	}
+
+	@Then("verify that $item is not displayed in reference bar")
+	public void isItemNotDisplayedInReferenceBar(String item) {
+		assertFalse(araMainPage.reportPaneReference().isItemDisplayed(item));
+	}
+
+	@Given("unselect $output from Selected in reference bar")
+	public void unselectOutputFromselected(String output) {
+		referenceBar.unselectFromOutputForReferenceBar(output);
+	}
+
+	@When("click Alphabetical Button in reference bar")
+	public void clickAlphabeticalButtonInReference() {
+		referenceBar.clickAlphabeticalButton();
+	}
+
+	@Then("verify that items in reference bar sorted by A/Z")
+	public void isItemsInReferenceBarSorted() {
+		assertTrue(araMainPage.reportPaneReference()
+				.isItemsInReferenceBarSorder());
+	}
+
+	@Given("navigate to Instrumental Filter tab")
+	public void navigateToInstrumentalTab() {
+		generalPrefs.navigateToInstrumentFilterTab();
+	}
+
+	@Then("verify that all checkboxes are checked")
+	public void isAllCheckboxesAreChecked() {
+		assertTrue("Not all checkboxed are checked",
+				instrumentalFilterTab.isAllCheckboxesAreChecked());
+	}
+
+	@When("uncheck $name checkbox")
+	public void uncheckCheckBox(String name) {
+		instrumentalFilterTab.uncheckCheckbox(name);
+	}
+
+	@When("click Ok button at Instrument Filter tab")
+	public void clickOkButtonAtInstrumentFilterTab() {
+		instrumentalFilterTab.clickOkButton();
+	}
+
+	@Then("verify that selected $name Asset Type is not present in report-table")
+	public void isAssetTypePresentInReportTable(String name) {
+		assertFalse(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.isAssetTypePresentIntable(name));
+	}
+
+	@When("uncheck all checkboxes")
+	public void uncheckAllCheckboxes() {
+		instrumentalFilterTab.uncheckAllCheckBoxes();
+	}
+
+	@When("check All checkboxes")
+	public void checkAllCheckboxes() {
+		instrumentalFilterTab.checkAllCheckboxes();
+	}
+
+	@When("select Contribution/Withdrawal option in General Prefs")
+	public void selectContributionWithdrawalOption() {
+		generalPrefs.selectContributionWithDrawalOption();
+	}
+
+	@When("select Rebalance option in General Prefs")
+	public void selectRebalanceOption() {
+		generalPrefs.selectRebalanceOption();
+	}
+
+	@Then("verify that $number inputs was affected")
+	public void verifyAffectedFields(int number) {
+		assertEquals("Bug, other fields affected", number, araMainPage
+				.reportPaneBottom().reportPaneBottomTable()
+				.getNumberOfAffectedFields());
+	}
+
+	// ========================== Filter Steps
+
+	@Given("navigate to Online Reports Filter Tab")
+	public void navigateToFilterTab() {
+		araMainPage.navigation().onlineReports().filterTab();
+	}
+
+	@Then("verify that Add Filter button is present")
+	public void isButtonAddFilterPresent() {
+		assertTrue(filters.isAddFilterButtonDisplayed());
+	}
+
+	@Then("verify that text messages are displayed")
+	public void isTextMessagesDisplayed() {
+		assertTrue(filters.isTextMessageDisplayed());
+	}
+
+	@Given("click Add Filter button")
+	public void clickAddFilterButton() {
+		filters.clickAddFilterButton();
+	}
+
+	@Then("verify that $title dialog appers")
+	public void isFilterDialogPresent(String title) {
+		assertEquals("Window is not present", title, araMainPage.filterDialog()
+				.getTitle());
+	}
+
+	@Then("verify that elements at the add filter dialog present")
+	public void isElementsAtTheDialogPresent() {
+		assertTrue("Not all elements are present", araMainPage.filterDialog()
+				.isElementsAtTheDialogPresent());
+	}
+
+	@When("select $aggregation from Aggregation Drop-down at Add Filter dialog")
+	public void selectAggregationAtAddFilterDialog(String aggregation) {
+		araMainPage.filterDialog().selectAggregation(aggregation);
+	}
+
+	@When("select $value from boundlist")
+	public void selectValueFromBoundlist(String value) {
+		araMainPage.filterDialog().selectFromBoundsList(value);
+	}
+
+	@When("press Ok button at Add filter dialog")
+	public void pressOkButtonAtAddFilterDialog() {
+		araMainPage.filterDialog().acceptAddFilterDialog();
+	}
+
+	@Then("verify that $filter Filter is present")
+	public void isFilterPresent(String filter) {
+		araMainPage.navigation().onlineReports().filterTab();
+		assertTrue(filters.isFilterPresent(filter));
+	}
+
+	@Then("verify that data in the report was changed")
+	public void isDataInTheReportChanged() {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.isFilterWasApplied());
+	}
+
+	@When("select filter $type from Type Drop Down list")
+	public void selectType(String type) {
+		araMainPage.filterDialog().selectTypeFromDropDown(type);
+	}
+
+	@When("select output $output from drop down list")
+	public void selectOutput(String output) {
+		araMainPage.filterDialog().selectOutput(output);
+	}
+
+	@When("select definition $definition from drop-down")
+	public void selectDefinition(String definition) {
+		araMainPage.filterDialog().selectDefinition(definition);
+	}
+
+	@When("enter numerical number $number for definition")
+	public void enterNumericalNumberForDefinition(String number) {
+		araMainPage.filterDialog().enterDefinitionNumber(number);
+	}
+
+	@When("click checbox $checkboxNumber")
+	public void unselectCheckBox(int checkboxNumber) {
+		filters.clickCheckBox(checkboxNumber);
+	}
+
+	@When("click on filter $filterName")
+	public void clickOnFilter(String filterName) {
+		filters.clickOnFilter(filterName);
+	}
+
+	@When("delete filter parameter")
+	public void deleteFilterParameter() {
+		araMainPage.filterDialog().deleteFilterParameter();
+	}
+
+	@When("delete Filter $filternumber")
+	public void deleteFilter(String filternumber) {
+		araMainPage.navigation().onlineReports().filterTab();
+		filters.deleteFilter(filternumber);
+	}
+
+	@Then("verify that filter $name is removed")
+	public void isFilterRemoved(String name) {
+		assertFalse(filters.isFilterPresent(name));
+	}
+
+	@When("unselect output Aggregation $aggregation from selected list")
+	public void unselectOutputAggregation(String aggregation) {
+		customAggreagtionPrefs.unselectOutputAggregation(aggregation);
+	}
+
+	@When("I set Percentage Formatting to $text")
+	public void setPercentageFormatting(String text) {
+		generalPrefs.selectPercentageFormatting(text);
+	}
+
+    @When("I set Value Formatting to $text")
+    public void setValueFormatting(String text){
+        generalPrefs.setValueFormatting(text);
+    }
+}

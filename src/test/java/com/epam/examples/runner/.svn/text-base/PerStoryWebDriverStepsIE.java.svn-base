@@ -1,0 +1,62 @@
+package com.epam.ara.runner;
+
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+import org.jbehave.core.annotations.AfterStory;
+import org.jbehave.core.annotations.BeforeStory;
+import org.jbehave.web.selenium.PerStoryWebDriverSteps;
+import org.jbehave.web.selenium.WebDriverProvider;
+
+public class PerStoryWebDriverStepsIE extends PerStoryWebDriverSteps {
+
+	public PerStoryWebDriverStepsIE(WebDriverProvider driverProvider) {
+		super(driverProvider);
+	}
+
+	private long startTime = 0;
+	private long stopTime = 0;
+
+	@BeforeStory
+	public void beforeStory() throws Exception {
+		startTime = System.currentTimeMillis();
+		driverProvider.initialize();
+	}
+
+	private void killIE() {
+		Runtime rt = Runtime.getRuntime();
+		try {
+			System.out.println("kill IE");
+			rt.exec("taskkill /f /im IEDriverServer.exe");
+			rt.exec("taskkill /f /im iexplore.exe");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	@AfterStory
+	public void afterStory() throws Exception {
+		driverProvider.end();
+		killIE();
+		stopTime = System.currentTimeMillis();
+		System.out.println("Story takes "
+				+ getStoryTimeCompletition(startTime, stopTime));
+	}
+
+	private String getStoryTimeCompletition(long startTime, long stopTime) {
+		long duration = stopTime - startTime;
+		return String.format(
+				"%d min, %d sec",
+				TimeUnit.MILLISECONDS.toMinutes(duration),
+				TimeUnit.MILLISECONDS.toSeconds(duration)
+						- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS
+								.toMinutes(duration)));
+	}
+
+}

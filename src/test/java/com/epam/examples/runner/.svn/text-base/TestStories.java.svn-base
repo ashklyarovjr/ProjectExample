@@ -1,0 +1,146 @@
+package com.epam.ara.runner;
+
+import static org.jbehave.core.io.CodeLocations.codeLocationFromClass;
+import static org.jbehave.core.io.CodeLocations.codeLocationFromPath;
+import static org.jbehave.core.reporters.Format.CONSOLE;
+import static org.jbehave.web.selenium.WebDriverHtmlOutput.WEB_DRIVER_HTML;
+
+import java.util.List;
+
+import org.jbehave.core.configuration.Configuration;
+import org.jbehave.core.embedder.StoryControls;
+import org.jbehave.core.failures.FailingUponPendingStep;
+import org.jbehave.core.failures.PendingStepStrategy;
+import org.jbehave.core.io.LoadFromRelativeFile;
+import org.jbehave.core.io.StoryFinder;
+import org.jbehave.core.junit.JUnitStories;
+import org.jbehave.core.reporters.CrossReference;
+import org.jbehave.core.reporters.Format;
+import org.jbehave.core.reporters.StoryReporterBuilder;
+import org.jbehave.core.steps.InjectableStepsFactory;
+import org.jbehave.core.steps.InstanceStepsFactory;
+import org.jbehave.core.steps.ParameterControls;
+import org.jbehave.web.selenium.ContextView;
+import org.jbehave.web.selenium.LocalFrameContextView;
+import org.jbehave.web.selenium.RemoteWebDriverProvider;
+import org.jbehave.web.selenium.SeleniumConfiguration;
+import org.jbehave.web.selenium.SeleniumContext;
+import org.jbehave.web.selenium.SeleniumContextOutput;
+import org.jbehave.web.selenium.WebDriverProvider;
+import org.jbehave.web.selenium.WebDriverScreenshotOnFailure;
+import org.jbehave.web.selenium.WebDriverSteps;
+import org.openqa.selenium.remote.DesiredCapabilities;
+
+import com.epam.ara.arapage.PageFactory;
+import com.epam.ara.steps.AggregationSteps;
+import com.epam.ara.steps.BenchmarkSteps;
+import com.epam.ara.steps.ContextSteps;
+import com.epam.ara.steps.EditReportSteps;
+import com.epam.ara.steps.LimitsSteps;
+import com.epam.ara.steps.LoginSteps;
+import com.epam.ara.steps.NewReportSteps;
+import com.epam.ara.steps.OptimizationSteps;
+import com.epam.ara.steps.PortfolioSteps;
+import com.epam.ara.steps.PreferencesSteps;
+import com.epam.ara.steps.SchedulerSteps;
+import com.google.common.util.concurrent.MoreExecutors;
+
+import de.codecentric.jbehave.junit.monitoring.JUnitReportingRunner;
+
+public class TestStories extends JUnitStories {
+	public static final Long STORY_TIMEOUT_IN_SECONDS = 20000l;
+	public static final String STORIES_RELATIVE_DIRECTORY = "src/main/stories";
+	public static final String REPORT_RELATIVE_DIRECTORY = "../build/reports/jbehave";
+	public static final String STORY_TO_EXCLUDE = "**/exclude_*.story";
+	public static DesiredCapabilities capabilities = DesiredCapabilities
+			.internetExplorer();
+
+	static {
+		System.setProperty("REMOTE_WEBDRIVER_URL",
+				"http://localhost:4444/wd/hub");
+		capabilities.setJavascriptEnabled(true);
+		capabilities.setCapability("handlesAlerts", true);
+		capabilities.setCapability("ignoreProtectedModeSettings", true);
+		capabilities.setCapability("ie.ensureCleanSession", true);
+		capabilities.setCapability("logLevel", "ERROR");
+
+	}
+
+	private WebDriverProvider driverProvider = new RemoteWebDriverProvider(
+			capabilities);
+
+	private PageFactory pageFactory = new PageFactory(driverProvider);
+	private WebDriverSteps lifecycleSteps = new PerStoryWebDriverStepsIE(
+			driverProvider);
+
+	public TestStories() {
+		if (lifecycleSteps instanceof PerStoryWebDriverStepsIE) {
+			configuredEmbedder().useExecutorService(
+					MoreExecutors.sameThreadExecutor());
+		}
+		JUnitReportingRunner.recommandedControls(configuredEmbedder());
+		configuredEmbedder().embedderControls().useStoryTimeoutInSecs(
+				STORY_TIMEOUT_IN_SECONDS);
+	}
+
+	/**
+	 * Configuration variables
+	 */
+	PendingStepStrategy pendingStepStrategy = new FailingUponPendingStep();
+	CrossReference crossReference = new CrossReference().withJsonOnly()
+			.withXmlOnly().withOutputAfterEachStory(true);
+	ContextView contextView = new LocalFrameContextView().sized(640, 120);
+	SeleniumContext seleniumContext = new SeleniumContext();
+	Format[] formats = new Format[]{new SeleniumContextOutput(seleniumContext),
+			CONSOLE, WEB_DRIVER_HTML};
+	StoryReporterBuilder reporterBuilder = new StoryReporterBuilder()
+			.withCodeLocation(codeLocationFromClass(TestStories.class))
+			.withFormats(Format.XML, Format.STATS, Format.CONSOLE)
+			.withCrossReference(crossReference);
+
+	@Override
+	public Configuration configuration() {
+		return new SeleniumConfiguration()
+				.useSeleniumContext(seleniumContext)
+				.useWebDriverProvider(driverProvider)
+				.usePendingStepStrategy(pendingStepStrategy)
+				.useStoryControls(
+						new StoryControls().doResetStateBeforeScenario(true))
+				// !!!Set to false for not perform the other
+				// scenarios as the failure state is retained
+				.useStoryLoader(
+						new LoadFromRelativeFile(
+								codeLocationFromPath(STORIES_RELATIVE_DIRECTORY)))
+				.useStepMonitor(crossReference.getStepMonitor())
+				.useStoryReporterBuilder(reporterBuilder)
+				.useParameterControls(
+						new ParameterControls()
+								.useDelimiterNamedParameters(true));
+
+	}
+	@Override
+	public InjectableStepsFactory stepsFactory() {
+		Configuration configuration = configuration();
+		return new InstanceStepsFactory(configuration, new LoginSteps(
+				pageFactory), new EditReportSteps(pageFactory),
+				new SchedulerSteps(pageFactory),
+				new PortfolioSteps(pageFactory), new PreferencesSteps(
+						pageFactory), new BenchmarkSteps(pageFactory),
+				new NewReportSteps(pageFactory), new ContextSteps(pageFactory),
+				new LimitsSteps(pageFactory),
+				new AggregationSteps(pageFactory), new OptimizationSteps(
+						pageFactory), lifecycleSteps,
+				new WebDriverScreenshotOnFailure(driverProvider, configuration
+						.storyReporterBuilder()));
+	}
+
+	@Override
+	protected List<String> storyPaths() {
+		String storyToInclude = "**/" + System.getProperty("story", "*")
+				+ ".story";
+		return new StoryFinder().findPaths(
+				codeLocationFromPath(STORIES_RELATIVE_DIRECTORY),
+				storyToInclude, STORY_TO_EXCLUDE);
+	}
+
+}

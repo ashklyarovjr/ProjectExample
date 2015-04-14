@@ -1,0 +1,401 @@
+package com.epam.ara.steps;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.apache.commons.lang3.RandomStringUtils;
+import org.jbehave.core.annotations.BeforeScenario;
+import org.jbehave.core.annotations.Given;
+import org.jbehave.core.annotations.Then;
+import org.jbehave.core.annotations.When;
+
+import com.epam.ara.arapage.AraMainPage;
+import com.epam.ara.arapage.PageFactory;
+import com.epam.ara.arapage.navigationpanel.onlinereports.ManagePooledReports;
+import com.epam.ara.arapage.navigationpanel.onlinereports.PostReportDialog;
+import com.epam.ara.arapage.navigationpanel.onlinereports.RetrieveReportDialog;
+import com.epam.ara.arapage.navigationpanel.onlinereports.editreport.defaulteditor.DefaultEditorTab;
+import com.epam.ara.arapage.navigationpanel.onlinereports.editreport.defaulteditor.DefaultEditorTabFooter;
+import com.epam.ara.arapage.navigationpanel.onlinereports.newreport.NewReport;
+import com.epam.ara.arapage.navigationpanel.onlinereports.newreport.NewReportFolder;
+import com.epam.ara.arapage.navigationpanel.onlinereports.newreport.NewReportProperties;
+import com.epam.ara.arapage.navigationpanel.optimization.Organizer;
+
+import freemarker.template.utility.OptimizerUtil;
+
+public class NewReportSteps {
+	private final PageFactory pages;
+
+	public AraMainPage araMainPage;
+	public NewReport newReportWindow;
+	public NewReportFolder newNewReportFolder;
+	public NewReportProperties newReportProperties;
+	private DefaultEditorTab defaultEditorTab;
+	private String newReportName = "newreporttest";
+	private String newFolderName = "NewFolder";
+	private Organizer organizer;
+	private PostReportDialog postReportDialog;
+	private RetrieveReportDialog retrieveReportDialog;
+	private ManagePooledReports managePooledReports;
+
+	public NewReportSteps(PageFactory pages) {
+		this.pages = pages;
+	}
+
+	@BeforeScenario
+	public void setupPages() {
+		araMainPage = pages.newAraPage();
+		newReportWindow = pages.newNewReport();
+		defaultEditorTab = pages.newDefaultEditorTab();
+		newNewReportFolder = pages.newNewReportFolder();
+		newReportProperties = pages.newNewReportProperties();
+		organizer = pages.newOrganizer();
+		postReportDialog = pages.newPostReportDialog();
+		retrieveReportDialog = pages.newRetrieveReportDialog();
+		managePooledReports = pages.newManagePooledReports();
+	}
+
+	@Given("click on Actions menu on Reports tab")
+	public void clickOnActionsMenu() {
+		araMainPage.navigation().onlineReports().reportsTab()
+				.clickActionsButton();
+	}
+
+	@Then("verify Actions menu list")
+	public void verifyActionsMenuList() {
+		assertTrue(araMainPage.navigation().onlineReports().reportsTab()
+				.clickActionsButton().verifyActionsMenuList());
+
+	}
+
+	@Given("navigate to Organize Report window")
+	public void navigateToOrganizeReportWindow() {
+		araMainPage.navigation().onlineReports().reportsTab()
+				.moveToSearchFiled().clickActionsButton()
+				.selectOrganizeOption();
+	}
+
+	@Given("navigate to Post Report window")
+	public void navigateToPostReportWindow() {
+		araMainPage.navigation().onlineReports().reportsTab()
+				.moveToSearchFiled().clickActionsButton().selectPostOption();
+	}
+
+	@Given("navigate to Retrieve Report window")
+	public void navigateToRetrieveReportWindow() {
+		araMainPage.navigation().onlineReports().reportsTab()
+				.moveToSearchFiled().clickActionsButton()
+				.selectRetrieveOption();
+	}
+
+	@Given("navigate to Manage Report window")
+	public void navigateToManageReportWindow() {
+		araMainPage.navigation().onlineReports().reportsTab()
+				.moveToSearchFiled().clickActionsButton().selectManageOption();
+	}
+
+	@Given("navigate to New Report screen")
+	public void navigateToNewReportScreen() {
+		araMainPage.navigation().onlineReports().reportsTab()
+				.moveToSearchFiled().clickActionsButton()
+				.selectNewReportOption();
+
+	}
+
+	@When("set report name")
+	public void setReportName() {
+		newReportName = newReportName + RandomStringUtils.randomNumeric(4);
+		newReportWindow.switchToNewReportDialog().setReportName(newReportName);
+	}
+
+	@When("in New Report Window select report folder $folder")
+	public void selectReportFolder(String folderName) {
+		newReportWindow.switchToNewReportDialog()
+				.selectReportFolder(folderName);
+	}
+
+	@Given("click OK button")
+	public void clickOKButton() {
+		newReportWindow.acceptNewReportCreation();
+		defaultEditorTab.pageIsShown();
+	}
+
+	@Given("click Cancel button")
+	public void clickCancelButton() {
+		newReportWindow.cancelNewReportCreation();
+		araMainPage.closeEmptyWindow();
+	}
+
+	@Then("verify that Actions menu has the cascading structure")
+	public void verifyActionsMenuHasCascadingStructure() {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.clickActionButton().verifyActionsMenuHasCascadingStructure());
+	}
+
+	@Then("verify that options for SummaryTable report are correct")
+	public void verifyOptionsForSummaryTableAreCorrect() {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.clickActionButton().verifyOptionsForSummaryTableAreCorrect());
+
+	}
+
+	@Then("verify that options for SummaryInformation report are correct")
+	public void verifyOptionsForSummaryInformationAreCorrect() {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.clickActionButton()
+				.verifyOptionsForSummaryInformationAreCorrect());
+
+	}
+
+	@Then("verify that options for Matrix Table Report are correct")
+	public void verifyOptionsForMatrixTableAreCorrect() {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.clickActionButton().verifyOptionsForMatrixTableAreCorrect());
+	}
+
+	@Then("verify that options for Grid View Report are correct")
+	public void verifyOptionsForGridViewAreCorrect() {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.clickActionButton().verifyOptionsForGridViewAreCorrect());
+	}
+
+	@When("select value from Over drop-down list $value")
+	public void selectValueFromOverDropDownList(String value) {
+		defaultEditorTab.selectValueFromOverDropDownList(value);
+	}
+
+	@Then("verify elements in New Report window")
+	public void verifyElementsInNewReportWindow() {
+		assertTrue(newReportWindow.switchToNewReportDialog()
+				.verifyElementsInNewReportWindow());
+	}
+
+	@Then("click OK verify that the warning message appears and apply")
+	public void verifyThatWarningMessageAppears() {
+		newReportWindow.switchToNewReportDialog().clickOKButton();
+		newReportWindow.applyWarningMessage();
+	}
+
+	@Then("verify that new report is not created")
+	public void verifyThatNewReportIsNotCreated() {
+		araMainPage.closeEmptyWindow();
+		assertFalse(araMainPage.navigation().onlineReports().reportsTab()
+				.verifyThatReportIsDisplayed(newReportName));
+	}
+
+	@Then("verify that new report is created")
+	public void verifyThatNewReportIsCreated() {
+		araMainPage.closeEmptyWindow();
+		assertTrue(araMainPage.navigation().onlineReports().reportsTab()
+				.verifyThatReportIsDisplayed(newReportName));
+	}
+
+	@Given("select new created report")
+	public void selectNewCreatedReport() {
+		araMainPage.closeEmptyWindow();
+		araMainPage.navigation().onlineReports().reportsTab()
+				.selectReportByName(newReportName);
+	}
+
+	@Given("click New Folder button")
+	public void clickNewFolderButton() {
+		newReportWindow.switchToNewReportDialog().clickNewFolderButton();
+	}
+
+	@Then("verify App Error at the New Folder Window")
+	public void verifyAppErrorAtNewFolderWindow() {
+		assertFalse("Application Error", newNewReportFolder
+				.switchToNewReportFolderDialog().isApplicationErrorPresent());
+	}
+
+	@Given("enter folder name")
+	public void enterFolderName() {
+		newFolderName = newFolderName + RandomStringUtils.randomNumeric(4);
+		newNewReportFolder.switchToNewReportFolderDialog().enterFolderName(
+				newFolderName);
+	}
+
+	@When("click OK button for new folder dialog")
+	public void clickOKButtonForNewFolderDialog() {
+		newNewReportFolder.acceptNewFolderDialog();
+	}
+
+	@Then("verify that new folder is displayed in 'Create In' folder tree")
+	public void verifyThatNewFolderIsDisplayed() {
+		assertTrue(newReportWindow.switchToNewReportDialog()
+				.verifyThatNewFolderIsDisplayed(newFolderName));
+	}
+
+	@Then("verify that created folder with created report is displayed")
+	public void verifyThatCreatedFolderWithCreatedReportIsDisplayed() {
+		araMainPage.closeEmptyWindow();
+		assertTrue(araMainPage.navigation().onlineReports().reportsTab()
+				.verifyThatCreatedFolderIsDisplayed(newFolderName));
+		assertTrue(araMainPage.navigation().onlineReports().reportsTab()
+				.verifyThatReportIsDisplayed(newReportName));
+	}
+
+	@When("click Properties button")
+	public void clickPropertiesbutton() {
+		newReportWindow.switchToNewReportDialog().clickPropertiesbutton();
+	}
+
+	@Then("verify that properties dialog box displayed")
+	public void verifyThatPropertiesDialogBoxDisplayed() {
+		assertTrue(newReportProperties.switchToNewReportPropertiesDialog()
+				.verifyThatPropertiesDialogBoxDisplayed());
+	}
+
+	@Then("verify elements for General tab")
+	public void verifyElementsForGeneralTab() {
+		assertTrue(newReportProperties.switchToNewReportPropertiesDialog()
+				.verifyElementsForGeneralTab());
+	}
+
+	@When("click on Summury tab")
+	public void clickOnSummuryTab() {
+		newReportProperties.switchToNewReportPropertiesDialog()
+				.clickOnSummuryTab();
+	}
+
+	@When("click on General tab")
+	public void clickOnGenerakTab() {
+		newReportProperties.switchToNewReportPropertiesDialog()
+				.clickOnGeneralTab();
+	}
+
+	@Then("verify elements for Summury tab")
+	public void verifyElementsForSummuryTab() {
+		assertTrue(newReportProperties.switchToNewReportPropertiesDialog()
+				.verifyElementsForSummuryTab());
+	}
+
+	@Then("click Cancel button for properties")
+	public void clickCancelButtonForProperties() {
+		newReportProperties.switchToNewReportPropertiesDialog()
+				.clickCancelButtonForProperties();
+		// araMainPage.closeEmptyReportProperties();
+
+	}
+
+	@Then("click OK button for properties")
+	public void clickOKButtonForProperties() {
+		newReportProperties.switchToNewReportPropertiesDialog()
+				.clickOKButtonForProperties();
+	}
+
+	@When("click Apply button for properties")
+	public void clickApplyButtonForProperties() {
+		newReportProperties.switchToNewReportPropertiesDialog()
+				.clickApplyButtonForProperties();
+	}
+
+	@Given("navigate to Properties screen")
+	public void navigateToPropertiesScreen() {
+		araMainPage.navigation().onlineReports().reportsTab()
+				.clickActionsButton().selectReportPropertiesOption();
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Given("set description $description")
+	public void setDescriptionInProperties(String description) {
+		newReportProperties.switchToNewReportPropertiesDialog()
+				.setDescriptionInProperties(description);
+	}
+
+	@Then("verify description $description")
+	public void verifyDescriptionInProperties(String description) {
+		assertTrue("Description was not applied",newReportProperties.switchToNewReportPropertiesDialog()
+				.verifyDescriptionInProperties(description));
+	}
+
+	@Then("verify that changes in description are not applyed $description")
+	public void verifyChangesDescriptionInProperties(String description) {
+		assertFalse("Description was applied", newReportProperties
+				.switchToNewReportPropertiesDialog()
+				.verifyDescriptionInProperties(description));
+	}
+
+	@Then("verify that correct error message is displayed")
+	public void verifyThatCorrectErrorMessageIsDisplayed() {
+		assertTrue(newReportProperties.switchToNewReportPropertiesDialog()
+				.switchToIllegalCharactersDialog()
+				.verifyIllegalCgaractersWarningAndApply());
+	}
+
+	@Then("verify that Organize Reports dialog box include folder hierarchies and buttons: New, Delete, Show, Hide, CollapseAll")
+	public void verifyOrganizeReportsDialogIncludeButtons() {
+		assertTrue("One of the buttons isn't displayed correctly", organizer
+				.swichToOrganizerWindow()
+				.verifyOrganizeReportsDialogIncludeButtons());
+	}
+
+	@Then("verify that created folder is deleted")
+	public void verifyThatCreatedFolderIsDeleted() {
+		System.out.println(OptimizationSteps.getOrganizerFolderName());
+		assertFalse(araMainPage
+				.navigation()
+				.onlineReports()
+				.reportsTab()
+				.verifyThatCreatedFolderIsDisplayed(
+						OptimizationSteps.getOrganizerFolderName()));
+	}
+
+	@Then("verify that report is deleted")
+	public void verifyThatReportIsDeleted() {
+		assertFalse(araMainPage
+				.navigation()
+				.onlineReports()
+				.reportsTab()
+				.verifyThatReportIsDisplayed(
+						DefaultEditorTabFooter.getReportName()));
+	}
+
+	@When("enter a correct post report description $description")
+	public void enterCorrectPostReportDescription(String description) {
+		postReportDialog.switchToPostReportDialog().setDescription(description);
+	}
+
+	@When("click Ok for Post report Dialog")
+	public void clickOkForPostReportDialog() {
+		postReportDialog.acceptPostReportDialog();
+	}
+
+	@Then("verify that report is posted to centralized location with description $desc")
+	public void verifyThatReportIsPostedToCentralizedLocation(String desc) {
+		assertTrue(retrieveReportDialog.switchToRetrieveReportDialog()
+				.isReportPostedWithDescription(desc));
+		retrieveReportDialog.switchToRetrieveReportDialog().closeRetrieveReportDialog();
+	}
+
+	@When("select report to delete")
+	public void selectReportToDelete() {
+		managePooledReports.switchToManagePooledReports().selectReport(
+				DefaultEditorTabFooter.getReportName());
+	}
+
+	@When("click delete selected button")
+	public void clickDeleteSelectedButton() {
+		managePooledReports.switchToManagePooledReports().clickDeleteBtn();
+	}
+
+	@Then("verify that report is not posted")
+	public void verifyThatReportIsNotPosted() {
+		assertTrue(
+				"Report still posted",
+				managePooledReports
+						.switchToManagePooledReports()
+						.isReportDeleted(DefaultEditorTabFooter.getReportName()));
+		managePooledReports.clickCancelBtn();
+	}
+
+    @Then("verify that report $repName is displayed")
+    public void isReportPresent(String repName){
+        araMainPage.navigation().onlineReports().reportsTab().verifyThatReportIsDisplayed(repName);
+    }
+
+}

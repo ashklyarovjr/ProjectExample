@@ -1,0 +1,247 @@
+package com.epam.ara.arapage;
+
+import com.epam.ara.arapage.navigationpanel.onlinereports.editreport.experteditor.ExpertEditorTab;
+import com.epam.ara.arapage.navigationpanel.portfolios.dialogs.CreateVirtualPortfolioDialog;
+import org.jbehave.web.selenium.WebDriverProvider;
+
+import com.epam.ara.arapage.navigationpanel.NavigationPanel;
+import com.epam.ara.arapage.navigationpanel.benchmarks.Benchmarks;
+import com.epam.ara.arapage.navigationpanel.limits.ChildLimitEditor;
+import com.epam.ara.arapage.navigationpanel.limits.LimitEditor;
+import com.epam.ara.arapage.navigationpanel.limits.Limits;
+import com.epam.ara.arapage.navigationpanel.limits.PostGlobalLimitsDialog;
+import com.epam.ara.arapage.navigationpanel.onlinereports.ManagePooledReports;
+import com.epam.ara.arapage.navigationpanel.onlinereports.OnlineReports;
+import com.epam.ara.arapage.navigationpanel.onlinereports.PostReportDialog;
+import com.epam.ara.arapage.navigationpanel.onlinereports.RetrieveReportDialog;
+import com.epam.ara.arapage.navigationpanel.onlinereports.editreport.EditReportNavigation;
+import com.epam.ara.arapage.navigationpanel.onlinereports.editreport.defaulteditor.DefaultEditorTab;
+import com.epam.ara.arapage.navigationpanel.onlinereports.editreport.histoutputbuilder.HistoricalOutputBuilder;
+import com.epam.ara.arapage.navigationpanel.onlinereports.editreport.outputbuilder.OutputBuilderTab;
+import com.epam.ara.arapage.navigationpanel.onlinereports.filters.Filters;
+import com.epam.ara.arapage.navigationpanel.onlinereports.newreport.NewReport;
+import com.epam.ara.arapage.navigationpanel.onlinereports.newreport.NewReportFolder;
+import com.epam.ara.arapage.navigationpanel.onlinereports.newreport.NewReportProperties;
+import com.epam.ara.arapage.navigationpanel.optimization.NewOptimizationProblemDialog;
+import com.epam.ara.arapage.navigationpanel.optimization.OptimizationNavigation;
+import com.epam.ara.arapage.navigationpanel.optimization.OptimizationPane;
+import com.epam.ara.arapage.navigationpanel.optimization.Organizer;
+import com.epam.ara.arapage.navigationpanel.optimization.SaveOptimizationAsDialog;
+import com.epam.ara.arapage.navigationpanel.optimization.TradeListEditTableDialog;
+import com.epam.ara.arapage.navigationpanel.portfolios.dialogs.CopyPortfolioToDialog;
+import com.epam.ara.arapage.navigationpanel.portfolios.dialogs.DeletePortfolioDialog;
+import com.epam.ara.arapage.navigationpanel.potrfolios.Portfolios;
+import com.epam.ara.arapage.navigationpanel.sheduler.NewScheduler;
+import com.epam.ara.arapage.navigationpanel.sheduler.Scheduler;
+import com.epam.ara.arapage.preferences.AboutTab;
+import com.epam.ara.arapage.preferences.ContextTab;
+import com.epam.ara.arapage.preferences.CustomAggregationPreferences;
+import com.epam.ara.arapage.preferences.DefineScenarioTab;
+import com.epam.ara.arapage.preferences.GeneralPreferences;
+import com.epam.ara.arapage.preferences.InstrumentalFilterTab;
+import com.epam.ara.arapage.preferences.MultiLevelAggregation;
+import com.epam.ara.arapage.preferences.OrderingTab;
+import com.epam.ara.arapage.preferences.ReferenceBar;
+import com.epam.ara.arapage.preferences.TimeBucketTab;
+import com.epam.ara.arapage.quicklinksbar.QuickLinksBar;
+import com.epam.ara.arapage.reportpane.ReportPane;
+import com.epam.ara.arapage.reportpane.ReportPaneBottom;
+import com.epam.ara.arapage.webpagedialogs.SecuritiesFinderDialog;
+import com.epam.ara.login.Login;
+
+public class PageFactory {
+
+	private WebDriverProvider driverProvider;
+
+	public PageFactory(WebDriverProvider driverProvider) {
+		this.driverProvider = driverProvider;
+	}
+
+	public Login newLogin() {
+		return new Login(driverProvider);
+	}
+
+	public NavigationPanel newNavigationPanel() {
+		return new NavigationPanel(driverProvider);
+	}
+
+	public QuickLinksBar newQuickLikBar() {
+		return new QuickLinksBar(driverProvider);
+	}
+
+	public ReportPane newReportPane() {
+		return new ReportPane(driverProvider);
+	}
+
+	public ReportPaneBottom newReportPaneBottom() {
+		return new ReportPaneBottom(driverProvider);
+	}
+
+	public AraMainPage newAraPage() {
+		return new AraMainPage(driverProvider);
+	}
+
+	public DefaultEditorTab newDefaultEditorTab() {
+		return new DefaultEditorTab(driverProvider);
+	}
+
+	public EditReportNavigation newEditReportNavigation() {
+		return new EditReportNavigation(driverProvider);
+	}
+
+	public OutputBuilderTab newOutputBuilderTab() {
+		return new OutputBuilderTab(driverProvider);
+	}
+
+	public HistoricalOutputBuilder newHistoricalOutputBuilder() {
+		return new HistoricalOutputBuilder(driverProvider);
+	}
+
+	public Scheduler newScheduler() {
+		return new Scheduler(driverProvider);
+	}
+
+	public NewScheduler newNewScheduler() {
+		return new NewScheduler(driverProvider);
+	}
+
+	public GeneralPreferences newGeneralPreferences() {
+		return new GeneralPreferences(driverProvider);
+	}
+
+	public OnlineReports newOnlinaReports() {
+		return new OnlineReports(driverProvider);
+	}
+
+	public Portfolios newPortfolios() {
+		return new Portfolios(driverProvider);
+	}
+
+	public CopyPortfolioToDialog newCopyPortfolioToDialog() {
+		return new CopyPortfolioToDialog(driverProvider);
+	}
+
+	public SecuritiesFinderDialog newSecuritiesFinder() {
+		return new SecuritiesFinderDialog(driverProvider);
+	}
+
+	public Benchmarks newBenchmarks() {
+		return new Benchmarks(driverProvider);
+	}
+
+	public CustomAggregationPreferences newCustomAggregationPreferences() {
+		return new CustomAggregationPreferences(driverProvider);
+	}
+
+	public ReferenceBar newReferenceBar() {
+		return new ReferenceBar(driverProvider);
+	}
+
+	public ContextTab newContextTab() {
+		return new ContextTab(driverProvider);
+	}
+
+	public NewReport newNewReport() {
+		return new NewReport(driverProvider);
+	}
+
+	public NewReportFolder newNewReportFolder() {
+		return new NewReportFolder(driverProvider);
+	}
+
+	public NewReportProperties newNewReportProperties() {
+		return new NewReportProperties(driverProvider);
+	}
+
+	public AboutTab newAboutTab() {
+		return new AboutTab(driverProvider);
+	}
+
+	public TimeBucketTab newTimeBUcketTab() {
+		return new TimeBucketTab(driverProvider);
+	}
+
+	public OrderingTab newOrderingTab() {
+		return new OrderingTab(driverProvider);
+	}
+
+	public DefineScenarioTab newDefineScenarioTab() {
+		return new DefineScenarioTab(driverProvider);
+	}
+
+	public LimitEditor newLimitEditor() {
+		return new LimitEditor(driverProvider);
+	}
+
+	public Limits newLimits() {
+		return new Limits(driverProvider);
+	}
+
+	public InstrumentalFilterTab newInstrumentFilterTab() {
+		return new InstrumentalFilterTab(driverProvider);
+	}
+
+	public Filters newFilters() {
+		return new Filters(driverProvider);
+	}
+
+	public PostGlobalLimitsDialog newPostGlobalLimitsDialog() {
+		return new PostGlobalLimitsDialog(driverProvider);
+	}
+
+	public MultiLevelAggregation newMultiLevelAggregation() {
+		return new MultiLevelAggregation(driverProvider);
+	}
+
+	public ChildLimitEditor newChildLimitEditor() {
+		return new ChildLimitEditor(driverProvider);
+	}
+
+	public OptimizationNavigation newOptimizationNavigation() {
+		return new OptimizationNavigation(driverProvider);
+	}
+
+	public NewOptimizationProblemDialog newNewOptimizationProblemDialog() {
+		return new NewOptimizationProblemDialog(driverProvider);
+	}
+
+	public SaveOptimizationAsDialog newSaveOptimizationAsDialog() {
+		return new SaveOptimizationAsDialog(driverProvider);
+	}
+
+	public Organizer newOrganizer() {
+		return new Organizer(driverProvider);
+	}
+
+	public OptimizationPane newOptimizationPane() {
+		return new OptimizationPane(driverProvider);
+	}
+
+	public TradeListEditTableDialog newTradeListEditTableDialog() {
+		return new TradeListEditTableDialog(driverProvider);
+	}
+
+	public DeletePortfolioDialog newDeletePortfolioDialog() {
+		return new DeletePortfolioDialog(driverProvider);
+	}
+
+	public PostReportDialog newPostReportDialog() {
+		return new PostReportDialog(driverProvider);
+	}
+
+	public RetrieveReportDialog newRetrieveReportDialog() {
+		return new RetrieveReportDialog(driverProvider);
+	}
+
+	public ManagePooledReports newManagePooledReports() {
+		return new ManagePooledReports(driverProvider);
+	}
+
+	public ExpertEditorTab newExpertEditorTab() {
+		return new ExpertEditorTab(driverProvider);
+	}
+
+    public CreateVirtualPortfolioDialog newCreateVirtualPortfolioDialog() {
+        return new CreateVirtualPortfolioDialog(driverProvider);
+    }
+}

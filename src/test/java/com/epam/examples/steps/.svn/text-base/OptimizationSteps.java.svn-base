@@ -1,0 +1,975 @@
+package com.epam.ara.steps;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.apache.commons.lang3.RandomStringUtils;
+import org.jbehave.core.annotations.BeforeScenario;
+import org.jbehave.core.annotations.Given;
+import org.jbehave.core.annotations.Then;
+import org.jbehave.core.annotations.When;
+
+import com.epam.ara.arapage.AraMainPage;
+import com.epam.ara.arapage.PageFactory;
+import com.epam.ara.arapage.navigationpanel.optimization.NewOptimizationProblemDialog;
+import com.epam.ara.arapage.navigationpanel.optimization.OptimizationNavigation;
+import com.epam.ara.arapage.navigationpanel.optimization.OptimizationPane;
+import com.epam.ara.arapage.navigationpanel.optimization.Organizer;
+import com.epam.ara.arapage.navigationpanel.optimization.SaveOptimizationAsDialog;
+import com.epam.ara.arapage.navigationpanel.optimization.TradeListEditTableDialog;
+
+public class OptimizationSteps {
+	private final PageFactory pages;
+
+	private AraMainPage araMainPage;
+	private OptimizationNavigation optimizationNavigation;
+	private OptimizationPane optimizationPane;
+	private NewOptimizationProblemDialog newOptimizationProblem;
+	private SaveOptimizationAsDialog saveOptimizationAsDialog;
+	private Organizer organizeOptimization;
+	private TradeListEditTableDialog tradeListEditTableDialog;
+	private String newOptimizationName = "";
+	private String newOptimizationName2 = "";
+	private String newOptimizationNameRem = "";
+	private String newFolderName = "";
+	private Long timestempValue = null;
+	private String defaultAggregationValue = "";
+	private int rowIndexBefore;
+	private int rowIndexAfter;
+	private static String organizerFolderName = "test";
+
+	public static String getOrganizerFolderName() {
+		return organizerFolderName;
+	}
+
+	private int columnPositionBeforeMoving;
+	private int columnPositionAfterMoving;
+
+	public OptimizationSteps(PageFactory pages) {
+		this.pages = pages;
+	}
+
+	@BeforeScenario
+	public void setupPages() {
+		araMainPage = pages.newAraPage();
+		optimizationNavigation = pages.newOptimizationNavigation();
+		newOptimizationProblem = pages.newNewOptimizationProblemDialog();
+		saveOptimizationAsDialog = pages.newSaveOptimizationAsDialog();
+		organizeOptimization = pages.newOrganizer();
+		optimizationPane = pages.newOptimizationPane();
+		tradeListEditTableDialog = pages.newTradeListEditTableDialog();
+	}
+
+	@Given("navigate to Optimization tab")
+	public void navigateToOptimizationTab() {
+		araMainPage.navigation().optimization();
+	}
+
+	@When("select New Optimization Problem option in Action menu")
+	public void selectNewOptimizationProblemOption() {
+		araMainPage.navigation().optimization().clickActionsButton()
+				.selectNewOptimizationProblemOption();
+	}
+
+	@When("select latest optimization problem")
+	public void selectCreatedOptimizationProblem() {
+		araMainPage.navigation().optimization()
+				.selectOptimization(newOptimizationName);
+	}
+
+	@When("select save optimization as option")
+	public void selectSaveAsOption() {
+		araMainPage.navigation().optimization().clickActionsButton()
+				.selectSaveAsOption();
+	}
+
+	@When("select Organize option in Action menu")
+	public void selectOrganizeOption() {
+		araMainPage.navigation().optimization().clickActionsButton()
+				.selectOrganizeOption();
+	}
+
+	@When("select Move Down option in Action menu")
+	public void selectMoveDownOption() {
+		araMainPage.navigation().optimization().clickActionsButton()
+				.selectMoveDownOption();
+	}
+
+	@When("select delete optimization option")
+	public void selectDeleteOptimizationOption() {
+		araMainPage.navigation().optimization().clickActionsButton()
+				.selectDeleteOption();
+	}
+
+	@Then("verify that New Optimization Problem window appears")
+	public void verifyNewOptimizationProblemWindowAppears() {
+		newOptimizationProblem.swichToNewOptimizationProblemDialog();
+	}
+
+	@Given("enter the name for your New Optimization Problem $reportName")
+	public void enterNameNewOptimizationProblem(String optimizationName) {
+		newOptimizationName = optimizationName
+				+ RandomStringUtils.randomNumeric(4);
+		System.out.println(newOptimizationName);
+		newOptimizationProblem.swichToNewOptimizationProblemDialog()
+				.enterNameNewOptimizationProblem(newOptimizationName);
+	}
+
+	@When("remember optimization name")
+	public void rememberOptimizationName() {
+		newOptimizationNameRem = newOptimizationName;
+		System.out.println("Remembered name is: " + newOptimizationName);
+	}
+
+	@Given("enter new name in save as dialog $optimizationName")
+	public void enterNameInSaveAsDialog(String optimizationName) {
+		newOptimizationName2 = optimizationName
+				+ RandomStringUtils.randomNumeric(4);
+		saveOptimizationAsDialog.switchToSaveOptimizationAsDialog()
+				.enterNameInSaveAsDialog(newOptimizationName2);
+	}
+
+	@When("click ok button")
+	public void clickOkButton() {
+		timestempValue = newOptimizationProblem
+				.acceptNewOptimizationProblemWindow();
+	}
+
+	@Then("verify that the created optimization appears as a branch from the Optimization section folder")
+	public void verifySubSectionFolderAppears() {
+		araMainPage.navigation();
+		assertTrue(optimizationNavigation
+				.verifySubSectionOptimizationAppears(newOptimizationName));
+	}
+
+	@Then("verify that the date and time displayed correctly")
+	public void verifyTheDateAndTimeDisplaeydCorrectly() {
+		araMainPage.navigation();
+		assertTrue(optimizationNavigation
+				.verifyTheDateAndTimeDisplaeydCorrectly(newOptimizationName,
+						timestempValue));
+	}
+
+	@Given("click Portfolio button")
+	public void clickPortfolioButton() {
+		newOptimizationProblem.swichToNewOptimizationProblemDialog()
+				.clickPortfolioButton();
+	}
+
+	@Given("click Upload button")
+	public void clickUploadButton() {
+		newOptimizationProblem.swichToNewOptimizationProblemDialog()
+				.clickUploadButton();
+	}
+
+	@Given("click New Folder")
+	public void clickNewFolderButton() {
+		newOptimizationProblem.swichToNewOptimizationProblemDialog()
+				.clickNewFolderButton();
+	}
+
+	@Then("verify that portfolio window appears")
+	public void verifyThatPortfolioWindowAppears() {
+		newOptimizationProblem.swichToNewOptimizationPortfolio();
+	}
+
+	@Then("verify that upload window appears")
+	public void verifyThatUploadWindowAppears() {
+		newOptimizationProblem.swichToNewOptimizationUpload();
+	}
+
+	@Then("verify that new folder window appears")
+	public void verifyThatNewFolderWindowAppears() {
+		newOptimizationProblem.swichToNewOptimizationNewFolder();
+	}
+
+	@Then("close upload window")
+	public void closeUploadWindow() {
+		newOptimizationProblem.closeUploadWindow();
+	}
+
+	@When("select portfolio $portfolioName in Portfolio Window")
+	public void selectPortfolio(String portfolioName) {
+		newOptimizationProblem
+				.selectPortfolioandclosePortfolioWindow(portfolioName);
+	}
+
+	@Then("verify that optimization is created and has selected portfolio $portfolioName")
+	public void verifyThatOptimizationHasSelectedPortfolio(String portfolioName) {
+		araMainPage.reportPaneBottom();
+		assertTrue(optimizationPane
+				.verifyThatOptimizationHasSelectedPortfolio(portfolioName));
+	}
+
+	@When("enter a name for new folder $folderName")
+	public void enterNameForNewFolder(String folderName) {
+		newFolderName = folderName + RandomStringUtils.randomNumeric(4);
+		newOptimizationProblem.swichToNewOptimizationNewFolder()
+				.typeNewFolderName(newFolderName);
+	}
+
+	@When("click OK button for New Folder window")
+	public void clickOKBtnForNewFolder() {
+		newOptimizationProblem.clickOKBtnForNewFolder();
+		araMainPage.closeEmptyOptimizationNewFolder();
+	}
+
+	@Then("verify that a Sub-Section is created and stored to created folder")
+	public void isSubSectionCreatedandStoredToCreatedFolder() {
+		araMainPage.navigation();
+		assertTrue(optimizationNavigation
+				.verifySubSectionOptimizationAppears(newFolderName));
+	}
+
+	@Then("verify that save as window appears")
+	public void verifyThatSaveAsWindowAppears() {
+		saveOptimizationAsDialog.switchToSaveOptimizationAsDialog();
+	}
+
+	@When("click ok button for save as dialog")
+	public void clickOkButtonForSaveAsDialog() {
+		saveOptimizationAsDialog.acceptSaveAsDialog();
+		araMainPage.closeEmptyWindow();
+	}
+
+	@When("accept delete optimization dialog")
+	public void acceptDeleteOptimizationDialog() {
+		optimizationNavigation.acceptDeleteOptimizationDialog();
+	}
+
+	@Then("verify that optimization is deleted")
+	public void verifyThatOptimizationIsDeleted() {
+		araMainPage.navigation();
+		assertFalse(optimizationNavigation
+				.verifySubSectionOptimizationAppears(newOptimizationName2));
+	}
+
+	@Then("verify that is deleted")
+	public void verifyThatIsDeleted() {
+		araMainPage.navigation();
+		assertFalse(optimizationNavigation
+				.verifySubSectionOptimizationAppears(newOptimizationName));
+	}
+
+	@Then("verify that Organize window appears")
+	public void verifyThatOrganizeWindowAppears() {
+		organizeOptimization.swichToOrganizerWindow();
+	}
+
+	@When("select folder to delete it")
+	public void selectFolderDelete() {
+		organizeOptimization.swichToOrganizerWindow().selectFolderDelete(organizerFolderName);
+	}
+
+	@When("click on New folder button")
+	public void clickOnNewFolderBtn() {
+		organizeOptimization.clickOnNewFolderBtn();
+	}
+
+	@When("click on Delete button")
+	public void clickOnDeleteBtn() {
+		organizeOptimization.clickOnDeleteBtn();
+		araMainPage.closeOrganizer();
+
+	}
+
+	@When("click on Move button")
+	public void clickOnMoveButon() {
+		organizeOptimization.clickOnMoveButon();
+	}
+
+	@When("enter new folder name and press ok button")
+	public void enterNewFolderNameAndPressOkButton() {
+		organizerFolderName = organizerFolderName
+				+ RandomStringUtils.randomNumeric(4);
+		organizeOptimization.swichToOrganizerNewFolderWindow()
+				.enterNewFolderName(organizerFolderName);
+		organizeOptimization.clickOkBtnForNewFolderDialog();
+		araMainPage.closeOrganizer();
+	}
+
+	@Then("verify that new folder is created with entered name")
+	public void verifyThatNewFolderIsCreatedWithEnteredName() {
+		araMainPage.navigation();
+		assertTrue(optimizationNavigation
+				.verifySubSectionFolderAppears(organizerFolderName));
+	}
+
+	@When("select previously created optimization for move down")
+	public void selectPreviouslyCreatedOptimization() {
+		araMainPage.navigation();
+		rowIndexBefore = optimizationNavigation
+				.selectPreviouslyCreatedOptimization(newOptimizationName);
+
+	}
+
+	@When("press ok for Organize window")
+	public void pressOkForOrganizeWindow() {
+		organizeOptimization.clickOkBtnForOrganizerWindow();
+	}
+
+	@Then("verify that optimization moved correctly")
+	public void verifyThatOptimizationMovedCorrectly() {
+		araMainPage.navigation();
+		rowIndexAfter = optimizationNavigation
+				.verifyThatOptimizationMovedCorrectly(newOptimizationName);
+		rowIndexBefore = rowIndexBefore + 1;
+		assertEquals(rowIndexBefore, rowIndexAfter);
+	}
+
+	@When("open Objective Function menu")
+	public void openObjectiveFunctionMenu() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.openObjectiveFunctionMenu();
+	}
+
+	@When("roll up Objective Function menu")
+	public void rollUpObjectiveFunctionMenu() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.rollUpObjectiveFunctionMenu();
+	}
+
+	@When("open Trade List & Limits menu")
+	public void openTradeListLimitsMenu() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.openTradeListLimitsMenu();
+	}
+
+	@When("open Global Constraints menu")
+	public void openGlobalConstraintsMenu() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.openGlobalConstraintsMenu();
+	}
+
+	@When("open Other Specifications menu")
+	public void openOtherSpecificationsMenu() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.openOtherSpecificationsMenu();
+	}
+
+	@Then("verify that Objective Function menu contains Function and Bound tables")
+	public void verifyObjectiveFunctionMenu() {
+		araMainPage.reportPaneBottom();
+		assertTrue(optimizationPane.verifyObjectiveFunctionMenu());
+	}
+
+	@When("select $functionName function from the Objective Function list box")
+	public void selectFunctionFromTheObjectiveFunctionList(String functionName) {
+		araMainPage.reportPaneBottom();
+		optimizationPane
+				.selectFunctionFromTheObjectiveFunctionList(functionName);
+	}
+
+	@When("select $itemName Attribute from the Objective Function list box")
+	public void selectItemFromFunctionAttributeList(String itemname) {
+		optimizationPane.selectItemFromFunctionAttributeList(itemname);
+	}
+
+	@When("select $scenarioSetName Scenario Set from the Objective Function list box")
+	public void selectScenarioSetFromFunctionList(String scenarioSetname) {
+		optimizationPane.selectScenarioSetFromFunctionList(scenarioSetname);
+	}
+
+	@When("select $timeValue Time from the Objective Function list box")
+	public void selectTimeFromObjectiveFunctionList(String timeValue) {
+		optimizationPane.selectTimeFromObjectiveFunctionList(timeValue);
+	}
+
+	@When("select $benchmark Benchmark from the Objective Function list box")
+	public void selectBenchmarkFromObjectiveFunctionList(String benchmark) {
+		optimizationPane.selectBenchmarkFromObjectiveFunctionList(benchmark);
+	}
+
+	@When("enter $value value into Relative Weight field")
+	public void enterValueIntoRelativeWeightField(String value) {
+		optimizationPane.enterValueIntoRelativeWeightField(value);
+	}
+
+	@Then("click Save button")
+	public void clickSaveButton() {
+		optimizationPane.clickSaveButton();
+	}
+
+	@Then("click Optimize button")
+	public void clickOptimizeButton() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.clickOptimizeButton();
+	}
+
+	@Then("verify that all changes are saved: $functionName, $attribute, $scenarioSetName, $timeValue, $benchmark, $relativeWeight")
+	public void verifyThatAllChangesAreSaved(String functionName,
+			String attribute, String scenarioSetName, String timeValue,
+			String benchmark, String relativeWeight) {
+		optimizationPane.verifyThatAllChangesAreSaved(functionName, attribute,
+				scenarioSetName, timeValue, benchmark, relativeWeight);
+	}
+
+	@When("click Add Bound button")
+	public void clickAddBoundButton() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.clickAddBoundButton();
+	}
+
+	@When("click Delete icon near necessary Bound row")
+	public void clickDeleteIconNearBound() {
+		optimizationPane.clickDeleteIconNearBound();
+	}
+
+	@Then("verify that bound deleted successfully")
+	public void verifyThatBoundDeletedSuccessfully() {
+		assertFalse(optimizationPane.verifyThatBoundDeletedSuccessfully());
+	}
+
+	@When("select $boundName bound in Bound table")
+	public void selectBoundInBoundTable(String boundName) {
+		optimizationPane.selectBoundInBoundTable(boundName);
+	}
+
+	@When("select $attributeValue Attribute in Bound table")
+	public void selectAttributeInBoundTable(String attributeValue) {
+		optimizationPane.selectAttributeInBoundTable(attributeValue);
+	}
+
+	@When("select $relationShip Relationship in Bound table")
+	public void selectRelationshipInBoundTable(String relationShip) {
+		optimizationPane.selectRelationshipInBoundTable(relationShip);
+	}
+
+	@When("set $value Bound value in Bound table")
+	public void setBoundValueInBoundTable(String value) {
+		optimizationPane.enterBoundValueInBoundTable(value);
+	}
+
+	@When("select $scenarioSetname Scenario Set in Bound table")
+	public void selectScenarioSetInBoundTable(String scenarioSetname) {
+		optimizationPane.selectScenarioSetInBoundTable(scenarioSetname);
+	}
+
+	@When("select $timeValue Time in Bound table")
+	public void selectTimeInBoundTable(String timeValue) {
+		optimizationPane.selectTimeInBoundTable(timeValue);
+	}
+
+	@When("select $benchmark Benchmark in Bound table")
+	public void selectBenchmarkInBoundTable(String benchmark) {
+		optimizationPane.selectBenchmarkInBoundTable(benchmark);
+	}
+
+	@Then("verify that all changes are applyed in Bound table $boundName, $attribute, $relationship, $boundValue, $scenarioSetName, $timeValue, $benchmark")
+	public void verifyThatAllChangesAreApplyedInBoundTable(String boundName,
+			String attribute, String relationship, String boundValue,
+			String scenarioSetName, String timeValue, String benchmark) {
+		optimizationPane
+				.verifyThatBoundChangesAreSaved(boundName, attribute,
+						relationship, boundValue, scenarioSetName, timeValue,
+						benchmark);
+	}
+
+	@Then("verify that problem optimized")
+	public void verifyThatProblemOptimized() {
+		araMainPage.refreshPage();
+		araMainPage.navigation();
+		assertTrue(optimizationNavigation.verifyResults());
+	}
+
+	@When("select Add/Remove option $value")
+	public void selectAddRemoveOption(String value) {
+		araMainPage.reportPaneBottom();
+		optimizationPane.selectAddRemoveOption(value);
+	}
+
+	@When("click add this portfolio to your Trade List & Limits Table")
+	public void clickAddThisPortfolioToTradeListLimitsTable() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.clickAddThisPortfolioToTradeListLimitsTable();
+	}
+
+	@When("select associated benchmark from Benchmark drop down $benchmarkName")
+	public void selectAssociatedBenchmarkFromBenchmarkDropDown(
+			String benchmarkName) {
+		araMainPage.reportPaneBottom();
+		optimizationPane
+				.selectAssociatedBenchmarkFromBenchmarkDropDown(benchmarkName);
+	}
+
+	@When("click Assign an associated benchmark button")
+	public void clickAssignAnAssociatedBenchmarkBtn() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.clickAssignAnAssociatedBenchmarkBtn();
+	}
+
+	@Then("verify that the values from Equiv % Weight (Bench) column are changed and the changes are displayed correctly")
+	public void verifyThatValuesFromEquivWeightBenchColumnAreChanged() {
+		araMainPage.reportPaneBottom();
+		assertTrue(
+				"Bug: 4000741400016810731 ",
+				optimizationPane
+						.verifyThatDataInColumnIsDisplayedCorrectly("Equiv % Weight (Bench)"));
+	}
+
+	@When("remember column order")
+	public void rememberColumnOrder() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.rememberValuesInColumn("22");
+	}
+
+	@When("click on an output column heading")
+	public void clickOnAnOutputColumnHeading() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.clickColumnHeader("22");
+	}
+
+	@Then("verify that the arrange contented in descending order")
+	public void verifyArrangeContentedInDescendingOrder() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.isColumnDataSorted("22", "descending");
+	}
+
+	@Then("verify that the arrange contented in ascending order")
+	public void verifyArrangeContentedInAscendingOrder() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.isColumnDataSorted("22", "ascending");
+	}
+
+	@Then("verify that the arrange contented back in their original order")
+	public void verifyThatArrangeContentedBackInTheirOriginalOrder() {
+		araMainPage.reportPaneBottom();
+		assertTrue(optimizationPane.isColumnDataChanged("22"));
+	}
+
+	@When("select Edit Table option")
+	public void selectEditTableOption() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.clickActionsButton().selectEditTableOption();
+	}
+
+	@When("get $outputName column position before editing table")
+	public void getColumnPositionBeforeEditingTable(String outputName) {
+		araMainPage.reportPaneBottom();
+		columnPositionBeforeMoving = optimizationPane
+				.getColumnPositionByName(outputName);
+	}
+
+	@When("move up output $outputName from the Selected fields list")
+	public void moveUpOutputFromSelectedFieldsList(String outputName) {
+		tradeListEditTableDialog.switchToTradeListEditTableDialog()
+				.selectOutputFromSelectedFields(outputName);
+		tradeListEditTableDialog.switchToTradeListEditTableDialog()
+				.clickMoveUpBtn();
+		tradeListEditTableDialog.switchToTradeListEditTableDialog()
+				.unSelectByValue(outputName, "o:EquivBenchmark%");
+	}
+
+	@When("remove output $outputName from the Selected fields list to the Available Fields list")
+	public void removeOutputFromSelectedFieldsToAvailableFields(
+			String outputName) {
+		tradeListEditTableDialog.switchToTradeListEditTableDialog()
+				.selectOutputFromSelectedFields(outputName);
+		tradeListEditTableDialog.switchToTradeListEditTableDialog()
+				.clickMoveLeftBtn();
+	}
+
+	@When("click Ok for Edit Table Dialog")
+	public void clickOkForEditTableDialog() {
+		tradeListEditTableDialog.clickOBtnTradeListEditTableDialog();
+	}
+
+	@Then("verify that the output $outputName is moved up")
+	public void verifyThatOutputIsMovedUp(String outputName) {
+		araMainPage.reportPaneBottom();
+		columnPositionAfterMoving = optimizationPane
+				.getColumnPositionByName(outputName);
+		assertEquals(columnPositionBeforeMoving - 1, columnPositionAfterMoving);
+	}
+
+	@Then("verify that the output $outputName is removed from the Selected fields")
+	public void verifyOutputIsRemovedFromSelectedFields(String outputName) {
+		araMainPage.reportPaneBottom();
+		assertFalse(optimizationPane.isColumnDisplayed(outputName));
+	}
+
+	@When("select aggregation for Optimization $aggragationName")
+	public void selectAggregation(String aggragationName) {
+		araMainPage.reportPaneParameters();
+		optimizationPane.selectAggregation(aggragationName);
+	}
+
+	@When("select Assign Tradable Group option")
+	public void selectAssignTradableGroupOption() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.clickActionsButton().selectAssignTradableGroupOption();
+	}
+
+	@When("select Unassign Tradable Group option")
+	public void selectUnassignTradableGroupOption() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.clickActionsButton()
+				.selectUnassignTradableGroupOption();
+	}
+
+	@When("select folder checkbox $folderName")
+	public void selectFolderCheckbox(String folderName) {
+		araMainPage.reportPaneBottom();
+		optimizationPane.selectFolderCheckbox(folderName);
+	}
+
+	@Then("verify that the input boxes are enable for checked books")
+	public void verifyThatInputBoxesAreEnableForCheckedBooks() {
+		araMainPage.reportPaneBottom();
+		assertTrue(optimizationPane
+				.verifyThatInputBoxesAreEnableForCheckedBooks());
+	}
+
+	@Then("verify that the input boxes are not displayed for checked books")
+	public void verifyThatInputBoxesAreNotDisplayedForCheckedBooks() {
+		araMainPage.reportPaneBottom();
+		assertFalse(optimizationPane
+				.verifyThatInputBoxesAreEnableForCheckedBooks());
+	}
+
+	@Then("verify that Global Constraints contains Global Constraints Menu and Global Constraint table")
+	public void verifyThatGlobalConstraintsContainsGlobalConstraintsMenuAndGlobalConstraintTable() {
+		araMainPage.reportPaneBottom();
+		assertTrue(optimizationPane.isGlobalConstraintsMenuDisplayed());
+		assertTrue(optimizationPane.isGlobalConstraintTableDisplayed());
+	}
+
+	@Then("verify that Parameters sub-section contains all options")
+	public void verifyThatParametersSubSectionContainsAllOptions() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.verifyThatParametersSubSectionContainsAllOptions();
+	}
+
+	@When("view default value of Aggregation field $value")
+	public void viewDefaultValueOfAggregationField(String value) {
+		araMainPage.reportPaneBottom();
+		defaultAggregationValue = optimizationPane
+				.viewDefaultValueOfAggregationField();
+		if (!defaultAggregationValue.equals(value)) {
+			System.out.println("WARNING! Default value is "
+					+ defaultAggregationValue);
+		}
+	}
+
+	@Then("verify that default value of Holdings is ALL")
+	public void verifyThatDefaultValueOfHoldingsIsALL() {
+		araMainPage.reportPaneBottom();
+		assertTrue(optimizationPane.verifyThatDefaultValueOfHoldingsIsALL());
+	}
+
+	@When("select value $value from Attribute drop-down list")
+	public void selectValueFromAttributeDropDownList(String value) {
+		araMainPage.reportPaneBottom();
+		optimizationPane.selectValueFromAttributeDropDownList(value);
+	}
+
+	@When("click calculate button for Attribute")
+	public void clickCalculateButtonForAttribute() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.clickCalculateButtonForAttribute();
+	}
+
+	@Then("verify that Calculate dialog-box appears and calculate function performs correctly")
+	public void verifyThatCalculateDialogAppearsCalculationiscorrect() {
+		assertTrue("Wrong amount", optimizationPane.switchToCalculateDialog()
+				.isAmountEquals("100.00%"));
+	}
+
+	@When("select Parameters Aggregation $aggregationName")
+	public void selectParametersAggregation(String aggregationName) {
+		araMainPage.reportPaneBottom();
+		optimizationPane.selectParametersAggregation(aggregationName);
+	}
+
+	@When("select Parameters Group $groupName")
+	public void selectParametersGroup(String groupName) {
+		araMainPage.reportPaneBottom();
+		optimizationPane.selectParametersGroup(groupName);
+	}
+
+	@When("select Parameters Holdings $holdingsName")
+	public void selectParametersHoldings(String holdingsName) {
+		araMainPage.reportPaneBottom();
+		optimizationPane.selectParametersHoldings(holdingsName);
+	}
+
+	@When("select Parameters Attribute $attributeName")
+	public void selectParametersAttribute(String attributeName) {
+		araMainPage.reportPaneBottom();
+		optimizationPane.selectParametersAttribute(attributeName);
+	}
+
+	@When("select Parameters Measure $measureName")
+	public void selectParametersMeasure(String measureName) {
+		araMainPage.reportPaneBottom();
+		optimizationPane.selectParametersMeasure(measureName);
+	}
+
+	@When("select Parameters Scenario Set $scenarioSet")
+	public void selectParametersScenarioSet(String scenarioSet) {
+		araMainPage.reportPaneBottom();
+		optimizationPane.selectParametersScenarioSet(scenarioSet);
+	}
+
+	@When("select Parameters Time $time")
+	public void selectParametersTime(String time) {
+		araMainPage.reportPaneBottom();
+		optimizationPane.selectParametersTime(time);
+	}
+
+	@When("select Parameters Trades $tradeName")
+	public void selectParametersTrades(String tradeName) {
+		araMainPage.reportPaneBottom();
+		optimizationPane.selectParametersTrades(tradeName);
+	}
+
+	@When("select Parameters Scale $scaleName")
+	public void selectParametersScale(String scaleName) {
+		araMainPage.reportPaneBottom();
+		optimizationPane.selectParametersScale(scaleName);
+	}
+
+	@When("select Parameters Soft Constraint $softConstrain")
+	public void selectParametersSoftConstraint(String softConstrain) {
+		araMainPage.reportPaneBottom();
+		optimizationPane.selectParametersSoftConstraint(softConstrain);
+	}
+
+	@Then("verify that the results of optimization are displayed correctly $aggName, $groupName, $holdingsName, $attributeName, $measureName, $scenarioSet, $time, $tradeName, $scale, $softConstraint")
+	public void verifyThatResultsOfOptimizationAreDisplayedCorrectly(
+			String aggName, String groupName, String holdingsName,
+			String attributeName, String measureName, String scenarioSet,
+			String time, String tradeName, String scale, String softConstraint) {
+		araMainPage.reportPaneBottom();
+		assertTrue(optimizationPane
+				.verifyThatResultsOfOptimizationAreDisplayedCorrectly(aggName,
+						groupName, holdingsName, attributeName, measureName,
+						scenarioSet, time, tradeName, scale, softConstraint));
+	}
+
+	@Then("verify that Relationship sub-section contains following options: Less Than/Equal To, Greater Than/Equal To, Equal To")
+	public void verifyThatRelationshipContainsOptions() {
+		araMainPage.reportPaneBottom();
+		assertTrue(optimizationPane.verifyThatRelationshipContainsOptions());
+	}
+
+	@Then("verify that Factor sub-section contains following options: Additive, Multiple")
+	public void verifyFactorContainsOptions() {
+		araMainPage.reportPaneBottom();
+		assertTrue(optimizationPane.verifyFactorContainsOptions());
+	}
+
+	@Then("verify that Target sub-section contains following options: Constant, Relative To Benchmark, Relative To Portfolio")
+	public void verifyTargetContainsOptions() {
+		araMainPage.reportPaneBottom();
+		assertTrue(optimizationPane.verifyTargetContainsOptions());
+	}
+
+	@When("click Constant radio-button")
+	public void clickConstantRadioButton() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.clickConstantRadioButton();
+	}
+
+	@Then("verify that Constant field appears")
+	public void verifyThatConstantFieldAppears() {
+		araMainPage.reportPaneBottom();
+		assertTrue(optimizationPane.verifyThatConstantFieldAppears());
+	}
+
+	@When("click Relative To Benchmark radio-button")
+	public void clickRelativeToBenchmarkRadiobutton() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.clickRelativeToBenchmarkRadiobutton();
+	}
+
+	@When("click Relative To Portfolio radio-button")
+	public void clickRelativeToPortfolioRadiobutton() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.clickRelativeToPortfolioRadiobutton();
+	}
+
+	@When("select Benchmark in Global Constraints Target menu $benchmarkName")
+	public void selectBenchmarkInGlobalConstraintsTargetMenu(
+			String benchmarkName) {
+		araMainPage.reportPaneBottom();
+		optimizationPane
+				.selectBenchmarkInGlobalConstraintsTargetMenu(benchmarkName);
+	}
+
+	@Then("verify that Benchmark and Time drop-down list appears")
+	public void verifyThatBenchmarkAndTimeDropDownListAppears() {
+		araMainPage.reportPaneBottom();
+		assertTrue(optimizationPane
+				.verifyThatBenchmarkAndTimeDropDownListAppears());
+	}
+
+	@Then("verify that drop-down with 'Whole Portfolio' and 'Equity' appears")
+	public void verifyThatDropDownWithWholePortfolioAndEquityAppears() {
+		araMainPage.reportPaneBottom();
+		assertTrue(optimizationPane
+				.verifyThatDropDownWithWholePortfolioAndEquityAppears());
+	}
+
+	@Then("verify that Portfolio and Time drop-down list appears")
+	public void verifyThatPortfolioAndTimeDropDownListAppears() {
+		araMainPage.reportPaneBottom();
+		assertTrue(optimizationPane
+				.verifyThatPortfolioAndTimeDropDownListAppears());
+	}
+
+	@When("click Add to Table button")
+	public void clickAddToTableButton() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.clickAddToTableButton();
+	}
+
+	@Then("verify that the restrictions appears on the Global Constraint table")
+	public void verifyRestrictionsAppearsOnTheGlobalConstraintTable() {
+		araMainPage.reportPaneBottom();
+		assertTrue(optimizationPane
+				.verifyRestrictionsAppearsOnTheGlobalConstraintTable());
+	}
+
+	@Then("verify that all users constraints are displayed in the Global Constraint table $aggName, $groupName, $attribute, $scenarioSet, $softConstainVal, $relationShip,$target,$factor")
+	public void verifyThatAllUsersConstraintsAreDisplayedInTheGlobalConstraintTable(
+			String aggName, String groupName, String attribute,
+			String scenarioSet, String softConstainVal, String relationShip,
+			String target, String factor) {
+		araMainPage.reportPaneBottom();
+		assertTrue(optimizationPane
+				.verifyThatAllUsersConstraintsAreDisplayedInTheGlobalConstraintTable(
+						aggName, groupName, attribute, scenarioSet,
+						softConstainVal, relationShip, target, factor));
+	}
+
+	@When("select created restriction")
+	public void selectCreatedRestriction() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.selectCreatedRestriction();
+	}
+
+	@When("click edit restriction button")
+	public void clickEditRestrictionButton() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.clickEditRestriction();
+	}
+
+	@When("change Soft Constraint, Relationship, Target, Factor values on the Global Constraints Menu $softConstainVal, $relationShip, $target, $factor")
+	public void changeValuesOnTheGlobalConstraintsMenu(String softConstainVal,
+			String relationShip, String target, String factor) {
+		araMainPage.reportPaneBottom();
+		optimizationPane.selectParametersSoftConstraint(softConstainVal);
+		optimizationPane.selectLessThanRelationship();
+		optimizationPane.selectRelativeToBenchmarkTarget();
+		optimizationPane.selectMultipleFactor();
+	}
+
+	@When("click Replace Entry button")
+	public void clickReplaceEntryButton() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.clickReplaceEntryButton();
+	}
+
+	@When("click Table Actions-> Delete selected")
+	public void clickTableActionsDeleteSelected() {
+		araMainPage.reportPaneBottom();
+		optimizationPane.clickTableActions().selectDeleteSelectedOption();
+	}
+
+	@Then("verify that selected row is deleted")
+	public void verifyThatSelectedRowIsDeleted() {
+		araMainPage.reportPaneBottom();
+		assertFalse(optimizationPane
+				.verifyRestrictionsAppearsOnTheGlobalConstraintTable());
+	}
+
+	@When("enter Maximum number of transactions $maxNumber")
+	public void enterMaximumNumberOfTransactions(String maxNumber) {
+		araMainPage.reportPaneBottom();
+		optimizationPane.enterMaximumNumberOfTransactions(maxNumber);
+	}
+
+	@When("enter Maximum number of positions $maxPosition")
+	public void enterMaximumNumberOfPositions(String maxPosition) {
+		araMainPage.reportPaneBottom();
+		optimizationPane.enterMaximumNumberOfPositions(maxPosition);
+	}
+
+	@Then("verify that the changes are applyed for transactions $maxNumber and positions $maxPosition")
+	public void verifyChangesAreApplyedForTransactionsAndPositions(
+			String maxNumber, String maxPosition) {
+		araMainPage.reportPaneBottom();
+		assertTrue(optimizationPane
+				.verifyChangesAreApplyedForTransactionsAndPositions(maxNumber,
+						maxPosition));
+	}
+
+	@When("enter value into Cash In/Out text box $value")
+	public void enterValueIntoCashInOutTextBox(String value) {
+		araMainPage.reportPaneBottom();
+		optimizationPane.enterValueIntoCashInOutTextBox(value);
+	}
+
+	@When("select currency from currency drop down list $currency")
+	public void selectCurrencyFromCurrencyDropDownList(String currency) {
+		araMainPage.reportPaneBottom();
+		optimizationPane.selectCurrencyFromCurrencyDropDownList(currency);
+	}
+
+	@When("go to other Optimization Problem on the Navigation panel")
+	public void goToOtherOptimizationProblem() {
+		araMainPage.navigation();
+		optimizationNavigation
+				.goToOtherOptimizationProblem(newOptimizationNameRem);
+	}
+
+	@When("open changed Optimization Problem")
+	public void openChangedOptimizationProblem() {
+		araMainPage.navigation();
+		optimizationNavigation.selectOptimization(newOptimizationName);
+		System.out.println("Changed optimization name is: "
+				+ newOptimizationName);
+	}
+
+	@Then("verify that the changes areapplyed correctly for Cash In/Out $value and currency $currency")
+	public void verifyChangesApplyedCorrectlyForCashInOutAndCurrency(
+			String value, String currency) {
+		araMainPage.reportPaneBottom();
+		assertTrue(optimizationPane
+				.verifyChangesApplyedCorrectlyForCashInOutAndCurrency(value,
+						currency));
+	}
+
+	@When("enter information into Comments field $information")
+	public void enterInformationIntoCommentsField(String information) {
+		araMainPage.reportPaneBottom();
+		optimizationPane.enterInformationIntoCommentsField(information);
+	}
+
+	@Then("verify that the comments are displayed correctly $commments")
+	public void verifyThatTheCommentsAreDisplayedCorrectly(String comments) {
+		assertTrue(optimizationPane
+				.verifyThatTheCommentsAreDisplayedCorrectly(comments));
+	}
+
+	@When("click Root Portfolio search button on the Problem Specification view")
+	public void clickRootPortfolioSearchButtonOnTheProblemSpecificationView() {
+		araMainPage.reportPaneBottom();
+		optimizationPane
+				.clickRootPortfolioSearchButtonOnTheProblemSpecificationView();
+	}
+
+	@When("select searched portfolio $portfilio")
+	public void selectSearchedPortfolio(String portfilio) {
+		araMainPage.selectOzPortfolioDialog().selectPortfolio(portfilio);
+	}
+
+	@When("select optimization by name $optimizationName")
+	public void selectOptimizationByName(String optimizationName) {
+		araMainPage.navigation();
+		optimizationNavigation.selectOptimization(optimizationName);
+	}
+
+}

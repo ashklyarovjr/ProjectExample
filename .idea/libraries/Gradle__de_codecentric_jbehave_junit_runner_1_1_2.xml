@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: de.codecentric:jbehave-junit-runner:1.1.2">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/de.codecentric/jbehave-junit-runner/1.1.2/f4cef12b55cfed9e0d68f7297e7091599ea5502b/jbehave-junit-runner-1.1.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/de.codecentric/jbehave-junit-runner/1.1.2/571650c83eeaf52aecbab80d5514dbc8220faff9/jbehave-junit-runner-1.1.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

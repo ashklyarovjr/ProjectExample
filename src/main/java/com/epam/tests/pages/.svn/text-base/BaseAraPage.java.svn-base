@@ -1,0 +1,380 @@
+package com.epam.ara.arapage;
+
+import static java.lang.String.format;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.fail;
+
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Logger;
+import org.jbehave.web.selenium.FluentWebDriverPage;
+import org.jbehave.web.selenium.WebDriverProvider;
+import org.openqa.selenium.*;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import com.epam.ara.constants.AlgoRiskConstants;
+import com.epam.ara.constants.IBaseConstants;
+
+public abstract class BaseAraPage extends FluentWebDriverPage {
+
+	protected Logger log = Logger.getLogger(getClass());
+
+	private static long DEFAULT_WAIT_TIMEOUT_IS_SECONDS = 90;
+	private boolean isMulti;
+	protected WebDriverWait wait;
+	public static IBaseConstants locators;
+
+	static {
+		locators = AlgoRiskConstants.getInstance();
+	}
+
+	public BaseAraPage(WebDriverProvider driverProvider) {
+		super(driverProvider);
+		wait = new WebDriverWait(driverProvider.get(),
+				DEFAULT_WAIT_TIMEOUT_IS_SECONDS);
+		wait.ignoring(StaleElementReferenceException.class,
+				WebDriverException.class);
+		PageFactory.initElements(driverProvider.get(), this);
+	}
+
+	public void found(String text) {
+		found(getPageSource(), text);
+	}
+
+	public void found(String pageSource, String text) {
+		if (!pageSource.contains(escapeHtml(text))) {
+			fail("Text: '" + text + "' not found in page '" + pageSource + "'");
+		}
+	}
+
+	public void found(List<String> texts) {
+		for (String text : texts) {
+			found(text);
+		}
+	}
+
+	public void notFound(String text) {
+		notFound(getPageSource(), text);
+	}
+
+	public void notFound(String pageSource, String text) {
+		assertThat(pageSource.contains(escapeHtml(text)), is(false));
+	}
+
+	private String escapeHtml(String text) {
+		return text.replace("<", "&lt;").replace(">", "&gt;");
+	}
+
+	/**
+	 * Override base selenium method select By value
+	 * 
+	 * @param value
+	 */
+	protected void selectByValue(WebElement element, String value) {
+		StringBuilder builder = new StringBuilder(".//option[@value = ");
+		builder.append(escapeQuotes(value));
+		builder.append("]");
+		List<WebElement> options = element.findElements(By.xpath(builder
+				.toString()));
+
+		boolean matched = false;
+		for (WebElement option : options) {
+			setSelected(option);
+			matched = true;
+		}
+
+		if (!matched) {
+			throw new NoSuchElementException(
+					"Cannot locate option with value: " + value);
+		}
+	}
+
+	/*
+	 * Methods for locating elements Elements
+	 */
+	public WebElement findByXPATH(String locator) {
+		return findElement(By.xpath(locator));
+	}
+
+	public WebElement findById(String id) {
+		return findElement(By.id(id));
+	}
+
+	public WebElement findByName(String name) {
+		return findElement(By.className(name));
+	}
+
+	public WebElement findByClassName(String className) {
+		return findElement(By.className(className));
+	}
+
+	public WebElement findByCss(String cssSelector) {
+		return findElement(By.cssSelector(cssSelector));
+	}
+
+	/*
+    *
+     */
+
+	public void typeInto(WebElement input, String text) {
+		input.clear();
+		input.sendKeys(text);
+	}
+
+	public void waitForVisible(WebElement element) {
+		wait.until(ExpectedConditions.visibilityOf(element));
+	}
+
+	public boolean isPresent(WebElement element) {
+		try {
+			return element.isDisplayed();
+		} catch (NoSuchElementException ex) {
+			log.error(format("Element %s is not present "
+					+ element.getTagName()));
+			ex.printStackTrace();
+			return false;
+		}
+	}
+
+	protected void unSelectByValue(WebElement element, String value) {
+		StringBuilder builder = new StringBuilder(".//option[@value = ");
+		builder.append(escapeQuotes(value));
+		builder.append("]");
+		List<WebElement> options = element.findElements(By.xpath(builder
+				.toString()));
+		boolean matched = false;
+		for (WebElement option : options) {
+			if (option.isSelected()) {
+				option.click();
+			}
+			matched = true;
+		}
+		if (!matched) {
+			throw new NoSuchElementException(
+					"Cannot locate option with value: " + value);
+		}
+
+	}
+
+	protected String escapeQuotes(String toEscape) {
+		// Convert strings with both quotes and ticks into: foo'"bar ->
+		// concat("foo'", '"', "bar")
+		if (toEscape.indexOf("\"") > -1 && toEscape.indexOf("'") > -1) {
+			boolean quoteIsLast = false;
+			if (toEscape.indexOf("\"") == toEscape.length() - 1) {
+				quoteIsLast = true;
+			}
+			String[] substrings = toEscape.split("\"");
+
+			StringBuilder quoted = new StringBuilder("concat(");
+			for (int i = 0; i < substrings.length; i++) {
+				quoted.append("\"").append(substrings[i]).append("\"");
+				quoted.append(((i == substrings.length - 1) ? (quoteIsLast
+						? ", '\"')"
+						: ")") : ", '\"', "));
+			}
+			return quoted.toString();
+		}
+
+		// Escape string with just a quote into being single quoted:
+		// f"oo -> 'f"oo'
+		if (toEscape.indexOf("\"") > -1) {
+			return format("'%s'", toEscape);
+		}
+
+		// Otherwise return the quoted string
+		return format("\"%s\"", toEscape);
+	}
+
+	public boolean isMultiple() {
+		return isMulti;
+	}
+
+	private void setSelected(WebElement option) {
+		if (!option.isSelected()) {
+			option.click();
+		}
+	}
+
+	protected BaseAraPage waitUntilFrameIsLoaded(final String frameName,
+			final By formLocator) {
+		wait.until(new ExpectedCondition<Boolean>() {
+			public Boolean apply(WebDriver webDriver) {
+				return webDriver.switchTo().defaultContent().switchTo()
+						.frame(frameName).findElement(formLocator)
+						.isDisplayed();
+			}
+		});
+		return this;
+	}
+
+	public void clickOKButton() {
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		WebElement btn_ok = findElement(BaseAraPage.locators.getOK_BTN());
+		btn_ok.click();
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void clickCancelButton() {
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		WebElement btn_cancel = findElement(BaseAraPage.locators
+				.getCANCEL_BTN());
+		btn_cancel.click();
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public boolean isApplicationErrorPresent() {
+		try {
+			implicityWait(0);
+			findElement(By.name("Error_Img"));
+			findElement(By
+					.xpath("//span[contains(text(),'Application Error')]"));
+			log.error("Application Error");
+			return true;
+		} catch (NoSuchElementException e) {
+			return false;
+		} finally {
+			implicityWait(10);
+		}
+	}
+
+	protected void implicityWait(int seconds) {
+		manage().timeouts().implicitlyWait(seconds, TimeUnit.SECONDS);
+	}
+
+	protected void delay(int millis) {
+		try {
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+			log.error("Thread error " + e.getMessage());
+		}
+	}
+
+	public double parseCellValue(String text) {
+		try {
+			if (text.isEmpty() | text.equals(" ")) {
+				text = "0";
+			} else if (text.contains("%")) {
+				text = text.substring(0, text.indexOf("%"));
+			} else {
+				text = text.replaceAll(",", "");
+			}
+			return Double.parseDouble(text);
+		} catch (StringIndexOutOfBoundsException e) {
+			log.info("Cell value has incorrect format");
+			throw new NumberFormatException();
+		}
+	}
+
+	/**
+	 * Use this method to switch into modal dialog. Passed as a parameter, a
+	 * unique part of URl modal window
+	 */
+	protected void switchToModal(String modalUrl) {
+		Set<String> handlers = getWindowHandles();
+		int i = 0;
+		// This is necessary to obtain the correct amount of window handlers
+		while (i < 3) {
+			handlers = getWindowHandles();
+			i++;
+		}
+		if (handlers.size() > 1) {
+			for (String handler : handlers) {
+				if (isCurrentDialog(handler, modalUrl)) {
+					switchTo().window(handler);
+					break;
+				}
+			}
+		} else {
+			System.out.println("No windows founded!");
+		}
+	}
+
+	public void switchToMainWindow() {
+		switchTo().window(AraMainPage.getMainWindowHandler());
+	}
+
+	protected boolean isCurrentDialog(String modalHandler, String modalUrl) {
+		String MAIN_WINDOW_HANDLER = AraMainPage.getMainWindowHandler();
+		try {
+			switchTo().window(modalHandler);
+			if (!modalHandler.equals(MAIN_WINDOW_HANDLER)
+					&& getCurrentUrl().contains(modalUrl)) {
+				return true;
+			}
+		} catch (NoSuchWindowException e) {
+			log.info("Empty window detected");
+		}
+		return false;
+	}
+
+	protected void waitForNumberOfWindowsToEqual(final int numberOfWindows) {
+		new WebDriverWait(getDriverProvider().get(), 10) {
+		}.until(new ExpectedCondition<Boolean>() {
+			@Override
+			public Boolean apply(WebDriver driver) {
+				return (driver.getWindowHandles().size() >= numberOfWindows);
+			}
+		});
+	}
+
+	protected void selectTimeInFuture(Select monthSelect, Select daySelect,
+			Select hoursSelect) {
+		long DIFFERENCE_BETWEEN_ZONES = 3720000;
+		int START_TIME_DIFFERENCE = 1;
+		int END_OF_DAY = 23;
+		int startTime = 0;
+		boolean isValidDate = false;
+		String currentMonth = "";
+		String currentDay = "";
+		String currenHour;
+		Calendar calendar = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("MMMMM dd yyyy HH a",
+				Locale.CANADA);
+		sdf.setTimeZone(TimeZone.getTimeZone("EST"));
+		while (!isValidDate) {
+			String currentTime = sdf.format(calendar.getTimeInMillis()
+					+ DIFFERENCE_BETWEEN_ZONES);
+			log.info("Current System time : " + currentTime);
+			String[] splitedDate = currentTime.split(" ");
+			currentMonth = splitedDate[0];
+			currentDay = splitedDate[1];
+			currenHour = splitedDate[3];
+			startTime = Integer.parseInt(currenHour) + START_TIME_DIFFERENCE;
+			if (startTime >= END_OF_DAY) {
+				calendar.add(Calendar.DATE, 1);
+				calendar.add(Calendar.HOUR_OF_DAY, 1);
+			} else {
+				isValidDate = true;
+			}
+		}
+		currenHour = format("%02d", startTime);
+		monthSelect.selectByValue(currentMonth);
+		daySelect.selectByValue(currentDay);
+		hoursSelect.selectByValue(currenHour);
+	}
+}

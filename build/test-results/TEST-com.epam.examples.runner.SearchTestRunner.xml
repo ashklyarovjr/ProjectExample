@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.epam.examples.runner.SearchTestRunner" tests="1" skipped="0" failures="0" errors="0" timestamp="2015-04-14T14:28:46" hostname="EPUAKHAW0083" time="32.739">
+  <properties/>
+  <testcase name="run" classname="com.epam.examples.runner.SearchTestRunner" time="32.739"/>
+  <system-out><![CDATA[Using executor service com.google.common.util.concurrent.MoreExecutors$DirectExecutorService@f941ed8
+Processing system properties {}
+Using controls EmbedderControls[batch=false,skip=false,generateViewAfterStories=true,ignoreFailureInStories=false,ignoreFailureInView=false,verboseFailures=false,verboseFiltering=false,storyTimeoutInSecs=1000,failOnStoryTimeout=false,threads=1]
+
+(BeforeStories)
+
+Running story Search.story
+
+(Search.story)
+Narrative:
+In order to use application functionality
+As a user
+I want to verify search window
+Scenario: 1.1.1 Verify that enter correct value in search field will give search results
+Given I am on search page
+When Enter the value in Search field whether
+And click on search button
+Then verify the search results
+
+Scenario: 1.1.2 Verify that enter incorrect value in search field will not give any results
+Given I am on search page
+When Enter the value in Search field ---
+And click on search button
+Then verify the message
+
+Scenario: 1.1.3 As a user I want to click on the first link in results
+Given I am on search page
+When Enter the value in Search field whether
+And click on search button
+Then verify the search results
+And click on the first link in results
+And verify that the first link opened
+
+
+
+(AfterStories)
+
+Generating reports view to 'D:\BDD task\ProjectExample\target\jbehave' using formats '[xml, stats, console, html]' and view properties '{navigator=ftl/jbehave-navigator.ftl, views=ftl/jbehave-views.ftl, reports=ftl/jbehave-reports-with-totals.ftl, nonDecorated=ftl/jbehave-report-non-decorated.ftl, decorated=ftl/jbehave-report-decorated.ftl, maps=ftl/jbehave-maps.ftl}'
+Reports view generated with 1 stories (of which 0 pending) containing 3 scenarios (of which 0 pending)
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

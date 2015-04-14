@@ -1,0 +1,348 @@
+package com.epam.ara.steps;
+
+import static org.junit.Assert.assertTrue;
+
+import org.apache.commons.lang3.RandomStringUtils;
+import org.jbehave.core.annotations.BeforeScenario;
+import org.jbehave.core.annotations.Given;
+import org.jbehave.core.annotations.Then;
+import org.jbehave.core.annotations.When;
+
+import com.epam.ara.arapage.AraMainPage;
+import com.epam.ara.arapage.PageFactory;
+import com.epam.ara.arapage.navigationpanel.sheduler.NewScheduler;
+import com.epam.ara.arapage.navigationpanel.sheduler.Scheduler;
+
+public class SchedulerSteps {
+	private final PageFactory pages;
+	private NewScheduler new_scheduler;
+	private Scheduler scheduler;
+	private AraMainPage araMainPage;
+
+	private static String scheduledReportName = "";
+	private static String schedule_exp_report_name = "";
+	private static String schedule_PDF_report_name = "";
+
+	public SchedulerSteps(PageFactory pages) {
+		this.pages = pages;
+	}
+
+	@BeforeScenario
+	public void setupPages() {
+		araMainPage = pages.newAraPage();
+		new_scheduler = pages.newNewScheduler();
+		scheduler = pages.newScheduler();
+
+	}
+
+	// Method select scheduler in navigation panel
+	@Given("navigate to Scheduler Tab")
+	public void navigateToSchedulerTab() {
+		araMainPage.navigation().scheduler();
+	}
+
+	@Given("navigate to New Scheduler Report")
+	public void navigateToNewSchedulerReport() {
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		araMainPage.navigation().scheduler().clickActionsButton()
+				.selectNewSchedulerReport();
+		try {
+			Thread.sleep(20000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		new_scheduler.pageIsShown();
+	}
+
+	@When("add output $outputName from Available Outputs")
+	public void addOutputFromAvailableOutputs(String outputName) {
+		new_scheduler.addOutputFromAvailableOutputs(outputName);
+	}
+
+	@When("click Select All Button")
+	public void clickSelectAllButton() {
+		new_scheduler.clickSelectAllButton();
+	}
+
+	@When("click Add button")
+	public void clickAddButton() {
+		new_scheduler.clickAddButton();
+	}
+
+	@When("click expand Portfolio Tab")
+	public void expandPortfolioTab() {
+		new_scheduler.expandPortfolioTab();
+	}
+
+	@When("click expand Schedule Tab")
+	public void expandScheduleTab() {
+		new_scheduler.expandScheduleTab();
+	}
+
+	@When("select Aggregation $aggName")
+	public void selectAggregation(String aggName) {
+		new_scheduler.selectAggregation(aggName);
+	}
+
+	@When("click Add To Table Button")
+	public void clickAddToTableButton() {
+		new_scheduler.clickAddToTableBtn();
+	}
+
+	@When("specify Start Time")
+	public void specifyStartTime() {
+		new_scheduler.specifyStartTime();
+	}
+
+	@When("set Scheduled Report Name $reportName")
+	public void setScheduledReportName(String reportName) {
+		scheduledReportName = reportName;
+		new_scheduler.setScheduledReportName(scheduledReportName);
+	}
+
+	@Then("save scheduled report")
+	public void saveScheduledReport() {
+		new_scheduler.saveScheduledReport();
+		// new_scheduler.waitOnCompletedState(scheduledReportName); //creation
+		// schedule now is in precondition steps no need wait
+		araMainPage.navigation().onlineReports().reportsTab();
+	}
+
+	public static String getScheduledReportName() {
+		return scheduledReportName;
+	}
+
+	@Given("select portfolio $portfolioName")
+	public void selectPortfolio(String portfolioName) {
+		araMainPage.navigation().onlineReports().portfolioTab()
+				.selectPortfolioByName(portfolioName);
+	}
+
+	@Given("select print report PDF option")
+	public void selectPrintReportPDFOption() {
+		araMainPage.navigation().onlineReports().reportsTab()
+				.clickActionsButton().selectPrintReportPDFOption();
+	}
+
+	@Given("select Schedule PDF Report option")
+	public void selectSchedulePDFReportOption() {
+		araMainPage.navigation().onlineReports().reportsTab()
+				.clickActionsButton().selectSchedulePDFReportOption();
+	}
+
+	@Then("verify that selected preferences are executed correctly $preference")
+	public void verifySelectedPreferencesAreExecuted(String preference) {
+		araMainPage.printReportDialog().verifySelectedPageSize(preference);
+		// araMainPage.printReportDialog().cancelPrintReportDialog();
+	}
+
+	@Then("verify that selected Page Orientation is Portrait")
+	public void isSelectedPageOrientationPortrait() {
+		assertTrue(araMainPage.printReportDialog()
+				.isPortraitPageOrientationSelected());
+	}
+
+	@Then("verify that selected Page Orientation is Landscape")
+	public void isSelectedPageOrientationLandscape() {
+		araMainPage.printReportDialog().isLanscapePageOrientationSelected();
+	}
+
+	@Then("verify that selected Page Layout is Full Report")
+	public void isSelectedPageLayoutFull() {
+		assertTrue(araMainPage.printReportDialog()
+				.isFullOptionPageLayoutSelected());
+	}
+
+	@Then("verify that selected Page Layout is Screen Report")
+	public void isSelectedPagePageLayoutScreen() {
+		assertTrue(araMainPage.printReportDialog()
+				.isScreenOptionPageLayoutSelected());
+	}
+
+	@Given("cancel Print Report dialog")
+	public void closePrintReportDialog() {
+		araMainPage.printReportDialog().cancelPrintReportDialog();
+	}
+
+	@Given("click on Header tab")
+	public void clickOnHeaderTab() {
+		araMainPage.printReportDialog().clickOnHeaderTab();
+	}
+
+	@Then("verify Header dialog box view")
+	public void verifyHeaderDialogBoxView() {
+		assertTrue(araMainPage.printReportDialog().verifyHeaderDialogBoxView());
+	}
+
+	@When("check Include Report Name")
+	public void checkIncludeReportName() {
+		araMainPage.printReportDialog().checkIncludeReportName();
+	}
+
+	@Then("verify that Report Name appeared on Print page $reportName")
+	public void verifyThatReportNameAppearedOnPrintPage(String reportName) {
+		araMainPage.printReportDialog().pressPrintButton();
+	}
+
+	@When("select export date in Report View")
+	public void selectExportDateInReportView() {
+		araMainPage.reportPaneBottom().reportPaneBottomTable().clickAction()
+				.selectExportOption().selectDataOption();
+	}
+
+	@When("select Schedule Export for Report")
+	public void selectScheduleExport() {
+		araMainPage.reportPaneBottom().reportPaneBottomTable().clickAction()
+				.selectExportOption().selectScheduleOption();
+	}
+
+	@Then("verify that Schedule Export dialog box appeared")
+	public void verifyScheduleExportDialogBoxAppers() {
+		assertTrue(araMainPage.scheduleExportDialog()
+				.verifyScheduleExportDialogAppers());
+	}
+
+	@Then("verify that elements for Schedule Export view are present")
+	public void verifyThatElementsForScheduleExportArePresent() {
+		assertTrue(araMainPage.scheduleExportDialog()
+				.verifyScheduleExportDialogView());
+		araMainPage.scheduleExportDialog().cancelScheduleExportDialog();
+	}
+
+	@Then("verify data displayed in CSV format")
+	public void verifyDataDisplayedInCSVFormat() {
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.selectCSVData());
+
+	}
+
+	@Given("enter schedule export report name $report_name")
+	public void enterScheduleExportReportName(String report_name) {
+		schedule_exp_report_name = report_name
+				+ RandomStringUtils.randomNumeric(4);
+		araMainPage.scheduleExportDialog().setScheduleExportReportName(
+				schedule_exp_report_name);
+
+	}
+
+	@Given("choose time in future")
+	public void chooseTimeInFuture() {
+		araMainPage.scheduleExportDialog().chooseTimeInFuture();
+	}
+
+	@When("click OK button for schedule export")
+	public void clickOkButtonForScheduleExport() {
+		araMainPage.scheduleExportDialog().applyScheduleExportDialog();
+		araMainPage.closeEmptyWindow();
+	}
+
+	@Then("verify that Report name appeared in Summary of CSV Reports table")
+	public void verifyReportNameApperedInSummaryCSVReportsTable() {
+		assertTrue(scheduler.switchToSchedulerTableFrame()
+				.verifyReportNameAppered(schedule_exp_report_name));
+	}
+
+	@Then("verify that Report name appeared in Summary of PDF Reports table")
+	public void verifyReportNameApperedInSummaryPDFReportsTable() {
+		assertTrue(scheduler.switchToSchedulerTableFrame()
+				.verifyReportNameAppered(schedule_exp_report_name));
+	}
+
+	@Then("verify that Report name $reportName displayed in Summary of CSV Reports table")
+	public void verifyReportNameDisplayedInSummaryCSVReportsTable(
+			String reportName) {
+		assertTrue(scheduler.switchToSchedulerTableFrame()
+				.verifyReportNameAppered(reportName));
+	}
+
+	@Then("verify that Report Status is pending")
+	public void verifyReportStatusIsPending() {
+		assertTrue(scheduler.switchToSchedulerTableFrame()
+				.verifyReportStatusIsPending(schedule_exp_report_name));
+	}
+
+	@Then("verify that Schedule PDF Report Status is pending")
+	public void verifySchedulePDFReportStatusIsPending() {
+		assertTrue(scheduler.switchToSchedulerTableFrame()
+				.verifyReportStatusIsPending(schedule_PDF_report_name));
+	}
+
+	@Then("verify that Schedule PDF Report dialog box appeared")
+	public void verifySchedulePDFReportDialogBoxAppers() {
+		assertTrue(araMainPage.schedulePDFReportDialog()
+				.verifySchedulePDFReportDialogAppers());
+	}
+
+	@Then("verify that elements for Schedule PDF Report view are present")
+	public void verifyElementsSchedulePDFReportView() {
+		assertTrue(araMainPage.schedulePDFReportDialog()
+				.verifyElementsSchedulePDFReportView());
+	}
+
+	// ===================================================================================================
+
+	@Given("enter schedule PDF report name $report_name")
+	public void enterSchedulePDFReportName(String report_name) {
+		schedule_PDF_report_name = report_name
+				+ RandomStringUtils.randomNumeric(4);
+		araMainPage.schedulePDFReportDialog().setSchedulePDFReportName(
+				schedule_PDF_report_name);
+
+	}
+
+	@Given("choose time in future for Schedule PDF")
+	public void chooseTimeInFutureforSchedulePDF() {
+		araMainPage.schedulePDFReportDialog().chooseTimeInFuture();
+	}
+
+	@When("click OK button for schedule PDF")
+	public void clickOkButtonForSchedulePDF() {
+		araMainPage.schedulePDFReportDialog().acceptSchedulePDFDialog();
+	}
+
+	@Then("verify that Report name appeared in Summary of CSV Reports table for Shedule PDF")
+	public void verifyReportNameApperedInSummaryCSVReportsTableforSchedulePDF() {
+		assertTrue(scheduler.switchToSchedulerTableFrame()
+				.verifyReportNameAppered(schedule_PDF_report_name));
+	}
+
+	@Then("verify that Report name appeared in Summary of PDF Reports table for Shedule PDF")
+	public void verifyReportNameApperedInSummaryPDFReportsTableforSchedulePDF() {
+		assertTrue(scheduler.switchToSchedulerTableFrame()
+				.verifyReportNameAppered(schedule_PDF_report_name));
+	}
+
+	@Given("select report folder $folderName")
+	public void selectReportbyName(String folderName) {
+		araMainPage.navigation().selectReportFolder(folderName);
+
+		/*
+		 * araMainPage.navigation().onlineReports().reportsTab()
+		 * .selectReportFolder(folderName);
+		 */
+	}
+
+	@Then("verify that the $difference measure is the difference between the $measure1 and $measure2 measures")
+	public void verifyThatMeasuresDifferent(String difference, String measure1,
+			String measure2) {
+		assertTrue(araMainPage
+				.reportPaneBottom()
+				.reportPaneBottomTable()
+				.verifyDifferenceBetweenMeasures(measure1, measure2, difference));
+	}
+
+	@Given("select scheduler report by name $reportName")
+	public void selectSchedulerReportbyName(String reportName) {
+		araMainPage.navigation().scheduler().selectReportByName(reportName);
+	}
+
+}

@@ -1,0 +1,566 @@
+package com.epam.ara.steps;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.jbehave.core.annotations.BeforeScenario;
+import org.jbehave.core.annotations.Given;
+import org.jbehave.core.annotations.Then;
+import org.jbehave.core.annotations.When;
+
+import com.epam.ara.arapage.AraMainPage;
+import com.epam.ara.arapage.PageFactory;
+import com.epam.ara.arapage.navigationpanel.benchmarks.Benchmarks;
+import com.epam.ara.arapage.navigationpanel.benchmarks.dialogs.CreateVirtualBlendedBenchmarkDialog;
+import com.epam.ara.arapage.navigationpanel.benchmarks.dialogs.RetrieveVirtualBenchmarkDialog;
+import com.epam.ara.arapage.navigationpanel.onlinereports.OnlineReports;
+import com.epam.ara.arapage.navigationpanel.portfolios.dialogs.SaveVirtualPortfolioDialog;
+import com.epam.ara.arapage.preferences.GeneralPreferences;
+
+public class BenchmarkSteps {
+
+	private final PageFactory pages;
+
+	private AraMainPage araMainPage;
+	private Benchmarks benchmarks;
+	private OnlineReports onlineReports;
+	private GeneralPreferences generalPreferences;
+
+	public BenchmarkSteps(PageFactory pages) {
+		this.pages = pages;
+	}
+
+	@BeforeScenario
+	public void setupPages() {
+		araMainPage = pages.newAraPage();
+		benchmarks = pages.newBenchmarks();
+		onlineReports = pages.newOnlinaReports();
+		generalPreferences = pages.newGeneralPreferences();
+	}
+
+	// ============= Benchmark creation
+
+	@When("I go to Benchmark Tab")
+	public void navigateToBenchmarkTab() {
+		araMainPage.navigation().benchmarks();
+		benchmarks.moveToFolder();
+	}
+
+	@Given("I click Actions button at Benchmarks Tab")
+	public void clickBenchmarksActionBUtton() {
+		araMainPage.navigation().benchmarks().clickActionsButton();
+	}
+
+	@When("I select Actions -> $menuItem")
+	public void selectActionsCreateVirtualBlendedBenchmark(String menuItem) {
+		benchmarks.clickActionsButton().clickOnActionsMenuItem(menuItem);
+	}
+
+	@Then("verify that Create Virtual Benchmark dialog $dialogName is present")
+	public void verifyThatCreateVirtualBlendedBenchmarkDialogIsPresent(
+			String dialogName) {
+		assertEquals("Dialog does not present", dialogName, araMainPage
+				.createVirtualBlendedBenchmarkDialog().getTitle());
+	}
+
+	@Then("verify that there is text field 'Name' in Create Virtual Benchmark dialog")
+	public void verifyTextFieldIsPresent() {
+		assertTrue("Field 'Name' does not present", araMainPage
+				.createVirtualBlendedBenchmarkDialog().isTestFieldPresent());
+	}
+
+	@When("enter Benchmark Name $name")
+	public void enterBenchmarkName(String name) {
+		araMainPage.createVirtualBlendedBenchmarkDialog().enterBenchmarkName(
+				name);
+	}
+
+	@When("I accept Create Virtual Benchmark dialog")
+	public void aceptCreateVirtualBenchmarkDialog() {
+		araMainPage.createVirtualBlendedBenchmarkDialog()
+				.acceptCreateVirtualPortfolioDialog();
+	}
+
+	@Then("verify that Virtual Benchmark was created")
+	public void verifyThatVirtualBenchmarkWasCreated() {
+		assertTrue(
+				"Benchmark does not found!",
+				araMainPage
+						.navigation()
+						.benchmarks()
+						.isBenchmarkCreated(
+								CreateVirtualBlendedBenchmarkDialog
+										.getCreatedBenchmarkName()));
+	}
+
+	@Then("verify that type is $type for this benchmark")
+	public void verifyBenchmarkType(String type) {
+		assertEquals("Wrong bencmark type", type, araMainPage.benchmarkPane()
+				.getBencmarkType());
+	}
+
+	@Given("Given click Actions -> Search")
+	public void clickActionsSearch() {
+		araMainPage.benchmarkPane().clickActionButton().clickActionsSearch();
+	}
+
+	@When("add some benchmark constituents - $benchmark")
+	public void addBenchmarkConstituents(String benchmark) {
+		araMainPage.searchBenchmarkDialog().selectBenchmarkFromList(benchmark);
+	}
+
+	@When("I confirm Search Benchmark dialog")
+	public void confirmSearchBenchmarkDialog() {
+		araMainPage.searchBenchmarkDialog().acceptSearchBenchmarkDialog();
+	}
+
+	@Then("verify that benchmark constituent $benchmarkName was created")
+	public void verifyBenchmarkConstituentWasCreated(String benchmarkName) {
+		assertTrue(araMainPage.benchmarkPane().isBenchmarkConstituentPresent(
+				benchmarkName));
+	}
+
+	@Then("verify that user can see $menuItem for Actions menu-list")
+	public void verifyActionMenuItemIsPresent(String menuItem) {
+		assertTrue(benchmarks.isActionMenuItemPresent(menuItem));
+	}
+
+	// ========================== 7.6.1
+
+	@Given("select report with table view ($reportName) in $folderName")
+	public void selectReport(String reportName, String folderName) {
+		araMainPage.navigation().onlineReports().reportsTab().collapseFolder()
+				.selectReportFolder(folderName).selectReportByName(reportName);
+	}
+
+	@When("I go to Benchmark Tab and select created benchmark")
+	public void selectBenchmarkByName() {
+		araMainPage
+				.navigation()
+				.benchmarks()
+				.selectBenchmarkByName(
+						SaveVirtualPortfolioDialog.getSavedPortfolioName());
+	}
+
+	@Then("verify that Virtual Benchmark was created with correct name")
+	public void verifyCreatedBenchmarkName() {
+		assertEquals(SaveVirtualPortfolioDialog.getSavedPortfolioName(),
+				araMainPage.navigation().benchmarks()
+						.getSelectedBenchmarkName());
+	}
+
+	@Then("verify that benchmark contains $position")
+	public void verifyBenchmarkPositions(String position) {
+		assertTrue(araMainPage.benchmarkPane().isBenchmarkPositionPresent(
+				position));
+	}
+
+	@When("I enter $weight in $fieldName weight field")
+	public void enterWeight(String weight, String fieldName) {
+		araMainPage.benchmarkPane().fillWeightField(fieldName, weight);
+	}
+
+	@When("I press Apply button")
+	public void pressApplyButton() {
+		araMainPage.benchmarkPane().clickApplyButton();
+	}
+
+	@Then("verify that summary calculation of weight is $percent")
+	public void verifySummaryCalculation(String percent) {
+		assertEquals(percent, araMainPage.benchmarkPane()
+				.getSummaryCalculation());
+	}
+
+	// ========================== 7.7.3
+
+	@When("I select $type type from list")
+	public void selectTypeFromList(String type) {
+		araMainPage.benchmarkPane().selectTypeFromList(type);
+	}
+
+	@Then("verify that Search Non-Blended Benchmark dialog $dialogName appears")
+	public void verifySearchNonBlendedBenchmarkDialogAppears(String dialogName) {
+		assertEquals(dialogName, araMainPage.searchNonBlendedBenchmarkDialog()
+				.getTitle());
+	}
+
+	@When("I add search term $searchTerm")
+	public void addSearchTerm(String searchName) {
+		araMainPage.searchNonBlendedBenchmarkDialog().addSearchTerm(searchName);
+	}
+
+	@When("I enter $securityName in Security Name field")
+	public void fillsecurityNameField(String securityName) {
+		araMainPage.searchNonBlendedBenchmarkDialog().enterSecurityName(
+				securityName);
+	}
+
+	@When("I press Search button")
+	public void pressSearchButton() {
+		araMainPage.searchNonBlendedBenchmarkDialog().clickSearchButton();
+	}
+
+	@When("enter units value $value")
+	public void enterUnitsValue(String value) {
+		araMainPage.searchNonBlendedBenchmarkDialog().enterUnitsValue(value);
+	}
+
+	@When("click Add to Book button")
+	public void clickAddToBook() {
+		araMainPage.searchNonBlendedBenchmarkDialog().clickAddToBookButton();
+	}
+
+	@When("I confirm Search Non-Blended Benchmark dialog")
+	public void confirmSearchNonBlendedBenchmarkDialog() {
+		araMainPage.searchNonBlendedBenchmarkDialog()
+				.acceptSearchNonBlendedBenchmarkDialog();
+	}
+
+	@Then("verify that the number of units for $securityName are equal to $number")
+	public void vefiryNumberOfUnits(String securityName, String number) {
+		assertEquals(number,
+				araMainPage.benchmarkPane().getNumberOfUnits(securityName));
+	}
+
+	// =============================== 7.7.4.1
+
+	@Then("verify that Post Virtual Benchmark dialog ARA appears")
+	public void verifyThatPostVirtualBencmarkDialogAppears() {
+		araMainPage.postVirtualBenchmarkDialog().getTitle();
+	}
+
+	@Then("vefify that for Post benchmark dialog there is visible $field")
+	public void verifyFieldIsPresent(String field) {
+		araMainPage.postVirtualBenchmarkDialog().isFieldPresent(field);
+	}
+
+	@Then("vefify that for dialog is visible button $button")
+	public void verifyButtonIsPresent(String buttonName) {
+		assertTrue(araMainPage.postVirtualBenchmarkDialog().isButtonPresent(
+				buttonName));
+	}
+
+	@When("at Post benchmark dialog I enter descriprion $description")
+	public void enterPostBenchmarkDescription(String description) {
+		araMainPage.postVirtualBenchmarkDialog().enterDescription(description);
+	}
+
+	@When("I confirm Post Virtual Benchmark dialog")
+	public void confirmPostVirtualBenchmarkDialog() {
+		araMainPage.postVirtualBenchmarkDialog()
+				.acceptPostVirtualBenchmarkDialog();
+	}
+
+	@Then("verify that Retrieve Virtual Benchmark dialog $dialog is displayed")
+	public void verifyRetrieveBenchmarkDialogIsPresent(String dialogName) {
+		assertEquals(dialogName, araMainPage.retrieveBenchmarkDialog()
+				.getTitle());
+	}
+
+	@Then("I verify that Virtual Benchmark was Posted")
+	public void verifyThatBenchmarkWasPosted() {
+		araMainPage.retrieveBenchmarkDialog().isBenchmarkPresent(
+				CreateVirtualBlendedBenchmarkDialog.getCreatedBenchmarkName());
+	}
+
+	@Then("verify that for Retrieve Benchmark dialog there is visible $columnName")
+	public void verifyRetrieveBenchmarkTableHeader(String columnName) {
+		araMainPage.retrieveBenchmarkDialog().isColumnPresent(columnName);
+	}
+
+	@Given("click Retrieve posted Benchmark")
+	public void clickRetrievePostedBenchmark() {
+		araMainPage.retrieveBenchmarkDialog().clickRetrieveBenchmark(
+				CreateVirtualBlendedBenchmarkDialog.getCreatedBenchmarkName());
+	}
+
+	@Then("verify that Duplicate Found message appears")
+	public void isDuplicateFoundMsgPresent() {
+		araMainPage.retrieveBenchmarkDialog().isDuplicateFoundMsgPresent();
+	}
+
+	@When("I enter Retrieving Benchmark name $name")
+	public void enterRetrievingBenchmarkName(String name) {
+		araMainPage.retrieveBenchmarkDialog().fillSaveAsField(name);
+	}
+
+	@When("I confirm Duplicate Found dialog")
+	public void confirmDuplicateFoundDialog() {
+		araMainPage.retrieveBenchmarkDialog().acceptRetrieveBenchmarkDialog();
+	}
+
+	@When("I go to Benchmark Tab and select retrieved benchmark")
+	public void selectRetrievedBenchmark() {
+		araMainPage
+				.navigation()
+				.benchmarks()
+				.selectBenchmarkByName(
+						RetrieveVirtualBenchmarkDialog
+								.getRetrievedBenchmarkName());
+	}
+
+	@Then("verify that Virtual Benchmark was retrieved")
+	public void verifyThatBenchmarkWasRetrieved() {
+		assertEquals(
+				RetrieveVirtualBenchmarkDialog.getRetrievedBenchmarkName(),
+				araMainPage.navigation().benchmarks()
+						.getSelectedBenchmarkName());
+	}
+
+	@When("I click Actions -> Lock Benchmark")
+	public void clickActionsLockBenchmark() {
+		araMainPage.reportPaneBottom().reportPaneBottomTable().clickAction()
+				.clickLockBenchmark();
+	}
+
+	@Then("verify that default value is Unlock Benchmark")
+	public void verifyThatDefaultValueIsUnlock() {
+		assertTrue(araMainPage.lockBenchmarkDialog()
+				.isUnlockBenchnarkSelected());
+	}
+	
+	@Then("verify that Lock Benchmark radiobutton appears selected")
+	public void isLockBenchmarkRadiobuttonAppearsSelected() {
+		assertTrue(araMainPage.lockBenchmarkDialog()
+				.isLockBenchnarkSelected());
+	}
+
+	@Then("verify that user can see Benchmark Hierarchy in Lock Benchmark window")
+	public void verifyThatBenchmarHierarchyIsPresent() {
+		araMainPage.lockBenchmarkDialog().isBenchmarkHierarchyDisplayed();
+	}
+
+	@Then("verify that Benchmark hierarchy contains $benchmarkName")
+	public void isBenchmarkHierarchyContainsBenchmark(String benchmarkName) {
+		assertTrue(araMainPage.lockBenchmarkDialog().isBenchmarkPresent(benchmarkName));
+	}
+	
+	@Then("verify that None option is not present in the Benchmark list")
+	public void isBenchmarkHierarchyContainsNone() {
+		assertFalse(araMainPage.lockBenchmarkDialog().isBenchmarkPresent("None"));
+	}
+
+	
+	@Then ("I unselect benchmark $benchmark in Lock Benchmark dialog")
+	@When("I select benchmark $benchmark in Lock Benchmark dialog")
+	public void selectBenchmarkInHierarchy(String benchmarkName) {
+		araMainPage.lockBenchmarkDialog().selectBenchmarkByName(benchmarkName);
+	}
+	
+	@Then("verify that benchmark $benchmark is selected")
+	public void isBenchmarkSelected(String benchmark) {
+		assertTrue(araMainPage.lockBenchmarkDialog().isBenchmarkSelected(benchmark));
+	}
+
+	@When("I click Cancel Lock Benchmark Dialog")
+	public void cliseLockBenchmarkDialog() {
+		araMainPage.lockBenchmarkDialog().cancelLockBecnhmarkDialog();
+	}
+
+	@Given("I confirm Lock Bechmark dialog")
+	@When("I confirm Lock Bechmark dialog")
+	public void acceptLockBenchmarkDialog() {
+		araMainPage.lockBenchmarkDialog().acceptLockBenchmarkDialog();
+	}
+	
+	@When("I click on locked benchmark $benchmarkName")
+	public void clickOnBenchmarkIcon(String benchmarkName) {
+		araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.clickOnBenchmarkIcon(benchmarkName);
+	}
+
+	@Then("verify that Benchmark Dialog closed and $benchmarkName icon does not present")
+	public void verifyThatBenchmarkDialogClosedWithoutApplyingChanges(
+			String benchmarkName) {
+		assertFalse(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.isBechmarkLocked(benchmarkName));
+	}
+	
+
+	@Then("verify that Lock Benchmark for Actions isn't displayed")
+	public void verifyTahtLockBenchmarkIsNotDisplayed() {
+		assertFalse(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.clickLockBenchmark());
+	}
+
+	@When("I click Actions -> Lock Context")
+	public void clickActionsLockContext() {
+		araMainPage.reportPaneBottom().reportPaneBottomTable().clickAction()
+				.clickLockContext();
+	}
+
+	@When("select Context $contextNumber to lock")
+	public void selectContextToLock(String contextNumber) {
+		araMainPage.lockContextDialog().selectContext(contextNumber);
+	}
+
+	@When("confirm Lock Context dialog")
+	public void confirmLockContextDialog() {
+		araMainPage.lockContextDialog().acceptLockContextDialog();
+	}
+
+	@Then("verify that Actions -> Lock $menuItem value is greyed")
+	public void isActionsBenchmarkGreyed(String menuItem) {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.clickAction().isMenuItemGreyed(menuItem));
+	}
+
+	@Then("verify that $benchmarkName Benchmark icon is present")
+	public void verifyLockedBenchmarkIconIspresent(String benchmarkName) {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.isBechmarkLocked(benchmarkName));
+	}
+
+	@When("select report ($report) from $outerFolder and $innerFolder")
+	public void selectReport(String report, String outerFolder,
+			String innerfolder) {
+		araMainPage.navigation().onlineReports().reportsTab();
+		onlineReports.collapseInternalFolder();
+		onlineReports.selectReportFolder(outerFolder);
+		onlineReports.selectReportFolder(innerfolder);
+		onlineReports.selectReportByName(report);
+	}
+
+	@Then("verify that column $columnName contain $cellData1 and $cellData2")
+	public void verifyThatColumnContainData(String columnName,
+			String cellData1, String cellData2) {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.isColumnContainData(columnName, cellData1, cellData2));
+	}
+
+	@Then("verify that $columnName contain $cellData1 and $cellData2 and $cellData3")
+	public void verifyThatColumnContainData(String columnName,
+			String cellData1, String cellData2, String cellData3) {
+		assertTrue(araMainPage
+				.reportPaneBottom()
+				.reportPaneBottomTable()
+				.isColumnContainData(columnName, cellData1, cellData2,
+						cellData3));
+	}
+
+	@When("I click on Locked Benchmark $benchmarkName icon")
+	public void clickLockedBenchmarkIcon(String benchmarkName) {
+		araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.clickLockedBenchmarkIcon(benchmarkName);
+	}
+
+	@When("I click unlock radio button at Lock Benchmark dialog")
+	public void clickUnlockRadioButton() {
+		araMainPage.lockBenchmarkDialog().clickUnlockBenchmark();
+	}
+
+	@Then("verify that error message '$message' is displayed")
+	public void isErrorMessageDisplayed(String message) {
+		assertTrue(araMainPage.lockBenchmarkErrorMessageDialog()
+				.isMessageTextPresent(message));
+		araMainPage.lockBenchmarkErrorMessageDialog().acceptErrorDialog();
+	}
+
+	@Then("I verify that $benchmarkName not selected")
+	public void verifyThatBenchmarkNotSelected(String benchmarkName) {
+		assertFalse(araMainPage.lockBenchmarkDialog().isBenchmarkSelected(
+				benchmarkName));
+	}
+
+	@When("I delete all virtual benchmarks")
+	public void deleteAllVirtualBenchmarks() {
+		araMainPage.deleteVirtualBenchmarkDialog().deleteAllVirtualBenchmarks();
+	}
+
+	@When("I go to Online Reports tab")
+	public void navigateToOnlineReportsTab() {
+		araMainPage.navigation().onlineReports();
+	}
+
+	@Then("verify that missing Benchmark error message <$messageText> appears")
+	public void verifyMissingBenchmarkError(String messageText) {
+		assertTrue(messageText + " text not found", araMainPage
+				.reportPaneBottom().reportPaneBottomTable()
+				.verifyMissingErrorMessageIsPresent(messageText));
+	}
+
+	@When("I click missing error link")
+	public void clickErrorLink() {
+		araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.clickMissingErrorLink();
+	}
+
+	@Given("set $colName column order to default")
+	public void setColumnSortOrder(String colName) {
+		araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.setColumnSortType(colName);
+	}
+
+	@When("I remember some values in the child column number $columnNumber")
+	public void rememberValuesInColumns(int columnNumber) {
+		araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.rememberValuesInColumn(columnNumber);
+	}
+
+	@When("I remember some values in column number $columnNumber")
+	public void rememberValuesInColumn(int columnNumber) {
+		araMainPage.reportPaneBottom().reportPaneBottomTable2()
+				.rememberValuesInColumn(columnNumber);
+	}
+
+	@When("I click on benchmark link in Associated benchmark")
+	public void clickOnBenchmarkLink() {
+		araMainPage.clickAssociatedBenchmarkLink();
+	}
+
+	@When("I select $benchmarkName benchmark in Select Benchmark dialog")
+	public void selectBenchmark(String benchmarkName) {
+		araMainPage.selectAssociatedBenchmarkDialog().selectBenchmark(
+				benchmarkName);
+	}
+
+	@When("I confirm Select Associated Benchmark dialog")
+	public void confirmSelectBenchmarkdialog() {
+		araMainPage.selectAssociatedBenchmarkDialog()
+				.acceptSelectBenchmarkDialog();
+	}
+
+	@Then("verify that values at the table column $childColumnNumber are not changed")
+	public void verifyThatValuesNotChanged(int childColumnNumber) {
+		assertTrue("Known issue 4000741400009290185. Data was changed",
+				araMainPage.reportPaneBottom().reportPaneBottomTable()
+						.isColumnDataChanged(childColumnNumber));
+	}
+
+	@Then("verify that values at the table column $childColumnNumber are changed")
+	public void verifyThatValuesChanged(int childColumnNumber) {
+		assertFalse("Data was not changed", araMainPage.reportPaneBottom()
+				.reportPaneBottomTable().isColumnDataChanged(childColumnNumber));
+	}
+
+	@Then("user verify that values at the table column $childColumnNumber are changed")
+	public void verifyThatValuesInColumnChanged(int childColumnNumber) {
+		assertFalse("Data was not changed", araMainPage.reportPaneBottom()
+				.reportPaneBottomTable2()
+				.isColumnDataChanged(childColumnNumber));
+	}
+
+	@When("I navigate to Benchmark Tab")
+	public void navigateToBenchmarkTabAtGeneralPreferences() {
+		generalPreferences.navigateToBenchmarkTab();
+	}
+
+	@When("I click on $headerName Benchmark sub-column $name header")
+	public void clickOnBenchmarkSubColumn(String headerName, String name) {
+		araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.clickBenchmarkSubColumn(headerName, name);
+	}
+
+	@Then("verify that values in column $columnNumber are sorted in $orderType order")
+	public void verifyColumnOrdering(int columnNumber, String orderType) {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.isColumnDataSorted(columnNumber, orderType));
+	}
+
+	@Then("verify that Associated benchmark name is $name")
+	public void verifyAssociatedBenchmarkName(String benchmarkName) {
+		assertEquals("Benchmarks names not equal", benchmarkName,
+				araMainPage.getAssociatedBenchmarkLinkName());
+	}
+}

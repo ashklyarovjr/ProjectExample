@@ -1,0 +1,1263 @@
+package com.epam.ara.steps;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import com.epam.ara.arapage.navigationpanel.onlinereports.editreport.experteditor.ExpertEditorTab;
+import com.epam.ara.utils.AraFileReader;
+
+import org.apache.commons.lang3.RandomStringUtils;
+import org.eclipse.jetty.util.log.Log;
+import org.jbehave.core.annotations.BeforeScenario;
+import org.jbehave.core.annotations.Given;
+import org.jbehave.core.annotations.Named;
+import org.jbehave.core.annotations.Then;
+import org.jbehave.core.annotations.When;
+
+import com.epam.ara.arapage.AraMainPage;
+import com.epam.ara.arapage.PageFactory;
+import com.epam.ara.arapage.navigationpanel.onlinereports.editreport.EditReportNavigation;
+import com.epam.ara.arapage.navigationpanel.onlinereports.editreport.defaulteditor.DefaultEditorTab;
+import com.epam.ara.arapage.navigationpanel.onlinereports.editreport.histoutputbuilder.HistoricalOutputBuilder;
+import com.epam.ara.arapage.navigationpanel.onlinereports.editreport.outputbuilder.OutputBuilderTab;
+import com.epam.ara.arapage.navigationpanel.onlinereports.newreport.NewReportProperties;
+
+public class EditReportSteps {
+	private final PageFactory pages;
+
+	public AraMainPage araMainPage;
+	private DefaultEditorTab defaultEditorTab;
+	private EditReportNavigation editReportNavigation;
+	private OutputBuilderTab outputBuilderTab;
+	private HistoricalOutputBuilder historicalOutputBuilder;
+	private NewReportProperties newReportProperties;
+	private ExpertEditorTab expertEditorTab;
+	private String outPutReportName = "";
+	private String outPutReportNameMIN = "";
+	private String outPutReportNameSUM = "";
+	private String outPutReportNameMEAN = "";
+	private String outPutReportNameSAMPL1 = "";
+	private String outPutReportNameSAMPL2 = "";
+	private String outPutReportNameSAMPL3 = "";
+	private String outPutReportNameRuleBuilder = "";
+	private String historicalOutputName = "";
+
+	public EditReportSteps(PageFactory pages) {
+		this.pages = pages;
+	}
+
+	@BeforeScenario
+	public void setupPages() {
+		araMainPage = pages.newAraPage();
+		defaultEditorTab = pages.newDefaultEditorTab();
+		editReportNavigation = pages.newEditReportNavigation();
+		outputBuilderTab = pages.newOutputBuilderTab();
+		historicalOutputBuilder = pages.newHistoricalOutputBuilder();
+		newReportProperties = pages.newNewReportProperties();
+		expertEditorTab = pages.newExpertEditorTab();
+	}
+
+	@Given("I am on ARA main page as $username")
+	public void iamOnMainPage(String username) {
+		araMainPage.rememberMainWindow();
+		araMainPage.pageIsShown();
+		assertEquals("The Main screen is not displayed", username, araMainPage
+				.quickLinksBar().getUsername());
+		araMainPage.closeEmptyWindow();
+	}
+
+	@Given("collapse all folder")
+	public void collapseFolder() {
+		araMainPage.navigation().navigateToOnlineReportTab()
+				.collapseFoldersJS();
+		araMainPage.refreshPage();
+	}
+
+	@Given("navigate to Edit Report screen")
+	public void navigateToEditReportScreen() {
+		araMainPage.navigation().onlineReports().clickActionsByJScript()
+				.selectEditReportOption();
+		defaultEditorTab.pageIsShown();
+	}
+
+	@Given("select report by name $reportName")
+	public void selectReportbyName(String reportName) {
+		araMainPage.navigation().navigateToOnlineReportTab()
+				.selectReportByName(reportName);
+		/*
+		 * .onlineReports().reportsTab() .selectReportByName(reportName);
+		 */
+	}
+
+	@When("select Single Report layout")
+	public void selectSingleReportLayout() {
+		defaultEditorTab.selectSingleReportLayout();
+	}
+
+	@When("select left part of Vertically Splitted Report layout")
+	public void selectVerticallySplitedReportLayoutLeftPart() {
+		defaultEditorTab.selectVerticallySplittedReportLayoutLeftPart();
+	}
+
+	@When("select right part of Vertically Splitted Report layout")
+	public void selectVerticallySplitedReportLayoutRightPart() {
+		defaultEditorTab.selectVerticallySplittedReportLayoutRightPart();
+	}
+
+	@When("select top part of Horizontally Splitted Report layout")
+	public void selectHorizontallySplitedReportLayoutTopPart() {
+		defaultEditorTab.selectHorizontallySplittedReportLayoutTopPart();
+	}
+
+	@When("select bottom part of Horizontally Splitted Report layout")
+	public void selectHorizontallySplitedReportLayoutBottomPart() {
+		defaultEditorTab.selectHorizontallySplittedReportLayoutBottomPart();
+	}
+
+	@When("select left part of Top Splitted Report layout")
+	public void selectTopSplitedReportLayoutLeftPart() {
+		defaultEditorTab.selectTopSplittedReportLayoutLeftPart();
+	}
+
+	@When("select right part of Top Splitted Report layout")
+	public void selectTopSplitedReportLayoutRightPart() {
+		defaultEditorTab.selectTopSplittedReportLayoutRightPart();
+	}
+
+	@When("select bottom part of Top Splitted Report layout")
+	public void selectTopSplitedReportLayoutBottomPart() {
+		defaultEditorTab.selectTopSplittedReportLayoutBottomPart();
+	}
+
+	@When("select top part of Bottom Splitted Report layout")
+	public void selectBottomSplitedReportLayoutTopPart() {
+		defaultEditorTab.selectBottomSplittedReportLayoutTopPart();
+	}
+
+	@When("select left part of Bottom Splitted Report layout")
+	public void selectBottomSplitedReportLayoutLeftPart() {
+		defaultEditorTab.selectBottomSplittedReportLayoutLeftPart();
+	}
+
+	@When("select right part of Bottom Splitted Report layout")
+	public void selectBottomSplitedReportLayoutRightPart() {
+		defaultEditorTab.selectBottomSplittedReportLayoutRightPart();
+	}
+
+	@When("select left part of Right Splitted Report layout")
+	public void selectRightSplitedReportLayoutLeftPart() {
+		defaultEditorTab.selectRightSplittedReportLayoutLeftPart();
+	}
+
+	@When("select top part of Right Splitted Report layout")
+	public void selectRightSplitedReportLayoutTopPart() {
+		defaultEditorTab.selectRightSplittedReportLayoutTopPart();
+	}
+
+	@When("select bottom part of Right Splitted Report layout")
+	public void selectRightSplitedReportLayoutBotomPart() {
+		defaultEditorTab.selectRightSplittedReportLayoutBottomPart();
+	}
+
+	@When("select top part of Left Splitted Report layout")
+	public void selectLeftSplitedReportLayoutTopPart() {
+		defaultEditorTab.selectLeftSplittedReportLayoutTopPart();
+	}
+
+	@When("select bottom part of Left Splitted Report layout")
+	public void selectLeftSplitedReportLayoutBottomPart() {
+		defaultEditorTab.selectLeftSplittedReportLayoutBottomPart();
+	}
+
+	@When("select right part of Left Splitted Report layout")
+	public void selectLeftSplitedReportLayoutRightPart() {
+		defaultEditorTab.selectLeftSplittedReportLayoutRightPart();
+	}
+
+	@When("select left top part of Quad Splitted Report layout")
+	public void selectQuadSplitedReportLayoutLeftTopPart() {
+		defaultEditorTab.selectQuadSplittedReportLayoutLeftTopPart();
+	}
+
+	@When("select left bottom part of Quad Splitted Report layout")
+	public void selectQuadSplitedReportLayoutLeftBottomPart() {
+		defaultEditorTab.selectQuadSplittedReportLayoutLeftBottomPart();
+	}
+
+	@When("select right top part of Quad Splitted Report layout")
+	public void selectQuadSplitedReportLayoutRightTopPart() {
+		defaultEditorTab.selectQuadSplittedReportLayoutRightTopPart();
+	}
+
+	@When("select right bottom part of Quad Splitted Report layout")
+	public void selectQuadSplitedReportLayoutRightBottomPart() {
+		defaultEditorTab.selectQuadSplittedReportLayoutRightBottomPart();
+	}
+
+	@When("select Table Report")
+	public void selectTableReport() {
+		defaultEditorTab.selectTableReport();
+	}
+
+	@Then("verify Table View")
+	public void verifyTableView() {
+		assertTrue(defaultEditorTab.verifyTableView());
+	}
+
+	@When("select Summary Table Report")
+	public void selectSummaryTableReport() {
+		defaultEditorTab.selectSummaryTableReport();
+	}
+
+	@Then("verify Summary Table View")
+	public void verifySummuryTableView() {
+		assertTrue(defaultEditorTab.verifySummuryTableView());
+	}
+
+	@When("select Summary Information Report")
+	public void selectSummuryInformationReport() {
+		defaultEditorTab.selectSummaryInfoReport();
+	}
+
+	@Then("verify Summary Information View")
+	public void verifySummaryInformationView() {
+		assertTrue(defaultEditorTab.verifySummaryInformationView());
+	}
+
+	@When("select Matrix Table Report")
+	public void selectMatrixTableReport() {
+		defaultEditorTab.selectMatrixTableReport();
+	}
+
+	@Then("verify Matrix Table view")
+	public void verifyMatrixTableView() {
+		assertTrue(defaultEditorTab.verifyMatrixTableView());
+	}
+
+	@When("select Grid View Report")
+	public void selectGridViewReport() {
+		defaultEditorTab.selectGridViewReport();
+	}
+
+	@Then("verify Grid View Report")
+	public void verifyGridViewReport() {
+		assertTrue(defaultEditorTab.verifyGridViewReport());
+	}
+
+	@When("select Graph Information Report")
+	public void selectGraphInformationReport() {
+		defaultEditorTab.selectGraphInformationReport();
+	}
+
+	@Then("verify Graph Information View")
+	public void verifyGraphInformationView() {
+		assertTrue(defaultEditorTab.verifyGraphInformationView());
+	}
+
+	@When("select Pie Graph Report")
+	public void selectPieGraphReport() {
+		defaultEditorTab.selectPieGraphReport();
+	}
+
+	@Then("verify Pie Graph View")
+	public void verifyPieGraphView() {
+		assertTrue(defaultEditorTab.verifyPieGraphView());
+	}
+
+	@When("select Scatter Plot Graph Report")
+	public void selectScatterPlotGraphReport() {
+		defaultEditorTab.selectScatterPlotGraphReport();
+	}
+
+	@Then("verify Scatter Plot Graph view")
+	public void verifyScatterPlotGraphView() {
+		assertTrue(defaultEditorTab.verifyScatterPlotGraphView());
+	}
+
+	@When("select Scatter Plot Graph Report $Plot_X, $Plot_Y")
+	public void selectScatterPlotGraphReport(String Plot_X, String Plot_Y) {
+		defaultEditorTab.selectScatterPlotGraphReport(Plot_X, Plot_Y);
+	}
+
+	@When("select Line Graph Report")
+	public void lineGraphReport() {
+		defaultEditorTab.selectLineGraphReport();
+	}
+
+	@Then("verify Line Graph view")
+	public void verifyLineGraphview() {
+		assertTrue(defaultEditorTab.verifyLineGraphview());
+	}
+
+	@When("select Per Output Graph Report")
+	public void perOutputGraphReport() {
+		defaultEditorTab.perOutputGraphReport();
+	}
+
+	@Then("verify Per Output Graph view")
+	public void verifyPerOutputGraphView() {
+		assertTrue(defaultEditorTab.verifyPerOutputGraphView());
+	}
+
+	@When("select Output Meter Report")
+	public void outputMeterReport() {
+		defaultEditorTab.outputMeterGraphReport();
+	}
+
+	@Then("verify Output Meter view")
+	public void verifyOutputMeterView() {
+		assertTrue(defaultEditorTab.verifyOutputMeterView());
+	}
+
+	@When("select Combination Graph Report")
+	public void selectCombinationGraphReport() {
+		defaultEditorTab.combinationGraphReport();
+	}
+
+	@Then("verify Combination Graph view")
+	public void verifyCombinationGraphView() {
+		assertTrue(defaultEditorTab.verifyCombinationGraphView());
+	}
+
+	@When("select Column/Bar Graph Report")
+	public void selectColumnBarGraphReport() {
+		defaultEditorTab.columnBarGraphreport();
+	}
+
+	@Then("verify Column/Bar Graph view")
+	public void verifyColumnBarGraphView() {
+		assertTrue(defaultEditorTab.verifyColumnBarGraphView());
+	}
+
+	@When("select Stacked Column Graph Report")
+	public void selectStackedColumnGraphReport() {
+		defaultEditorTab.stackedColumnGraphReport();
+	}
+
+	@Then("verify Stacked Column Graph view")
+	public void verifyStackedColumnGraphView() {
+		assertTrue(defaultEditorTab.verifyStackedColumnGraphView());
+	}
+
+	@When("select Sorted Bar Graph Report")
+	public void selectSortedBarGraphReport() {
+		defaultEditorTab.sortedBarGraphReport();
+	}
+
+	@Then("verify Sorted Bar Graph view")
+	public void verifySortedBarGraphView() {
+		assertTrue(defaultEditorTab.verifySortedBarGraphView());
+	}
+
+	@When("select Dual Criteria Graph Report")
+	public void selectDualCriteriaGraphReport() {
+		defaultEditorTab.dualCriteriaGraphReport();
+	}
+
+	@Then("verify Dual Criteria Graph view")
+	public void verifyDualCriteriaGraphView() {
+		assertTrue(defaultEditorTab.verifyDualCriteriaGraphView());
+	}
+
+	@When("select Scenario Graph Report")
+	public void selectScenarioGraphReport() {
+		defaultEditorTab.scenarioGraphReport();
+	}
+
+	@Then("verify Scenario Graph view")
+	public void verifyScenarioGraphView() {
+		assertTrue(defaultEditorTab.verifyScenarioGraphView());
+	}
+
+	@When("select Distribution Graph Report")
+	public void selectDistributionGraphReport() {
+		defaultEditorTab.distributionGraphReport();
+	}
+
+	@Then("verify Distribution Graph view")
+	public void verifyDistributionGraphView() {
+		assertTrue(defaultEditorTab.verifyDistributionGraphView());
+	}
+
+	@When("select Histogram Report")
+	public void selectHistogramReport() {
+		defaultEditorTab.histogramReport();
+	}
+
+	@Then("verify Histogram view")
+	public void verifyHistogramview() {
+		assertTrue(defaultEditorTab.verifyHistogramview());
+	}
+
+	@When("I save my changes clicking Ok button")
+	public void saveChanges() {
+		defaultEditorTab.saveChanges();
+	
+	}
+
+	@When("I discard my changes clicking Cancel button")
+	public void cancelChanges() {
+		defaultEditorTab.cancelChanges();
+	}
+
+	@Then("a main page is opened")
+	public void verifyMainScreenAppers() {
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		araMainPage.pageIsShownWithoutErrors();
+		araMainPage.closeEmptyWindow();
+		assertFalse(
+				"Application Error displayed, see screenshot of page for details",
+				araMainPage.navigation().isApplicationErrorPresent());
+		assertFalse(
+				"Application Error displayed, see screenshot of page for details",
+				araMainPage.reportPaneBottom().isApplicationErrorPresent());
+		assertFalse(
+				"Application Error displayed, see screenshot of page for details",
+				araMainPage.reportPaneParameters().isApplicationErrorPresent());
+		assertFalse(
+				"Application Error displayed, see screenshot of page for details",
+				araMainPage.reportPaneReference().isApplicationErrorPresent());
+	}
+
+	@Then("verify that App Error doesn't present")
+	public void verifyAppError() {
+		boolean navPanelErr = araMainPage.navigation()
+				.isApplicationErrorPresent();
+		boolean reportViewErr = araMainPage.reportPaneBottom()
+				.isApplicationErrorPresent();
+		boolean reportPaneErr = araMainPage.reportPaneParameters()
+				.isApplicationErrorPresent();
+		boolean reportPaneRef = araMainPage.reportPaneReference()
+				.isApplicationErrorPresent();
+		String DEFAULT_FOLDER = "Concentration Profile";
+		if (navPanelErr || reportViewErr || reportPaneErr || reportPaneRef) {
+			araMainPage.navigation().navigateToOnlineReportTab()
+					.selectReportFolder(DEFAULT_FOLDER);
+			assertFalse("Attention Application Error was found", navPanelErr
+					|| reportViewErr || reportPaneErr || reportPaneRef);
+		}
+	}
+
+	@Then("verify a default Edit Report layouts")
+	public void verifyEditReportLayouts(
+			@Named("report-layouts") Integer defaultLayouts) {
+		assertEquals("Nuber of report layouts not as expected", defaultLayouts,
+				defaultEditorTab.getAmountOfReportLayouts());
+	}
+
+	@Then("report layout of $type type is shown")
+	public void verifyReportLayoutONmainScreen(String type) {
+		assertEquals("Wrong Report Layout is shown", type, araMainPage
+				.reportPaneBottom().getReportLayoutType());
+	}
+
+	@When("select in Over $value at Line Grap view")
+	public void selectFromShowNavigator(String value) {
+		defaultEditorTab.selectValueFromOverDropDownList(value);
+	}
+
+	// =============================================================Output=Builder=Tab==========================
+	@Given("navigate to Output Builder Report Tab")
+	public void navigateToOutputBuilderReportTab() {
+		editReportNavigation.navigateToOutputBuilderTab();
+		outputBuilderTab.pageIsShown();
+	}
+
+	@When("select New Output in the Output list box")
+	public void selectNewOutputInTheOutputListBox() {
+		outputBuilderTab.selectNewReportOutput("----- New Output -----");
+	}
+
+	@When("select New Macro in the Output list box")
+	public void selectNewMacroInTheOutputListBox() {
+		outputBuilderTab.selectNewReportOutput("----- New Macro -----");
+	}
+
+	@When("change value in Formatting Type $value")
+	public void changeFormattingType(String value) {
+		outputBuilderTab.selectReportType(value);
+	}
+
+	@When("select Output by $name")
+	public void selectOutputByName(String name) {
+		outputBuilderTab.selectAnExpression(name);
+	}
+
+	@When("click SUM button")
+	public void clickSumButton() {
+		outputBuilderTab.clickSumButton();
+	}
+
+	@When("click DIFFERENCE button")
+	public void clickDifferenceButton() {
+		outputBuilderTab.clickDifferenceButton();
+	}
+
+	@When("click Multiply button")
+	public void clickMultiplyButton() {
+		outputBuilderTab.clickMultiplyButton();
+	}
+
+	@When("click Divide button")
+	public void clickDivideButton() {
+		outputBuilderTab.clickDivideButton();
+	}
+
+	@When("type in Expression Editor $value")
+	public void typeInExpressionEditor(String value) {
+		outputBuilderTab.typeInExpressionEditor(value);
+	}
+
+	@When("type in Expression name which exist")
+	public void typeInExpressionEditorName() {
+		outputBuilderTab.typeInExpressionEditor(outPutReportNameMEAN);
+	}
+
+	@When("unselect by value $value")
+	public void unselectByValue(String value) {
+		outputBuilderTab.unSelectByValue(value);
+	}
+
+	@When("save new output sample1 $outputname")
+	public void saveNewOutputAsSampl1(String outputname) {
+		outPutReportNameSAMPL1 = outputname
+				+ RandomStringUtils.randomNumeric(4);
+		outputBuilderTab.setOutputName(outPutReportNameSAMPL1);
+		outputBuilderTab.clickOkOutputBuilder();
+		defaultEditorTab.pageIsShown();
+	}
+
+	@When("save new output sample2 $outputname")
+	public void saveNewOutputAsSampl2(String outputname) {
+		outPutReportNameSAMPL2 = outputname
+				+ RandomStringUtils.randomNumeric(4);
+		outputBuilderTab.setOutputName(outPutReportNameSAMPL2);
+		outputBuilderTab.clickOkOutputBuilder();
+		defaultEditorTab.pageIsShown();
+	}
+
+	@When("save new output sample3 $outputname")
+	public void saveNewOutputAsSampl3(String outputname) {
+		outPutReportNameSAMPL3 = outputname
+				+ RandomStringUtils.randomNumeric(4);
+		outputBuilderTab.setOutputName(outPutReportNameSAMPL3);
+		outputBuilderTab.clickOkOutputBuilder();
+		defaultEditorTab.pageIsShown();
+	}
+
+	@When("save new output with MIN as $outputname")
+	public void saveNewOutputWithMin(String outputname) {
+		outPutReportNameMIN = outputname + RandomStringUtils.randomNumeric(4);
+		outputBuilderTab.setOutputName(outPutReportNameMIN);
+		outputBuilderTab.clickOkOutputBuilder();
+		defaultEditorTab.pageIsShown();
+	}
+
+	@When("save new output with SUM as $outputname")
+	public void saveNewOutputWithSum(String outputname) {
+		outPutReportNameSUM = outputname + RandomStringUtils.randomNumeric(4);
+		outputBuilderTab.setOutputName(outPutReportNameSUM);
+		outputBuilderTab.clickOkOutputBuilder();
+		defaultEditorTab.pageIsShown();
+	}
+
+	@When("save new output with MEAN as $outputname")
+	public void saveNewOutputWithMean(String outputname) {
+		outPutReportNameMEAN = outputname + RandomStringUtils.randomNumeric(4);
+		System.out.println("New MEAN name:" + outPutReportNameMEAN);
+		outputBuilderTab.setOutputName(outPutReportNameMEAN);
+		outputBuilderTab.clickOkOutputBuilder();
+		defaultEditorTab.pageIsShown();
+	}
+
+	@When("save new output as $outputname")
+	public void saveNewOutput(String outputname) {
+		outPutReportName = outputname + RandomStringUtils.randomNumeric(4);
+		outputBuilderTab.setOutputName(outPutReportName);
+		outputBuilderTab.clickOkOutputBuilder();
+		defaultEditorTab.pageIsShown();
+	}
+
+	@When("save new output with name which exist")
+	public void saveNewOutputWithExistedName() {
+		System.out.println("Existed name: " + outPutReportNameMEAN);
+		outputBuilderTab.setOutputName(outPutReportNameMEAN);
+		outputBuilderTab.clickOkOutputBuilder();
+	}
+
+	@When("save new output rule builder $outputname")
+	public void saveNewOutputRuleBuilder(String outputname) {
+		outPutReportNameRuleBuilder = outputname
+				+ RandomStringUtils.randomNumeric(4);
+		outputBuilderTab.setOutputName(outPutReportNameRuleBuilder);
+		outputBuilderTab.clickOkOutputBuilder();
+		defaultEditorTab.pageIsShown();
+	}
+
+	@When("save new output")
+	public void saveNewOutput() {
+		outputBuilderTab.setOutputName(outPutReportName);
+		outputBuilderTab.clickOkOutputBuilder();
+	}
+
+	@When("click Ok button on the OutputBuilder")
+	public void clickOkButtonOnOutputBuilder() {
+		outputBuilderTab.clickOkOutputBuilder();
+	}
+
+	@When("click Cancel button on the OutputBuilder")
+	public void clickCancelButton() {
+		outputBuilderTab.clickCancelOutputBuilder();
+		defaultEditorTab.pageIsShown();
+	}
+
+	@Then("verify that created Macros appear in the Expression Editor")
+	public void verifyThatCreatedMacroAppearsInExprEdit() {
+		assertTrue(outputBuilderTab
+				.verifycreatedMacroAppearsInExprEdit(outPutReportNameMIN));
+		assertTrue(outputBuilderTab
+				.verifycreatedMacroAppearsInExprEdit(outPutReportNameSUM));
+		assertTrue(outputBuilderTab
+				.verifycreatedMacroAppearsInExprEdit(outPutReportNameMEAN));
+	}
+
+	@Then("verify that predefined $macro appears in the list of available fields")
+	public void verifyThatPredefinedSampleMacroAppears(String macro) {
+		assertTrue(outputBuilderTab.verifycreatedMacroAppearsInExprEdit(macro));
+	}
+
+	@When("click on Context Independent checkbox")
+	public void checkContextIndependentBox() {
+		outputBuilderTab.checkContextIndependentBox();
+	}
+
+	@Then("verify that Context Independent checkbox is on")
+	public void isContextIndependentOff() {
+		assertTrue(
+				"Known Issue: Bug Number 4000741400024151553 Affects story 7.13.4, 7.13.5",
+				outputBuilderTab.isContextIndependentBoxChecked());
+	}
+
+	/**
+	 * Use this method when need to add created report, with saved name in
+	 * variable
+	 */
+	@When("select created output")
+	public void selectCreatedOutput() {
+		defaultEditorTab.selectAnExpressionToReportedOutputs(outPutReportName);
+	}
+
+	@When("select created output by name $name")
+	public void selectCreatedOutputByName(String name) {
+		defaultEditorTab.selectAnExpressionToReportedOutputs(name);
+	}
+
+	@When("unselect created output by $value")
+	public void unselectCreatedOutputByName(String value) {
+		defaultEditorTab.bottom().unSelectByValue(value);
+
+	}
+
+	@When("select created outputs")
+	public void selectCreatedOutputs() {
+		defaultEditorTab
+				.selectAnExpressionToReportedOutputs(outPutReportNameSAMPL1);
+		defaultEditorTab
+				.selectAnExpressionToReportedOutputs(outPutReportNameSAMPL2);
+		defaultEditorTab
+				.selectAnExpressionToReportedOutputs(outPutReportNameSAMPL3);
+	}
+
+	@Then("check that created Macros are not present in the list of available fields")
+	public void checkThatCreatedMacroIsNotPresent() {
+		assertFalse(defaultEditorTab
+				.isElementVisibleInAvailableFields(outPutReportNameMIN));
+		assertFalse(defaultEditorTab
+				.isElementVisibleInAvailableFields(outPutReportNameSUM));
+		assertFalse(defaultEditorTab
+				.isElementVisibleInAvailableFields(outPutReportNameMEAN));
+	}
+
+	@Then("check that $macro doesn`t appear in the list of available fields")
+	public void checkThatCreatedMacroIsNotPresent(String macro) {
+		assertFalse(defaultEditorTab.isElementVisibleInAvailableFields(macro));
+	}
+
+	@Then("check that $value is selected")
+	public void checkThatValueIsSelected(String value) {
+		assertTrue(defaultEditorTab.isElementVisibleInSelectedFields(value));
+	}
+
+	/**
+	 * Use this method when need to select report set as story parameter
+	 */
+	@When("select $expression on the Report Builder tab")
+	public void selectExpressionOnTheReportBuilderTab(String expression) {
+		defaultEditorTab.selectAnExpressionToReportedOutputs(expression);
+	}
+
+	@When("save report with new name")
+	public void saveReportWithNewName() {
+		defaultEditorTab.renameReport();
+	}
+
+	@When("save report with new name $name")
+	public void saveReportWithNewName(String name) {
+		defaultEditorTab.renameReport(name);
+	}
+
+	@When("click Cancel button on the Default Editor Tab")
+	public void clickCancelButtonDefaultEditorTab() {
+		defaultEditorTab.cancelChanges();
+		araMainPage.pageIsShown();
+	}
+
+	@Then("verify that warning message appears and apply")
+	public void verifyThatWarningMessageAppears() {
+		assertTrue(outputBuilderTab.overwriteReportMsg()
+				.verifyThatWarningMessageAppears());
+		outputBuilderTab.overwriteReportMsg().clickOkInOverwriteDialog();
+	}
+
+	@Then("click Ok in overwrite dialog")
+	public void clickOkInOverwriteDialog() {
+		outputBuilderTab.overwriteReportMsg().clickOkInOverwriteDialog();
+	}
+
+	@Then("verify selected type $reportType")
+	public void compareReportType(String reportType) {
+		assertTrue(outputBuilderTab.compareReportType(reportType));
+	}
+
+	// ====================================================Ara Main Page==
+
+	@Then("verify that the column is displayed correctly")
+	public void verifyThatTheColumnIsDisplayedCorrectly() {
+		System.out.print("Verify data " + outPutReportName + "\n");
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.verifyThatDataInColumnIsDisplayedCorrectly(outPutReportName));
+	}
+
+	@Then("verify that the output in report is displayed as SUM $columnName1 and $columnName2")
+	public void verifyThatOutputInReportIsDisplayedAsSUM(String columnName1,
+			String columnName2) {
+		System.out.print("Verify data " + outPutReportName + "\n");
+		assertTrue(araMainPage
+				.reportPaneBottom()
+				.reportPaneBottomTable()
+				.verifyNumericFunction_Sum(outPutReportName, columnName1,
+						columnName2));
+	}
+
+	@Then("verify that the output in report is displayed as SUM of several outputs $columnName1, $columnName2, $columnName3")
+	public void verifyThatOutputInReportIsDisplayedAsSUMOFSeveral(
+			String columnName1, String columnName2, String columnName3) {
+		System.out.print("Verify data " + outPutReportName + "\n");
+		assertTrue(araMainPage
+				.reportPaneBottom()
+				.reportPaneBottomTable()
+				.verifyNumericFunction_SumVarargs(outPutReportName,
+						columnName1, columnName2, columnName3));
+	}
+
+	@Then("verify that the output in report is displayed as Difference $columnName1 and $columnName2")
+	public void verifyThatOutputInReportIsDisplayedAsDif(String columnName1,
+			String columnName2) {
+		System.out.print("Verify data " + outPutReportName + "\n");
+		assertTrue(araMainPage
+				.reportPaneBottom()
+				.reportPaneBottomTable()
+				.verifyNumericFunction_Sum(outPutReportName, columnName1,
+						columnName2));
+	}
+
+	@Then("verify that the column is not displayed correctly")
+	public void verifyThatTheColumnIsNotDisplayedCorrectly() {
+		assertFalse(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.verifyThatDataInColumnIsDisplayedCorrectly(outPutReportName));
+	}
+
+	@Then("verify that the column is displayed as --")
+	public void verifyThatTheColumnIsDisplayedAs() {
+		assertFalse(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.verifyThatDataInColumnIsDisplayedCorrectly(outPutReportName));
+	}
+
+	@Then("verify that in column with created output displayed correct value $value")
+	public void verifyThatInColumnDisplayedCorrectValue(String value) {
+		assertTrue(araMainPage
+				.reportPaneBottom()
+				.reportPaneBottomTable()
+				.verifyThatDataInColumnIsDisplayedCorrectly(outPutReportName,
+						value));
+	}
+
+	@Then("verify that column $colNumber contains numbers")
+	public void verifyTahtColumnContainsNotOnly(int colNumber) {
+		assertTrue("Column doesn't contain numbers", araMainPage
+				.reportPaneBottom().reportPaneBottomTable()
+				.verifyThatColumnContainNumbers(colNumber));
+	}
+
+	@Then("verify that in column rule builder displayed correct value $value")
+	public void verifyThatInColumnRuleBuilderDisplayedCorrectValue(String value) {
+		assertTrue(araMainPage
+				.reportPaneBottom()
+				.reportPaneBottomTable()
+				.verifyThatDataInColumnIsDisplayedCorrectly(
+						outPutReportNameRuleBuilder, value));
+	}
+
+	@Then("verify that in specified column $columnname displayed correct value $value")
+	public void verifyThatInSpecifiedColumnDisplayedCorrectValue(
+			String columnname, String value) {
+		System.out.print("Verify data " + outPutReportName + "\n");
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.verifyThatDataInColumnIsDisplayedCorrectly(columnname, value));
+	}
+
+	@Then("verify that value in $columnName column is $value as defined in properties")
+	public void verifyThatInColumnDisplayedCorrectValue(String columnname,
+			String value) {
+		assertTrue(araMainPage
+				.reportPaneBottom()
+				.reportPaneBottomTable()
+				.verifyThatFirstCellDisplayedWithSelectedValue(columnname,
+						value));
+	}
+
+	@Then("verify that view $columnname are rendered correctly with expected results")
+	public void verifyThatViewRenderedCorrectly(String columnname) {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.verifyThatDataInColumnIsDisplayedCorrectly(columnname));
+	}
+
+	@Then("verify that the column is displayed with selected type $type")
+	public void verifyColumnIsDisplayedWithSelectedValue(String type) {
+		assertTrue(araMainPage
+				.reportPaneBottom()
+				.reportPaneBottomTable()
+				.verifyColumnIsDisplayedWithSelectedType(outPutReportName, type));
+	}
+
+	@Then("verify that the <IF> is displayed correctly $columnName1, $columnName2")
+	public void verifyThatIFIsDisplayedCorrectly(String columnName1,
+			String columnName2) {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.verifyFunction_IF(outPutReportName, columnName1, columnName2));
+	}
+
+	@Then("verify that numeric function abs displayed correct for $output")
+	public void verifyThatNumericFunctionAbsDisplayedCorrectValue(String output) {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.verifyNumericFunction_abs(outPutReportName, output));
+	}
+
+	@Then("verify that numeric function sqrt displayed correct for $output")
+	public void verifyThatNumericFunctionSqrtDisplayedCorrectValue(String output) {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.verifyNumericFunction_sqrt(outPutReportName, output));
+	}
+
+	@Then("verify that numeric function square displayed correct for $output")
+	public void verifyThatNumericFunctionSquareDisplayedCorrectValue(
+			String output) {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.verifyNumericFunction_square(outPutReportName, output));
+	}
+
+	@Then("verify that value is displayed for Parent book in the 'Sample RS output' column and is equal to the sum of children nodes values")
+	public void verifyValuIsDisplayedForParentBookIsEqualTheSumOfChildren() {
+		assertTrue(araMainPage
+				.reportPaneBottom()
+				.reportPaneBottomTable()
+				.verifyValuIsDisplayedForParentBookIsEqualTheSumOfChildren(
+						outPutReportName));
+	}
+
+	@Then("verify that correct figures are shown")
+	public void verifyThatCorrectFiguresAreShown() {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.verifyThatDataInFirstCellISDisplayed(outPutReportName));
+	}
+
+	@Then("verify corresponding between $value1 and $value2 at the top portfolio level")
+	public void verifyThatMeasuresDifferent(String value1, String value2) {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.verifyThatMeasuresSameAtTopPortfolioLevel(value1, value2));
+	}
+
+	@Given("click Select Rule Link")
+	public void clickSelectRuleLink() {
+		araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.clickSelectRuleLink("1", "Rule Selector 1");
+	}
+
+	@Given("click Select Rule Link for row number $rowNumber and column $columnName")
+	public void clickSelectRuleLinkForRow(String rowNumber, String columnName) {
+		araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.clickSelectRuleLink(rowNumber, columnName);
+
+	}
+
+	@Then("verify that correct value $value are shown in My Sample output for $rowNumber")
+	public void verifyValueInMySampleOutput(String value, String rowNumber) {
+		assertTrue(araMainPage
+				.reportPaneBottom()
+				.reportPaneBottomTable()
+				.verifyValueInMySampleOutput(value, outPutReportName, rowNumber));
+	}
+
+	@Then("verify that Search window contains created macros")
+	public void verifyThatSearchWindowIsOpened() {
+		assertTrue(araMainPage.ruleSelectorDialog()
+				.verifyThatSearchWindowContainsCreatedMacros(outPutReportName));
+	}
+
+	@Then("verify that 'None' is selectable as a Rule")
+	public void verifyThatNoneIsSelectableAsRule() {
+		assertTrue(araMainPage.ruleSelectorDialog()
+				.verifyThatSearchWindowContainsCreatedMacros("None"));
+	}
+
+	@Then("verify predefined macros")
+	public void verifyPredefinedMacros() {
+		assertTrue(araMainPage.ruleSelectorDialog()
+				.verifyThatSearchWindowContainsCreatedMacros("sample macro"));
+	}
+
+	@Then("select outputs from rule selector dialog $output")
+	public void selectOutputsFromRuleSelectorDialog(String output) {
+		araMainPage.ruleSelectorDialog().selectOutputsFromRuleSelectorDialog(
+				output);
+	}
+
+	@When("select SumOfChildren output from rule selector dialog")
+	public void selectSumOfChildrenOutputFromRuleSelectorDialog() {
+		araMainPage.ruleSelectorDialog().selectOutputsFromRuleSelectorDialog(
+				outPutReportNameRuleBuilder);
+	}
+
+	@When("select Sample 1 created output in Rule Selector Dialog")
+	public void selectSample1CreatedOutput() {
+		araMainPage.ruleSelectorDialog().selectOutputsFromRuleSelectorDialog(
+				outPutReportNameSAMPL1);
+	}
+
+	@When("select Sample 2 created output in Rule Selector Dialog")
+	public void selectSample2CreatedOutput() {
+		araMainPage.ruleSelectorDialog().selectOutputsFromRuleSelectorDialog(
+				outPutReportNameSAMPL2);
+	}
+
+	@When("select Sample 3 created output in Rule Selector Dialog")
+	public void selectSample3CreatedOutput() {
+		araMainPage.ruleSelectorDialog().selectOutputsFromRuleSelectorDialog(
+				outPutReportNameSAMPL3);
+	}
+
+	@When("select created macros MIN in Rule Selector Dialog")
+	public void selectCreatedMacrosMin() {
+		araMainPage.ruleSelectorDialog().selectOutputsFromRuleSelectorDialog(
+				outPutReportNameMIN);
+	}
+
+	@When("select created macros SUM in Rule Selector Dialog")
+	public void selectCreatedMacrosSum() {
+		araMainPage.ruleSelectorDialog().selectOutputsFromRuleSelectorDialog(
+				outPutReportNameSUM);
+	}
+
+	@When("select created macros MEAN in Rule Selector Dialog")
+	public void selectCreatedMacrosMean() {
+		araMainPage.ruleSelectorDialog().selectOutputsFromRuleSelectorDialog(
+				outPutReportNameMEAN);
+	}
+
+	@Then("click Cancel at Search Window")
+	public void closeSearchWindow() {
+		araMainPage.cancelSearchWindowDialog();
+		// araMainPage.closeEmptyWindow();
+
+	}
+
+	@Given("delete created report")
+	public void deleteCreatedReport() {
+		araMainPage.navigation().navigateToOnlineReportTab()
+				.clickActionsButton().selectDeleteReportOption();
+		araMainPage.acceptDeleteReportDialog();
+	}
+
+	// ===============================================Historical Output
+
+	@Given("navigate to Historical Output Report Tab")
+	public void navigateToHistoricalOutputReportTab() {
+		editReportNavigation.navigateToHistoricalOutputBuilder();
+		historicalOutputBuilder.pageIsShown();
+	}
+
+	@Then("verify that for Historical Output Builder all sections are shown")
+	public void verifyThatHistoricalOutputAllSectionsAreShown() {
+		assertTrue(historicalOutputBuilder
+				.verifyThatHistoricalOutputAllSectionsAreShown());
+	}
+
+	@When("select scheduled report $reportName")
+	public void selectScheduledReport(String reportName) {
+		historicalOutputBuilder.selectSheduledReport(reportName);
+	}
+
+	@Then("verify output for selected report $outputName")
+	public void verifyOutputForSelectedReport(String outputName) {
+		assertTrue(historicalOutputBuilder
+				.verifyOutputForSelectedReport(outputName));
+	}
+
+	@When("select output")
+	public void selectOutPut() {
+		historicalOutputBuilder.selectOutput();
+	}
+
+	@When("select historical data $value")
+	public void selectHistoricalDataValue(String value) {
+		historicalOutputBuilder.selectHistoricalDataValue(value);
+	}
+
+	@When("enter Name $name For Historical Report")
+	public void enterNameForHistoricalReport(String name) {
+		historicalOutputName = name + RandomStringUtils.randomNumeric(4);
+		historicalOutputBuilder
+				.enterNameForHistoricalReport(historicalOutputName);
+	}
+
+	@When("click OK button for Historical Output")
+	public void clickOkButtonHistoricalOutput() {
+		historicalOutputBuilder.clickOKButton();
+	}
+
+	@Then("verify that new report output became available")
+	public void verifyThatNewReportBecameAvailable() {
+		defaultEditorTab.pageIsShown();
+		assertTrue(defaultEditorTab
+				.isElementVisibleInAvailableFields(historicalOutputName));
+	}
+
+	@Given("add created output to the Selected fields")
+	public void addCreatedOutputToTheSelectedFields() {
+		defaultEditorTab
+				.selectAnExpressionToReportedOutputs(historicalOutputName);
+	}
+
+	@Then("verify that Input Map drop down is displayed")
+	public void verifyInputMapDropDownIsDisplayed() {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.verifyThatInputMapDropdownIsDisplayed());
+	}
+
+	@When("select value $value and click Go button")
+	public void selectValueAndClickGo(String value) {
+		araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.selectValueFromInputMapDropDown(value);
+		araMainPage.reportPaneBottom().reportPaneBottomTable().clickGoButton();
+	}
+
+	@Then("verify selections ROOT - Currency - Country specified in the input map")
+	public void selectionsSpecifiedInTheInputMap() {
+		assertTrue("Known issue: 4000741400040992766", araMainPage
+				.reportPaneBottom().reportPaneBottomTable()
+				.selectionsSpecifiedInTheInputMap());
+	}
+
+	@Given("select historical output from Historical Output list box")
+	public void selectHistoricalOutputFromListBox() {
+		historicalOutputBuilder
+				.selectHistoricalOutputFromListBox(historicalOutputName);
+	}
+
+	@When("click Delete report")
+	public void clickDeleteOutputButton() {
+		historicalOutputBuilder.clickDeleteOutputButton();
+	}
+
+	@Then("verify that selected historical output is removed")
+	public void verifyThatSelectedReportisRemoved() {
+		assertFalse(historicalOutputBuilder
+				.verifyThatSelectedReportisRemoved(outPutReportName));
+
+	}
+
+	@Then("verify that $reportName report appears")
+	public void verifyThatReportAppears() {
+		assertTrue(araMainPage.reportPaneBottom().verifyThatReportShown());
+	}
+
+	@Then("verify that created report is displayed without errors")
+	public void verifyCreatedReportIsDisplayedWithoutErrors() {
+		assertTrue(araMainPage.reportPaneBottom().verifyThatReportShown());
+	}
+
+	@Given("select $value from the Curve list box")
+	public void selectvalueFromListBox(String value) {
+		araMainPage.reportPaneParameters().selectvalueFromCurveListBox(value);
+	}
+
+	@Then("verify that selected $value from the Curve list box is active")
+	public void verifyCurveListBoxValue(String value) {
+		assertEquals("Selected value is not active", value, araMainPage
+				.reportPaneParameters().getCurveListBoxSelectedValue());
+	}
+
+	@Given("select $scenario from the Scenario list box")
+	public void selectScenarioFromScenarioListBox(String scenario) {
+		araMainPage.reportPaneParameters().selectScenario(scenario);
+	}
+
+	@Then("verify that selected $scenario from the Scenario list box is active")
+	public void verifyThatScenarioIsActive(String scenario) {
+		assertEquals("Selected value is not active", scenario, araMainPage
+				.reportPaneParameters().getSelectedScenarioListBox());
+	}
+
+	@Given("select $scenario from the Scenario Stress list box")
+	public void selectScenarioFromScenarioStressListBox(String scenario) {
+		araMainPage.reportPaneParameters().selectStressScenario(scenario);
+	}
+
+    @When("I set Inv Horizon to $invHorizon")
+    public void setInvHorizon(String invHorizon){
+        araMainPage.reportPaneParameters().selectTimeStep(invHorizon);
+    }
+
+	@Given("select $currency currency from the Currency list box")
+	public void selectCurrencyFromCurrencyListBox(String currency) {
+		araMainPage.reportPaneParameters().selectCurrency(currency);
+	}
+
+	@Then("verify that currecy $currency in the Currency list box is active")
+	public void verifyCurrencyInCurrencyList(String currency) {
+		assertEquals("Currency does not match", currency, araMainPage
+				.reportPaneParameters().getSelectedCurrency());
+	}
+
+	@When("click update with selections button")
+	public void clickUpdateWithSelectionsButton() {
+		araMainPage.reportPaneParameters().clickUpdateWithSelectionsButton();
+	}
+
+	@Then("verify that results of the selected key are displayed")
+	public void verifyThatResultsOfSelectedKeyAreDisplayed() {
+		assertTrue(araMainPage.reportPaneBottom().verifyThatReportShown());
+	}
+
+	@Then("verify that $row row appears in the $column column")
+	public void verifyThatSetRowAppersInColumn(String row, String column) {
+		assertTrue(araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.verifyInColumnDisplayedSelectedRow(column, row));
+	}
+
+	@Then("verify selected output $outputname with its value appears in Reference bar")
+	public void verifyOutputwithValueAppearsInReferenceBar(String outputname) {
+		assertTrue(araMainPage.reportPaneReference()
+				.verifyOutputwithValueAppears(outputname));
+	}
+
+	@Then("verify that values of $outputReference Reference bar and $outputTable in column are identical")
+	public void verifyValuesOfReferenceBarAndColumnIdentical(
+			String outputReference, String outputTable) {
+		String referenceBarOutputValue = araMainPage.reportPaneReference()
+				.getOutputValueInReferenceBar(outputReference);
+		assertTrue(araMainPage
+				.reportPaneBottom()
+				.reportPaneBottomTable()
+				.verifyThatFirstCellDisplayedWithSelectedValue(outputTable,
+						referenceBarOutputValue));
+	}
+
+	@Then("verify that currency at Currency list and value of $outputReference Reference bar are identical")
+	public void verifyThatCurrenciesAreIdentical(String outputReference) {
+		String selected = araMainPage.reportPaneParameters()
+				.getSelectedCurrency();
+		String referenceBarOutputValue = araMainPage.reportPaneReference()
+				.getOutputValueInReferenceBar(outputReference);
+		String SELECTED_REF_VALUE = "c:"
+				+ referenceBarOutputValue.toLowerCase();
+		assertEquals("Values does not equals", selected, SELECTED_REF_VALUE);
+	}
+
+	@When("select display information $value")
+	public void selectDisplayInformation(String value) {
+		defaultEditorTab.selectDisplayInformation(value);
+	}
+
+	@Then("verify that Currencies table appears in Report view")
+	public void isCurrenciesTableAppearInReportView() {
+		assertTrue("Currencies table doesn't appears in Report view",
+				araMainPage.reportPaneBottom().reportPaneBottomTable()
+						.isCurrenciesTableAppearsInTableView());
+	}
+
+	@Given("select $benchmarkSet Missing Benchmark Set")
+	public void selectMissingBenchmarkSet(String benchmarkSet) {
+		boolean isBenchmarksetPresent = araMainPage.reportPaneBottom()
+				.isMissingBenchmarkPresent();
+		if (isBenchmarksetPresent) {
+			araMainPage.rememberMainWindow();
+			araMainPage.navigation().onlineReports().clickActionsButton()
+					.selectReportPropertiesOption();
+			assertTrue("Report properties window doesn't appear",
+					newReportProperties.switchToNewReportPropertiesDialog()
+							.verifyThatPropertiesDialogBoxDisplayed());
+			System.out.println("properties window opened");
+			newReportProperties.switchToNewReportPropertiesDialog()
+					.clickBenchmarkSetLink();
+			System.out.println("click Benchmark Set Link");
+			araMainPage.benchmarkSetDialog().selectBenchmarkSet(benchmarkSet);
+			newReportProperties.switchToNewReportPropertiesDialog()
+					.clickOKButtonForProperties();
+			// araMainPage.closeEmptyReportProperties();
+		}
+	}
+
+	// ============================ Expert Editor Tab
+
+	@Given("navigate to Expert Editor tab")
+	public void navigateExpertEditorTab() {
+		editReportNavigation.navigateToExpertEditorTab();
+	}
+
+	String reportName = "";
+
+	@When("I define report $reportNumber layout")
+	public void defineReport(String reportNumber) {
+		reportName = reportNumber;
+		String reportText = AraFileReader.readTxt(reportName);
+		expertEditorTab.defineTheReport(reportText);
+	}
+
+	@When("I save report with new name")
+	public void saveReport() {
+		expertEditorTab.setReportName(reportName);
+		expertEditorTab.clickOKButton();
+	}
+
+	@Then("verify that exported data displayed correctly")
+	public void verifyExportedData() {
+		String actual = araMainPage.reportPaneBottom().reportPaneBottomTable()
+				.getExportedData();
+		String expected = AraFileReader.readCSV(reportName);
+		assertEquals(expected, actual);
+	}
+
+    @Then("verify that exported $reportName data compares to data from $folder folder")
+    public void verifyExportedDataCorrect(String reportName,String folder) {
+        String actual = araMainPage.reportPaneBottom().reportPaneBottomTable()
+                .getExportedData();
+        String expected = AraFileReader.readCSV(folder,reportName);
+        assertEquals(expected, actual);
+    }
+}

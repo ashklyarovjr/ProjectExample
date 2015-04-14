@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/scm-webapp/svn/market_risk/!svn/ver/97/trunk/ara_market_0dev/src/main/java/com/epam/ara/steps
+END
+LimitsSteps.java
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/scm-webapp/svn/market_risk/!svn/ver/5/trunk/ara_market_0dev/src/main/java/com/epam/ara/steps/LimitsSteps.java
+END
+PortfolioSteps.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/scm-webapp/svn/market_risk/!svn/ver/97/trunk/ara_market_0dev/src/main/java/com/epam/ara/steps/PortfolioSteps.java
+END
+PreferencesSteps.java
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/scm-webapp/svn/market_risk/!svn/ver/58/trunk/ara_market_0dev/src/main/java/com/epam/ara/steps/PreferencesSteps.java
+END
+LoginSteps.java
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/scm-webapp/svn/market_risk/!svn/ver/51/trunk/ara_market_0dev/src/main/java/com/epam/ara/steps/LoginSteps.java
+END
+SchedulerSteps.java
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/scm-webapp/svn/market_risk/!svn/ver/5/trunk/ara_market_0dev/src/main/java/com/epam/ara/steps/SchedulerSteps.java
+END
+BenchmarkSteps.java
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/scm-webapp/svn/market_risk/!svn/ver/5/trunk/ara_market_0dev/src/main/java/com/epam/ara/steps/BenchmarkSteps.java
+END
+OptimizationSteps.java
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/scm-webapp/svn/market_risk/!svn/ver/5/trunk/ara_market_0dev/src/main/java/com/epam/ara/steps/OptimizationSteps.java
+END
+EditReportSteps.java
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/scm-webapp/svn/market_risk/!svn/ver/86/trunk/ara_market_0dev/src/main/java/com/epam/ara/steps/EditReportSteps.java
+END
+ContextSteps.java
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/scm-webapp/svn/market_risk/!svn/ver/5/trunk/ara_market_0dev/src/main/java/com/epam/ara/steps/ContextSteps.java
+END
+AggregationSteps.java
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/scm-webapp/svn/market_risk/!svn/ver/5/trunk/ara_market_0dev/src/main/java/com/epam/ara/steps/AggregationSteps.java
+END
+NewReportSteps.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/scm-webapp/svn/market_risk/!svn/ver/84/trunk/ara_market_0dev/src/main/java/com/epam/ara/steps/NewReportSteps.java
+END

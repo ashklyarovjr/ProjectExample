@@ -1,0 +1,64 @@
+<html>
+<head>
+<title>Search</title>
+<style type="text/css" media="all">
+@import url( "./style/jbehave-core.css" );
+</style>
+</head>
+<body>
+<div class="story">
+<h1></h1>
+<div class="path">Search.story</div>
+<div class="narrative"><h2>Narrative:</h2>
+<div class="element inOrderTo"><span class="keyword inOrderTo">In order to</span> use application functionality</div>
+<div class="element asA"><span class="keyword asA">As a</span> user</div>
+<div class="element iWantTo"><span class="keyword iWantTo">I want to</span> verify search window</div>
+</div>
+<div class="scenario">
+<h2>Scenario: 1.1.1 Verify that enter correct value in search field will give search results</h2>
+<div class="step successful">Given I am on search page</div>
+<div class="step successful">When Enter the value in Search field <span class="step parameter">whether</span></div>
+<div class="step successful">And click on search button</div>
+<div class="step successful">Then verify the search results</div>
+</div>
+<div class="scenario">
+<h2>Scenario: 1.1.2 Verify that enter incorrect value in search field will not give any results</h2>
+<div class="step successful">Given I am on search page</div>
+<div class="step successful">When Enter the value in Search field <span class="step parameter">---</span></div>
+<div class="step successful">And click on search button</div>
+<div class="step successful">Then verify the message</div>
+</div>
+<div class="scenario">
+<h2>Scenario: 1.1.3 As a user I want to click on the first link in results</h2>
+<div class="step successful">Given I am on search page</div>
+<div class="step successful">When Enter the value in Search field <span class="step parameter">whether</span></div>
+<div class="step successful">And click on search button</div>
+<div class="step successful">Then verify the search results</div>
+<div class="step successful">And click on the first link in results</div>
+<div class="step successful">And verify that the first link opened</div>
+</div>
+</div>
+
+</body>
+<!--  SyntaxHighlighter resources:  should be included at end of body -->
+<link rel="stylesheet" type="text/css" href="./style/sh-3.0.83/shCore.css"/>
+<link rel="stylesheet" type="text/css" href="./style/sh-3.0.83/shThemeRDark.css"/>
+<script language="javascript" src="./js/sh-3.0.83/shCore.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushBash.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushCss.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushDiff.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushGroovy.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushJava.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushJScript.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushPlain.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushPython.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushRuby.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushScala.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushXml.js"></script>
+<script language="javascript" src="./js/shBrushBdd.js"></script>
+<script type="text/javascript">
+    SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['toolbar'] = false;    
+    SyntaxHighlighter.all();
+</script>
+</html>
